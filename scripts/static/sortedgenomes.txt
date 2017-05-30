@@ -1,0 +1,120 @@
+<OPTION>Acinetobacter pittii PHEA-2
+<OPTION>Aeromonas hydrophila subsp. hydrophila ATCC 7966
+<OPTION>Agrobacterium fabrum str. C58
+<OPTION>Amycolatopsis mediterranei U32
+<OPTION>Aquifex aeolicus VF5
+<OPTION>Bacillus anthracis str. Ames
+<OPTION>Bacillus anthracis str. Sterne
+<OPTION>Bacillus cereus ATCC 14579
+<OPTION>Bacillus subtilis subsp. subtilis str. 168
+<OPTION>Bacteroides fragilis YCH46
+<OPTION>Bacteroides thetaiotaomicron VPI-5482
+<OPTION>Bifidobacterium bifidum PRL2010
+<OPTION>Bifidobacterium longum NCC2705
+<OPTION>Bordetella bronchiseptica 253
+<OPTION>Bordetella parapertussis Bpp5
+<OPTION>Bordetella pertussis Tohama I
+<OPTION>Borrelia burgdorferi B31
+<OPTION>Brachybacterium faecium DSM 4810
+<OPTION>Bradyrhizobium diazoefficiens USDA 110
+<OPTION>Buchnera aphidicola str. APS (Acyrthosiphon pisum)
+<OPTION>Burkholderia mallei ATCC 23344
+<OPTION>Burkholderia pseudomallei K96243
+<OPTION>Campylobacter jejuni subsp. jejuni NCTC 11168 = ATCC 700819
+<OPTION>Caulobacter crescentus CB15
+<OPTION>Caulobacter crescentus NA1000
+<OPTION>Chlamydia trachomatis 434/Bu
+<OPTION>Chlamydia trachomatis D/UW-3/CX
+<OPTION>Chlamydophila pneumoniae CWL029
+<OPTION>Chlorobium tepidum TLS
+<OPTION>Chloroflexus aurantiacus J-10-fl
+<OPTION>Clostridioides difficile 630
+<OPTION>Clostridium acetobutylicum ATCC 824
+<OPTION>Clostridium botulinum A str. ATCC 3502
+<OPTION>Clostridium botulinum A str. Hall
+<OPTION>Corynebacterium glutamicum ATCC 13032
+<OPTION>Coxiella burnetii RSA 493
+<OPTION>Deinococcus radiodurans R1
+<OPTION>Desulfovibrio vulgaris str. Hildenborough
+<OPTION>Dictyoglomus turgidum DSM 6724
+<OPTION>Enterobacter aerogenes KCTC 2190
+<OPTION>Enterobacter cloacae subsp. cloacae ATCC 13047
+<OPTION>Enterococcus faecalis V583
+<OPTION>Enterococcus faecium DO
+<OPTION>Escherichia coli IAI39
+<OPTION>Escherichia coli O104:H4 str. 2011C-3493
+<OPTION>Escherichia coli O157:H7 str. Sakai
+<OPTION>Escherichia coli O83:H1 str. NRG 857C
+<OPTION>Escherichia coli UMN026
+<OPTION>Escherichia coli str. K-12 substr. MG1655
+<OPTION>Flavobacterium psychrophilum JIP02/86
+<OPTION>Francisella tularensis subsp. tularensis SCHU S4
+<OPTION>Fusobacterium nucleatum subsp. nucleatum ATCC 25586
+<OPTION>Gardnerella vaginalis ATCC 14019
+<OPTION>Geobacter sulfurreducens PCA
+<OPTION>Gloeobacter violaceus PCC 7421
+<OPTION>Haemophilus influenzae Rd KW20
+<OPTION>Helicobacter pylori 26695
+<OPTION>Ketogulonicigenium vulgare WSH-001
+<OPTION>Klebsiella pneumoniae subsp. pneumoniae HS11286
+<OPTION>Lactobacillus acidophilus NCFM
+<OPTION>Lactobacillus paracasei ATCC 334
+<OPTION>Lactobacillus plantarum WCFS1
+<OPTION>Lactobacillus salivarius UCC118
+<OPTION>Lactococcus lactis subsp. lactis Il1403
+<OPTION>Legionella pneumophila subsp. pneumophila str. Philadelphia 1
+<OPTION>Leptospira interrogans serovar Lai str. 56601
+<OPTION>Listeria monocytogenes EGD-e
+<OPTION>Mesoplasma florum L1
+<OPTION>Mesorhizobium ciceri biovar biserrulae WSM1271
+<OPTION>Moorella thermoacetica ATCC 39073
+<OPTION>Mycobacterium abscessus
+<OPTION>Mycobacterium bovis AF2122/97
+<OPTION>Mycobacterium leprae TN
+<OPTION>Mycobacterium smegmatis str. MC2 155
+<OPTION>Mycobacterium tuberculosis H37Rv
+<OPTION>Mycoplasma mycoides subsp. mycoides SC str. PG1
+<OPTION>Mycoplasma pneumoniae M129
+<OPTION>Neisseria gonorrhoeae FA 1090
+<OPTION>Neisseria meningitidis MC58
+<OPTION>Prochlorococcus marinus subsp. marinus str. CCMP1375
+<OPTION>Pseudomonas aeruginosa PAO1
+<OPTION>Pseudomonas putida KT2440
+<OPTION>Pseudomonas syringae pv. syringae B728a
+<OPTION>Rhodobacter sphaeroides 2.4.1
+<OPTION>Rhodopirellula baltica SH 1
+<OPTION>Rhodospirillum rubrum ATCC 11170
+<OPTION>Rickettsia prowazekii str. Madrid E
+<OPTION>Salinibacter ruber DSM 13855
+<OPTION>Salmonella enterica subsp. enterica serovar Typhi str. CT18
+<OPTION>Salmonella enterica subsp. enterica serovar Typhimurium str. LT2
+<OPTION>Shewanella oneidensis MR-1
+<OPTION>Shigella dysenteriae Sd197
+<OPTION>Shigella flexneri 2a str. 301
+<OPTION>Sinorhizobium fredii NGR234
+<OPTION>Sinorhizobium medicae WSM419
+<OPTION>Sinorhizobium meliloti 1021
+<OPTION>Staphylococcus aureus subsp. aureus NCTC 8325
+<OPTION>Staphylococcus epidermidis ATCC 12228
+<OPTION>Streptococcus agalactiae 2603V/R
+<OPTION>Streptococcus mitis B6
+<OPTION>Streptococcus mutans UA159
+<OPTION>Streptococcus pneumoniae R6
+<OPTION>Streptococcus pyogenes M1 GAS
+<OPTION>Streptococcus sanguinis SK36
+<OPTION>Streptococcus suis BM407
+<OPTION>Streptomyces coelicolor A3(2)
+<OPTION>Thermanaerovibrio acidaminovorans DSM 6589
+<OPTION>Thermodesulfovibrio yellowstonii DSM 11347
+<OPTION>Thermosynechococcus elongatus BP-1
+<OPTION>Thermotoga maritima MSB8
+<OPTION>Thermus thermophilus HB8
+<OPTION>Treponema denticola ATCC 35405
+<OPTION>Vibrio cholerae O1 biovar El Tor str. N16961
+<OPTION>Vibrio fischeri ES114
+<OPTION>Vibrio parahaemolyticus RIMD 2210633
+<OPTION>Xanthomonas campestris pv. campestris str. ATCC 33913
+<OPTION>Yersinia enterocolitica subsp. enterocolitica 8081
+<OPTION>Yersinia pestis CO92
+<OPTION>[Bacillus thuringiensis] serovar konkukian str. 97-27
+<OPTION>[Pseudomonas syringae] pv. tomato str. DC3000
