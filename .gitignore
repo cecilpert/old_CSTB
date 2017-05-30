@@ -1,4 +1,5 @@
 *.log
 ._*
 tmp/
-
+reference_genomes/ 
+test/
