@@ -58,59 +58,9 @@ def find_sgRNA_seq(seq,pam):
     reg_exp = build_expression(pam) 
     indices = [m.start() for m in re.finditer('(?=' + reg_exp + ')', seq, re.I)]
     return indices
-
-
-def construct_seq_dict(fasta_path,organism_code,PAM,non_PAM_motif_length):
-    '''
-    Construct seq dict for an organism. 
-    1. Take the nt sequence for the genome as SeqRecord object
-    2. Search PAM motif (for strand +) and reverse complement PAM motif (for strand -) in the sequence with find_sgRNA_seq function. This function give a list with indexes where the motif was found.
-    4. Browse index lists and take the sequence of the complete sgRNA from index. 
-    To determinate the sequence of the complete sgRNA : 
-    - check if the motif isn't to close from start or end of the genome sequence 
-    - determinate coordinates, see code for details 
-    - take the subsequence in genome SeqRecord with calculate coordinates. It will be reverse complemented for strand +. 
-    - create dictionnary like key=sequence and value=list of coordinates like strand(start,end)
-    5. Return the dictionnary
-    '''
-
-    fasta_file=fasta_path +'/' + organism_code +'_genomic.fna'
-    genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
-
-    genome_length=len(genome_seqrecord)
-
-    genome_seq=str(genome_seqrecord.seq)
     
-    seq_list_forward=find_sgRNA_seq(genome_seq,PAM)
-    seq_list_reverse=find_sgRNA_seq(genome_seq,reverse_complement(PAM))
 
-    seq_dict={}
-
-    count=0
-    for indice in seq_list_forward: 
-        end=indice+len(PAM)+non_PAM_motif_length
-        if not end > genome_length:
-            seq=str(genome_seqrecord.seq[indice:end].reverse_complement())
-            if seq not in seq_dict:
-                count+=1
-                seq_dict[seq]=['+('+str(indice+1)+','+str(end)+')']
-            else:   
-                seq_dict[seq].append('+('+str(indice+1)+','+str(end)+')')
-            
-    for indice in seq_list_reverse: 
-        end=indice+len(PAM)
-        start=indice-non_PAM_motif_length
-        if not start<=0:
-            seq=genome_seq[start:end]
-            if seq not in seq_dict:
-                seq_dict[seq]=['-('+str(start+1)+','+str(end)+')'] 
-            else:    
-                seq_dict[seq].append('-('+str(start+1)+','+str(end)+')')
-          
-    return(seq_dict)    
-
-
-def construct_seq_dict_with_organism(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
+def construct_in(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
     '''
     Same function as construct_seq_dict except the dictionnary will not be like value=list of coordinates. It add the information about organism with dictionnary values like : dictionnary with key=organism and value=list of coordinates in this organism
     '''
@@ -147,102 +97,24 @@ def construct_seq_dict_with_organism(fasta_path,organism,organism_code,PAM,non_P
     end=time.time()
     return(seq_dict) 
 
-   
-def search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path):
-    '''Create dictionnary with common sgRNA between all organisms and call the function to create hitlist for this dictionnary. The final dictionnary is like key=sequence and value=other dictionnary with key=organism and value=list of position in the organism
-    Steps : 
-    1. Take the smallest genome for the first iteration because we can't have more common sgRNA than total sgRNA of the smallest genome 
-    2. Create a dictionnary of smallest genome like key=sequence and value=dictionnary with key=organism and value=list of position
-    3. Write all sequences in dictionnary in a temporary fasta file
-    4. Use bowtie with this file as query and the second genome as reference 
-    5. Use the function treat_bowtie_results to generate a dictionnary with key=sequence and value=position in genome.
-    6. Complete the dictionnary the first dictionnary that included informations about organism by adding the position in the second genomes. 
-    6. Write the common sequences in temporary fasta file and launch bowtie on next genome. Do this steps until all included genomes are treated. 
-    7. Use the function construct_hit_list that will construct an hit list with final dictionnary.  
-    '''
 
-    out=open('tmp/sgRNA_in.fa','w')
-    new_genomes_IN=[]
+def sort_genomes(list_genomes,fasta_path,dict_org_code): 
+    '''Sort genomes by ascending size'''
+    tmp_list=[]
+    for genome in list_genomes: 
+        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome] +'_genomic.fna', 'fasta'))
+        tmp_list.append((len(fasta_genome.seq),genome))
+    genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0])]   ##Sort by ascending size
+    return(genomes_sorted)
 
-    for element in genomes_IN:
-        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[element] +'_genomic.fna', 'fasta'))
-        new_genomes_IN.append((len(fasta_genome.seq),element)) ##Tuple with length of genome and genome reference code
-
-    genomes_IN=[i[1] for i in sorted(new_genomes_IN,key=lambda genome:genome[0])]   ##Sort by ascending size
-    smallest=genomes_IN[0]
-    #eprint("Sorted genomes by size, extracted smallest Dict,",smallest)
-    ##IMPROVEMENT: SORT GENOMES_IN BY INCREASING SGRNA DICT SIZE
-
-    start_global=time.time()
-    start=time.time()
-    seq_dict_to_compare= construct_seq_dict_with_organism(fasta_path,smallest,dict_org_code[smallest],PAM,non_PAM_motif_length)
-    end=time.time()
-    print('first_hits',len(seq_dict_to_compare))
-    construction_time=end-start
-
-    for seq in seq_dict_to_compare: 
-        out.write('>'+seq+'\n'+seq+'\n')
-
-    out.close()    
-
-    for organism in genomes_IN[1:]:
-        new_dic={}
-        organism_code=dict_org_code[organism]
-        bowtie_command=bowtie_path+' --quiet -a -c -v 0 '+indexs_path+'1/'+organism_code+' -f tmp/sgRNA_in.fa tmp/results_bowtie.txt'
-        os.system(bowtie_command)
-        dic_results=treat_bowtie_results_IN(PAM,non_PAM_motif_length)
-        out=open('tmp/sgRNA_in.fa','w')
-        for seq in dic_results: 
-            out.write('>'+seq+'\n'+seq+'\n')
-            new_dic[seq]=seq_dict_to_compare[seq]
-            new_dic[seq][organism]=dic_results[seq]    
-        out.close()
-        seq_dict_to_compare=new_dic       
-        if not seq_dict_to_compare:  # Empty list evaluates to False
-            print("Program terminated& Adding organism "+organism+" gave an absence of common occurences. Maybe try lowering sgRNA size. \nCAVEAT: the search is for exact matches.")
-            end_global=time.time()  
-            time_global=end_global-start_global
-            print('TIME',time_global)
-            sys.exit(1)
-    end_global=time.time()  
-    time_global=end_global-start_global   
-    eprint(time_global)   
-    print('CONSTRUCTION',construction_time)
-    print('COMPARAISON',end_global-start_global-construction_time)
-    hits_list=construct_hitlist(seq_dict_to_compare)
-
-    return hits_list
-
-def treat_bowtie_results_IN(PAM,non_PAM_motif_length): 
-    '''Treat bowtie results for included genomes. 
-
-    Take submit sequences, strand and pos of alignment. 
-    Store informations in dictionnary with key=sequence and value=list of coordinates in genome (format of coordinates is : strand(start,end))
-    Return this dictionnary 
-    '''
-    f=open('tmp/results_bowtie.txt','r')
-    res_dict={}    
-    len_sgRNA=len(PAM)+int(non_PAM_motif_length)
-    forbidden_positions=[i for i in range(int(non_PAM_motif_length),len_sgRNA)]
-    dic_strand={'+':'-','-':'+'}
-    dic_results={}
-    for line in f: 
-        line_split=line.rstrip().split('\t')
-        hit_seq=line_split[0]   
-        strand=line_split[1]
-        pos=int(line_split[3])
-        if strand=='+': 
-            start=pos+1
-            end=pos+len_sgRNA
-        elif strand=='-': 
-            end=pos
-            start=pos-len_sgRNA
-        if hit_seq not in dic_results:     
-            dic_results[hit_seq]=[dic_strand[strand]+'('+str(start)+','+str(end)+')']  
-        else: 
-            dic_results[hit_seq].append(dic_strand[strand]+'('+str(start)+','+str(end)+')')
-    f.close()
-    return dic_results 
+def sort_genomes_desc(list_genomes,fasta_path,dict_org_code): 
+    '''Sort genomes by ascending size'''
+    tmp_list=[]
+    for genome in list_genomes: 
+        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome] +'_genomic.fna', 'fasta'))
+        tmp_list.append((len(fasta_genome.seq),genome))
+    genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0],reverse=True)]   ##Sort by ascending size
+    return(genomes_sorted)    
 
 def construct_hitlist(dict_seq):
     '''
@@ -258,148 +130,66 @@ def construct_hitlist(dict_seq):
     return(hits_list)
 
 
-def not_in_search(indexs_path,bowtie_path,genomes_NOT_IN,dict_org_code,hit_list,PAM,non_PAM_motif_length):
-    '''Search against excluded genomes.
-    - For each genomes, launch bowtie2 with all common sgRNA as query and the genome as reference. The length of the seed (option -L) is changed because the default size (22) is too close of the size of sgRNA to allow enough mismatches in research. The option -a write all alignments in bowtie results.
-    - Bowtie results are treated with treat_bowtie_results_not_in function. This function will complete each sgRNA object Hit with information about alignments with excluded genomes.
-    '''
-    for organism in genomes_NOT_IN:
-        organism_code=dict_org_code[organism]
-        bowtie_command='bowtie2 -x'+indexs_path+'2/'+organism_code+' -f tmp/sgRNA_in.fa -S tmp/results_bowtie2.sam -L 13 -a'
-        os.system(bowtie_command)
-        treat_bowtie_results_not_in(PAM,organism,hit_list)
+def write_to_fasta(dic_seq): 
+    '''Write sequences in dic_seq in a fasta file'''
+    out=open('tmp/sgRNA.fa','w')
+    count=0
+    for seq in dic_seq: 
+        count+=1
+        out.write('>'+seq+'\n'+seq+'\n')
+    out.close()            
 
-def treat_bowtie_results_not_in(PAM,organism,hit_list): 
-    '''
-    Treat bowtie2 results for excluded genomes. 
-    Split results and take submits sequences, sequences that align, cigar code and position of alignment. 
-    Treat this informations and store the results in a dictionnary (key=sequence and value=information about alignment). Information about alignment will be like : mismatch_information:strand and position:supplemetary information. The first field can be 'Exact match', 'No indel' (it means no indel but mismatch) or 'Indel' with information about indel position. The third field contains informations about mismatches positions. 
-    Example of indel position (cigar code) : 15M1I7M. This means that there is 15 aligned position (match or mismatch), 1 insertion in submit sequence and 7 aligned positions.
-    Example of mismatch position : 15A8. This means the 15 first base are the same, then there is a A in submit sequence and an other base in reference sequence, and the 8 last bases are the same again. 
-    See more about cigar code at : https://samtools.github.io/hts-specs/SAMv1.pdf (Section 1.4) 
-    '''
-    f=open('tmp/results_bowtie2.sam','r')
-    res_dict={}
-    for l in f: 
-        if l[0]!='@':
-            l_split=l.rstrip().split('\t')
-            hit_seq=l_split[0]
-            seq_align=l_split[9]
-            cigar=l_split[5]
-            pos=l_split[3]
-            if cigar=='*': 
-                res_dict[hit_seq]='None'
-            else: 
-                if hit_seq not in res_dict: 
-                    res_dict[hit_seq]=[]
-                mm=l_split[-2]
-                mm=mm.split(':')[-1]
-                if seq_align==hit_seq: 
-                    strand='-'
-                elif seq_align!=hit_seq:
-                    strand='+' 
-                    cigar=reverse_cigar(cigar)   
-                if mm=='23' and cigar=='23M':
-                    res_dict[hit_seq].append('Exact match:'+strand+pos)
-                else: 
-                    if cigar=='23M': 
-                        dic_str='No indel:'+strand+pos
-                    else: 
-                        dic_str='Indel '+cigar+':'+strand+pos    
-                    count_mm=0
-                    if strand=='-': 
-                        mm_pam=treat_mismatch_reverse(PAM,mm) 
-                    elif strand=='+':  
-                        mm_pam=treat_mismatch_forward(PAM,mm)  
-                        mm=reverse_mismatch(mm)                         
-                    if mm_pam: 
-                        res_dict[hit_seq].append(dic_str+':Mismatch in PAM')
-                    else: 
-                        res_dict[hit_seq].append(dic_str+':'+mm)
-                                                                                                                        
-    f.close()             
-    complete_hit_list(hit_list,res_dict,organism)      
+def add_notin(organism_code,indexs_path,dic_seq): 
+    bowtie_command='bowtie2 -x'+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie2.sam -L 13 -a --quiet'
+    os.system(bowtie_command)
+    new_dic=treat_bowtie_not_in(dic_seq)
+    return new_dic
 
-def reverse_mismatch(mm): 
-    '''
-    Take a mismatch string as input and return its reverse. The string is read from the end and the base are complemented. 
-    Example : for 10A2A9C2, the reverse is 2G9T2T10
-    '''
-    new_mm=''
-    rc_dic={'A':'T','C':'G','G':'C','T':'A','N':'N'}
-    list_bases=[]
-    for i in mm: 
-        if i.isalpha(): 
-            list_bases.append(i)   
-    list_bases.reverse()          
-    for base in list_bases: 
-        mm_split=mm.split(base)
-        new_mm+=mm_split[-1]+rc_dic[base]
-        mm=mm_split[:-1]
-        if len(mm)>1: 
-            mm=base.join(mm)
-        else:
-            mm=mm[0]   
-        if mm.isnumeric():
-            new_mm+=mm
-    return(new_mm)     
+def add_in(bowtie_path,organism_code,indexs_path,dic_seq,genome,len_sgrna):  
+    bowtie_command='bowtie2 -x '+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie2.sam -L 13 -a --quiet'  
+    os.system(bowtie_command)
+    new_dic=treat_bowtie_in(dic_seq,genome,len_sgrna)   
+    return new_dic
 
-def reverse_cigar(cigar):
-    '''
-    Reverse a cigar code. 
-    Example : for 13M1I9M, the reverse is 9M1I13M
-    '''
-    new_cigar=''
-    list_letters=[]
-    for i in cigar: 
-        if i.isalpha(): 
-            list_letters.append(i)
-    first=list_letters.pop()
-    list_letters.reverse()
-    for letter in list_letters: 
-        cigar_split=cigar.split(letter)
-        new_cigar+=cigar_split[-1]
-        cigar=cigar_split[:-1]         
-        if len(cigar)>1: 
-            cigar=letter.join(cigar)+letter
-        else:
-            cigar=cigar[0]+letter   
-    new_cigar+=cigar
-    return new_cigar        
+def treat_bowtie_not_in(dic_seq): 
+    res=open('tmp/results_bowtie2.sam','r')
+    count=0
+    new_dic={}
+    for l in res: 
+        if l[0]!='@': 
+            if l.split('\t')[2]=='*':
+                seq=l.split('\t')[0]
+                new_dic[seq]=dic_seq[seq]
+    return new_dic  
 
-           
-def treat_mismatch_forward(PAM,mm): 
-    '''
-    Check if a mismatch is in the PAM motif. For forward verification, check if the mismatch is in the first bases (depending on motif length).  
-    '''
-    acgt=['A','C','G','T']
-    for base in acgt: 
-        mm_pam=mm.split(base)[0]
-        if mm_pam.isnumeric():
-            if int(mm_pam)<len(PAM):
-                return True
-    return False        
-
-def treat_mismatch_reverse(PAM,mm):
-    '''
-    Check if a mismatch is in the PAM motif. For reverse verification, check if the mismatch is in the last bases (depending on motif length).  
-    '''
-    acgt=['A','C','G','T']
-    for base in acgt: 
-        mm_pam=mm.split(base)[-1]
-        if mm_pam.isnumeric():
-            if int(mm_pam)<len(PAM):
-                return True
-    return False  
-                   
-                          
-def complete_hit_list(hit_list,res_dict,organism): 
-    '''Complete Hit objects previously created with construct_hit_list function.
-    Add informations about positions of the sequences in excluded genomes '''
-    for hit in hit_list: 
-        if hit.sequence in res_dict: 
-            hit.NOTIN_Dict[organism]=res_dict[hit.sequence]       
-
+def treat_bowtie_in(dic_seq,genome,len_sgrna): 
+    res=open('tmp/results_bowtie2.sam','r')
+    count=0
+    new_dic={}
+    for l in res: 
+        if l[0]!='@': 
+            if l.split('\t')[2]!='*':
+                l_split=l.split('\t')
+                cigar=l_split[5]
+                if cigar=='23M': 
+                    mm=l_split[17]
+                    if mm.split(':')[-1]=='23': 
+                        seq=l_split[0]
+                        if seq not in new_dic: 
+                            new_dic[seq]=dic_seq[seq]
+                        if genome not in new_dic[seq]: 
+                            new_dic[seq][genome]=[]    
+                        seq_align=l_split[9]
+                        if seq != seq_align: 
+                            strand='+'
+                        else:
+                            strand='-'  
+                        start=l_split[3]
+                        end=int(start)+len_sgrna-1
+                        coord=strand+'('+start+','+str(end)+')'
+                        new_dic[seq][genome].append(coord)
+    return new_dic                    
+   
 def Scorage_triage(hitlist):
     '''
     Scoring of the hits found, where positive scores mean stronger sgRNA constructs.
@@ -560,11 +350,52 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     Launch the function needed that depends of users input, writes the results in file and creates a string 
     in json format for parsing the results in javascript.
     '''
+    start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
     if len(genomes_IN)!=1:
-        hit_list=search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path)
-    else:
+        #hit_list=search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path)
+        sorted_genomes=sort_genomes(genomes_IN,fasta_path,dict_org_code)
+    else: 
+        sorted_genomes=genomes_IN   
+   
+    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]],PAM,non_PAM_motif_length)
+    eprint(str(len(dic_seq))+' hits in first included genome')
+    write_to_fasta(dic_seq)
+
+    if len(genomes_NOT_IN)>=1: 
+        sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
+        for genome in genomes_NOT_IN: 
+            dic_seq=add_notin(dict_org_code[genome],indexs_path,dic_seq)
+            if len(dic_seq)==0: 
+                print("Program terminated&No hits remain after exclude genome "+genome)
+                end_time=time.time()
+                total_time=end_time-start_time
+                eprint('TIME',total_time)
+                sys.exit(1)
+            eprint(str(len(dic_seq))+' hits remain after exclude genome '+genome) 
+            write_to_fasta(dic_seq)                  
+    if len(sorted_genomes)>1: 
+        for genome in sorted_genomes[1:]:
+            dic_seq=add_in(bowtie_path,dict_org_code[genome],indexs_path,dic_seq,genome,len(PAM)+non_PAM_motif_length)
+            if len(dic_seq)==0: 
+                print("Program terminated&No hits remain after include genome "+genome)
+                end_time=time.time()
+                total_time=end_time-start_time
+                eprint('TIME',total_time)
+                sys.exit(1)
+            write_to_fasta(dic_seq)
+    
+    for seq in dic_seq: 
+        for genome in dic_seq[seq]: 
+            if len(dic_seq[seq][genome])>1: 
+                eprint(seq)
+                eprint(dic_seq[seq])   
+
+        #for genome in sorted_genomes[1:]: 
+            #dic_seq=add_in(bowtie_path,dict_org_code[genome],indexs_path,dic_seq,genome,len(PAM)+non_PAM_motif_length)  
+            #eprint(dic_seq)      
+    '''else:
         start_const=time.time()
         organism=genomes_IN[0]
         seq_dict=construct_seq_dict_with_organism(fasta_path,organism,dict_org_code[organism],PAM,non_PAM_motif_length)
@@ -590,7 +421,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     ##Output formatting for printing to interface
     output_interface(hit_list[:100],genomes_NOT_IN,new_tag)
 
-    os.system('rm -r tmp')
+    os.system('rm -r tmp')'''
 
 
             

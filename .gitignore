@@ -1,5 +1,12 @@
 *.log
 ._*
+scripts/_*
 tmp/
 reference_genomes/ 
 test/
+more_genomes/
+bowtie-1.1.2/
+test_genomes.py
+profiling_other_taxonomic_level.py
+scripts/reference_genomes_ftp.txt
+to_download.sh
