@@ -74,6 +74,8 @@ def construct_in(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
 
     genome_seq=str(genome_seqrecord.seq)
     
+    eprint(PAM)
+    eprint(reverse_complement(PAM))
     seq_list_forward=find_sgRNA_seq(genome_seq,PAM)
     seq_list_reverse=find_sgRNA_seq(genome_seq,reverse_complement(PAM))
 
