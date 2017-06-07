@@ -88,7 +88,7 @@ def blast_to_find_all_genes(query_seq, genomes, blast_path, path_reference_genom
 	for i in range(len(genomes)): 
 		eprint("Searching for sequence in",genomes[i])
 		db_path = path_reference_genomes + "fasta/" + dic_genome[genomes[i]] + "_genomic.fna" #peut-etre mieux faire sur les cds parce que avec le génome complet pas d'infos sur nom gene, description etc...
-		blast_command = blast_path + "blastn -db " + db_path + " -query " + file_query + " -outfmt 5"
+		blast_command = "blastn -db " + db_path + " -query " + file_query + " -outfmt 5"
 		blast_output = os.popen(blast_command, 'r')
 		blast_records = NCBIXML.parse(blast_output)
 		for blast_record in blast_records:

@@ -236,6 +236,7 @@ def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
     The file is a tabulated file, with first column=sgRNA sequence, then one column for each included organisms with list of positions of the sequence in each, and finally one column for each excluded organism with informations about alignment of the sequence with this genomes organisms.
     '''
     new_tag=timestamp()
+    print(new_tag)
     output=open('./scripts/static/results'+new_tag+'.txt','w')
     not_in=True
     gi=','.join(genomes_IN)
@@ -243,109 +244,39 @@ def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
     if gni=='': 
         gni='None'
         not_in=False
-    print(gi)
-    print(gni)
     output.write('#ALL GENOMES\n#Genomes included :'+gi+' ; Genomes excluded :'+gni+'\n'+'#Parameters: PAM:'+reverse_complement(PAM)+' ; sgRNA size:'+str(non_PAM_motif_length)+'\n')
     output.write('sgRNA sequence')
     for genome_i in genomes_IN:
-        output.write('\t'+genome_i)
-    if not_in: 
-        for genome_ni in genomes_NOT_IN: 
-            output.write('\t'+genome_ni)   
+        output.write('\t'+genome_i) 
     output.write('\n')
     for hit in hit_list:
         output.write(hit.sequence)
         for gi in genomes_IN: 
-            output.write('\t'+','.join(hit.genomes_Dict[gi]))
-        if not_in: 
-            for gni in genomes_NOT_IN: 
-                if hit.NOTIN_Dict[gni]=='None':
-                    output.write('\t Absent')
-                else: 
-                    output.write('\t')
-                    exact_match_counter=0
-                    mismatch_arr=[]
-                    exact_match_arr=[]
-                    for el in hit.NOTIN_Dict[gni]:
-                        if el.split(':')[0]=='Exact match':
-                            exact_match_arr.append(el.split(':')[1])
-                        else:
-                            mismatch_arr.append(el)
-                    if len(exact_match_arr)>0 and len(mismatch_arr)>0: 
-                        to_write=str(len(exact_match_arr))+' exact match(es) : '+','.join(exact_match_arr)+ ' and '+str(len(mismatch_arr))+' non-exact match(es): '+','.join(mismatch_arr)    
-                    elif len(exact_match_arr)>0: 
-                       to_write=str(len(exact_match_arr))+' exact match(es) : '+','.join(exact_match_arr)
-                    elif len(mismatch_arr)>0: 
-                        to_write=str(len(mismatch_arr))+' non-exact match(es): '+','.join(mismatch_arr)   
-                    output.write(to_write)               
+            output.write('\t'+','.join(hit.genomes_Dict[gi]))              
         output.write('\n')  
 
-
-def output_interface(hit_list,genomes_NOT_IN,new_tag):   
+def output_interface(hit_list,genomes_NOT_IN):   
     '''
     Reformat the results to print them in json format. 
     There will be parsed in javascript to display it in interface. 
     '''
-    output_arr=[]
-    output_arr_NOTIN=[]
-    seq_arr=[]
-    org_arr=[]
-    org_arr_NOTIN=[]
-    counter=0
-    for i in hit_list: 
-        genome_arr=[]
-        genome_arr_NOTIN=[]
-        seq_arr.append(i.sequence) 
+    json='['
+    for hit in hit_list: 
+        json+='{"sequence":"'+hit.sequence+'","in":['
+        for genome in hit.genomes_Dict:
+            json+='{"org":"'+genome+'","coords":"'
+            coords=';'.join(hit.genomes_Dict[genome])
+            json+=coords+'"},'
+        json=json.rstrip(',')    
+        json+=']},'
+    json=json.rstrip(',')    
+    json+=']'    
+    not_in_str=','.join(genomes_NOT_IN)  
 
-        ##Hybridisation output
-        for j in i.genomes_Dict:
-            if counter==0:
-                org_arr.append(j)
-            occ_arr=[]
-            for k in range(len(i.genomes_Dict[j])):
-                occ_arr.append(str(i.genomes_Dict[j][k]))
-            genome_arr.append('{"'+j+'":"'+'%'.join(occ_arr)+'"}')
+    print(json)
+    print(not_in_str)
 
-        ##NOT IN output
-        for NOTIN in i.NOTIN_Dict:
-            if i.NOTIN_Dict[NOTIN]=="None":
-                occ_NOTIN='Absent'
-            else:
-                occ_NOTIN=''
-                occ_NOTIN_arr=i.NOTIN_Dict[NOTIN]
-                mismatch_arr=[]
-                exact_match_arr=[]
-                for el in occ_NOTIN_arr:
-                    if el.split(':')[0]=='Exact match':
-                        exact_match_arr.append(el)
-                    else:
-                        mismatch_arr.append(el)
-                if mismatch_arr:
-                    occ_NOTIN+='Present:'+str(len(exact_match_arr))+' exact match(es):'+','.join(exact_match_arr) +' and '+str(len(mismatch_arr))+' non-exact matches: '+','.join(mismatch_arr)
-                else:
-                    occ_NOTIN+='Present:'+str(len(exact_match_arr))+' exact match(es):'+','.join(exact_match_arr)
-            genome_arr_NOTIN.append('{"'+NOTIN+'":"'+occ_NOTIN+'"}') 
 
-        output_arr.append('{"'+i.sequence+'":['+','.join(genome_arr)+']}')
-        output_arr_NOTIN.append('{"'+i.sequence+'":['+','.join(genome_arr_NOTIN)+']}')
-        counter+=1
-    for nig in genomes_NOT_IN:
-        org_arr_NOTIN.append(nig)
-    result_string='{"sequences":['+','.join(output_arr)+']}'
-    result_string_NOTIN='{"sequences":['+','.join(output_arr_NOTIN)+']}'
-    seq_string=','.join(seq_arr)
-    org_string=','.join(org_arr)
-    if org_arr_NOTIN:
-        org_NOTIN_string=','.join(org_arr_NOTIN)
-    else:
-        org_NOTIN_string='None'
-    print(new_tag)
-    print(org_string)
-    print(org_NOTIN_string)
-    print(result_string)
-    print(result_string_NOTIN)
-    print(seq_string) 
-              
 def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,dict_org_code):
     '''
     Launch the function needed that depends of users input, writes the results in file and creates a string 
@@ -389,36 +320,17 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
             eprint(str(len(dic_seq))+' hits remain after include genome '+genome)    
             write_to_fasta(dic_seq)
 
-        #for genome in sorted_genomes[1:]: 
-            #dic_seq=add_in(bowtie_path,dict_org_code[genome],indexs_path,dic_seq,genome,len(PAM)+non_PAM_motif_length)  
-            #eprint(dic_seq)      
-    '''else:
-        start_const=time.time()
-        organism=genomes_IN[0]
-        seq_dict=construct_seq_dict_with_organism(fasta_path,organism,dict_org_code[organism],PAM,non_PAM_motif_length)
-        hit_list = construct_hitlist(seq_dict)
-        end_const=time.time()
-    eprint('Found',len(hit_list),'hits on',len(genomes_IN),'genomes using an sgRNA of size',
-          len(PAM)+non_PAM_motif_length,'in',time.time()-start,'seconds.')
-    not_in_status="NOT IN status: "
-    if len(genomes_NOT_IN)==0:
-        not_in_status+="No"
-        eprint(not_in_status)
-    else:
-        not_in_status+="Yes"
-        eprint(not_in_status)
-        not_in_search(indexs_path,bowtie_path,genomes_NOT_IN,dict_org_code,hit_list,PAM,non_PAM_motif_length)
-        
-    #Score and sort the results       
+    hit_list=construct_hitlist(dic_seq)    
+
     hit_list=Scorage_triage(hit_list) 
 
     ##Put results in local file for access via the interface.
-    new_tag=write_to_file(genomes_IN,genomes_NOT_IN,hit_list[:1000],PAM,non_PAM_motif_length)
+    write_to_file(genomes_IN,genomes_NOT_IN,hit_list[:1000],PAM,non_PAM_motif_length)
 
     ##Output formatting for printing to interface
-    output_interface(hit_list[:100],genomes_NOT_IN,new_tag)
+    output_interface(hit_list[:100],genomes_NOT_IN)
 
-    os.system('rm -r tmp')'''
+    os.system('rm -r tmp')
 
 
             

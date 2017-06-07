@@ -42,13 +42,10 @@ def ret():
 			info=error_split[1].rstrip("\n]")
 			return jsonify("Search yielded no results.",info)
 	else:
-		tag=lines[-6].strip()
-		org_str=lines[-5].strip()
-		org_str_NOTIN=lines[-4].strip()
-		result_str=lines[-3].strip()
-		result_str_NOTIN=lines[-2].strip()
-		seq_str=lines[-1].strip()
-		return jsonify(result_str,result_str_NOTIN,seq_str,org_str,org_str_NOTIN,tag)
+		tag=lines[0].strip()
+		res=lines[1].strip()
+		not_in=lines[2].strip()
+		return jsonify(res,not_in,tag)
 
 
 
@@ -104,7 +101,6 @@ def ret_specific_gene():
 	mm_nin=mm_nin.replace('"','')
 
 	command='python3 ./scripts/specificgene.py -seq '+seq+' -gi '+ gin+' -gni '+gnotin+' -n '+n+' -ip '+percent_id+' -mm '+max_mismatch+' -pam '+pam+' -sl '+sgrna_length+" -mmog "+mm_og+' -mmnin '+mm_nin
-	print(command)
 	output=os.popen(command,'r')
 	all_lines=output.readlines()	##List containing all print statements in specific gene script.
 	#print(all_lines)

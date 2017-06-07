@@ -442,45 +442,29 @@ $(document).ready(function(){
 		var SGRNA=$("select[name='sgrna-length_AllG'] > option:selected").val();
 		$.getJSON($SCRIPT_ROOT+'/allgenomes',{gi:GIN,gni:GNOTIN,max_mismatch:MISMATCH,pam:PAM,sgrna_length:SGRNA},
 		function(data) {
-			if (data.length==6){
+			if (data.length==3){
 				res=data[0];
-				res_NOTIN=data[1];
-				seq=data[2];
-				conserve_genomes_IN=(data[3].split(","));
-				if (data[4]=="None"){
-					conserve_genomes_NOTIN=[]
-				}
-				else{
-					conserve_genomes_NOTIN=(data[4].split(","))
-				}
-				tag=data[5];
+				window.alert(res)
+				not_in=data[1]; 
+				window.alert(not_in)
+				tag=data[2];
+				window.alert(tag)
 			}
 			else {
 			resultFound=0;
 			}
 			if(resultFound==1){
 				var obj=JSON.parse(res);
-				var obj_NOTIN=JSON.parse(res_NOTIN)
-				var arseq=seq.split(",");
+				var out='<tr><th colspan=2>All hits are absent (based on Bowtie2 alignment) from excluded genomes : '+not_in+'</th></tr><tr><td colspan=2></td></th>';
 				$("#Waiting").fadeOut();
 				$("#Result").show();
-				var out='';
-				for (i=0;i<arseq.length;i++){	//Populate out string with table holding output content.
-					out+='<tr><th colspan="2">sgRNA Construct: '+arseq[i]+'</th></tr>';
-					out+='<tr><th>Organism</th><th>Hybridises at</th></tr>';
-					for(j=0;j<conserve_genomes_IN.length;j++){
-						var str=obj.sequences[i][arseq[i]][j][conserve_genomes_IN[j]].split("%").toString();
-						out+='<tr><td>'+conserve_genomes_IN[j]+'</td><td>'+str+'</td></tr>';
-						}
-					if (conserve_genomes_NOTIN.length!=0){
-						out+='<tr><th>NOT IN</th></tr>'
-						for (ni=0;ni<conserve_genomes_NOTIN.length;ni++){
-							var strnotin=obj_NOTIN.sequences[i][arseq[i]][ni][conserve_genomes_NOTIN[ni]]
-							out+='<tr><td><i>'+conserve_genomes_NOTIN[ni]+'</i> <br>'+strnotin+'</td></tr>';
-					}
-					}
-					out+='<br>'
-			};
+				for (i=0;i<obj.length;i++){
+					out+='<tr><th colspan=2>Construct: '+obj[i].sequence+'</th></tr>';
+					out+='<tr><th>Genomes: </th><th>Coordinates: </th></tr>';
+					for (j=0;j<obj[i].in.length;j++){
+						out+='<tr><td>'+obj[i].in[j].org+'</td> <td>'+obj[i].in[j].coords+'</td></tr>';
+					}	
+				}	
 			$("#ResTable").html(out);
 			display_download("./static/results"+tag+".txt")	//Link to where the output file is held; used for downloading the results.
 			//Same file used for AllG and SpecG options.
