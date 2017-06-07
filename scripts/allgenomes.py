@@ -21,7 +21,6 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)     ##Found at http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python
 
 
-
 class Hit():
     def __init__(self,sequence,genomes_Dict):
         self.sequence=sequence
@@ -40,6 +39,8 @@ def args_gestion(dict_organism_code):
     parser.add_argument("-pam",metavar="<str>",help="The PAM motif",required=True)
     args=parser.parse_args()
     ##
+    eprint('IN',args.gi)
+    eprint('NOT IN',args.gni)
     organisms_selected=args.gi.split('+')
     organisms_excluded=args.gni.split('+')
     organisms_selected=[i for i in organisms_selected if i in dict_organism_code]
@@ -353,12 +354,13 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
+    print(genomes_IN)
     if len(genomes_IN)!=1:
         #hit_list=search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path)
         sorted_genomes=sort_genomes(genomes_IN,fasta_path,dict_org_code)
     else: 
         sorted_genomes=genomes_IN   
-   
+
     dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]],PAM,non_PAM_motif_length)
     eprint(str(len(dic_seq))+' hits in first included genome')
     write_to_fasta(dic_seq)
@@ -374,7 +376,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
                 eprint('TIME',total_time)
                 sys.exit(1)
             eprint(str(len(dic_seq))+' hits remain after exclude genome '+genome) 
-            write_to_fasta(dic_seq)                  
+            write_to_fasta(dic_seq) 
+
     if len(sorted_genomes)>1: 
         for genome in sorted_genomes[1:]:
             dic_seq=add_in(bowtie_path,dict_org_code[genome],indexs_path,dic_seq,genome,len(PAM)+non_PAM_motif_length)
@@ -384,13 +387,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
                 total_time=end_time-start_time
                 eprint('TIME',total_time)
                 sys.exit(1)
+            eprint(str(len(dic_seq))+' hits remain after include genome '+genome)    
             write_to_fasta(dic_seq)
-    
-    for seq in dic_seq: 
-        for genome in dic_seq[seq]: 
-            if len(dic_seq[seq][genome])>1: 
-                eprint(seq)
-                eprint(dic_seq[seq])   
 
         #for genome in sorted_genomes[1:]: 
             #dic_seq=add_in(bowtie_path,dict_org_code[genome],indexs_path,dic_seq,genome,len(PAM)+non_PAM_motif_length)  

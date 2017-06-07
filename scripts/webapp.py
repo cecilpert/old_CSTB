@@ -32,10 +32,6 @@ def ret():
 	sgrna_length=str(sgrna_length)
 	sgrna_length=sgrna_length.replace('"','')
 
-
-
-
-
 	command="python3 ./scripts/allgenomes.py -gi "+gi+" -gni "+gni+" -pam "+pam+" -sl "+sgrna_length
 	print(command)
 	output=os.popen(command,'r')
