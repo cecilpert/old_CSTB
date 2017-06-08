@@ -143,19 +143,19 @@ def write_to_fasta(dic_seq):
     out.close()            
 
 def add_notin(organism_code,indexs_path,dic_seq): 
-    bowtie_command='bowtie2 -x'+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie2.sam -L 13 -a --quiet'
+    bowtie_command='bowtie2 -x'+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie.sam -L 13 -a --quiet'
     os.system(bowtie_command)
     new_dic=treat_bowtie_not_in(dic_seq)
     return new_dic
 
 def add_in(bowtie_path,organism_code,indexs_path,dic_seq,genome,len_sgrna):  
-    bowtie_command='bowtie2 -x '+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie2.sam -L 13 -a --quiet'  
+    bowtie_command='bowtie2 -x '+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie.sam -L 13 -a --quiet'  
     os.system(bowtie_command)
     new_dic=treat_bowtie_in(dic_seq,genome,len_sgrna)   
     return new_dic
 
 def treat_bowtie_not_in(dic_seq): 
-    res=open('tmp/results_bowtie2.sam','r')
+    res=open('tmp/results_bowtie.sam','r')
     count=0
     new_dic={}
     for l in res: 
@@ -166,7 +166,7 @@ def treat_bowtie_not_in(dic_seq):
     return new_dic  
 
 def treat_bowtie_in(dic_seq,genome,len_sgrna): 
-    res=open('tmp/results_bowtie2.sam','r')
+    res=open('tmp/results_bowtie.sam','r')
     count=0
     new_dic={}
     for l in res: 
@@ -175,7 +175,7 @@ def treat_bowtie_in(dic_seq,genome,len_sgrna):
                 l_split=l.split('\t')
                 cigar=l_split[5]
                 if cigar=='23M': 
-                    mm=l_split[17]
+                    mm=l_split[-2]
                     if mm.split(':')[-1]=='23': 
                         seq=l_split[0]
                         if seq not in new_dic: 
@@ -332,7 +332,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     ##Output formatting for printing to interface
     output_interface(hit_list[:100],genomes_NOT_IN)
 
-    os.system('rm -r tmp')
+    #os.system('rm -r tmp')
 
 
             
