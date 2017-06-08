@@ -294,7 +294,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
         sorted_genomes=genomes_IN   
 
     dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]],PAM,non_PAM_motif_length)
-    eprint(str(len(dic_seq))+' hits in first included genome')
+    eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     write_to_fasta(dic_seq)
 
     if len(genomes_NOT_IN)>=1: 
