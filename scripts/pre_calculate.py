@@ -23,7 +23,6 @@ def find_PAM(seq,motif):
 def find_sgRNA(organism_code,PAM,non_PAM_motif_length):
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
-    print(len(genome_seqrecord))
     genome_seq=str(genome_seqrecord.seq)
     sgRNA='' 
     for i in range(non_PAM_motif_length): 
@@ -43,9 +42,9 @@ def concatenate_seq(seq_list_forward,seq_list_reverse,organism_code):
     previous_end=0
     previous_start=0
     count_overlap=0
-    previous_start_to_keep=seq_list_all[0]
-    dic_overlap={}
-    for i in seq_list_all: 
+    previous_start_to_keep=seq_list_reverse[0]
+    dic={}
+    for i in seq_list_reverse: 
         start=i 
         end=i+23
         if start<previous_end: 
@@ -59,20 +58,20 @@ def concatenate_seq(seq_list_forward,seq_list_reverse,organism_code):
         if not overlap: 
             start_to_keep=start
         end_to_keep=end     
-        dic_overlap[start_to_keep]=end_to_keep
+        dic[start_to_keep]=end_to_keep
         previous_end=end  
         previous_start=start  
     
+
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
     genome_seq=str(genome_seqrecord.seq)
     new_seq=''
-    for start,end in dic_overlap.items(): 
-        new_seq+=genome_seq[start:end]
+    for start,end in dic.items(): 
+        new_seq+=genome_seq[start:end]+'N'
     
     new_description=genome_seqrecord.description+',just sgRNA'
     new_seq_record=SeqRecord(Seq(new_seq),genome_seqrecord.id,genome_seqrecord.name,new_description)
-    print(len(new_seq_record))
     SeqIO.write(new_seq_record,'reference_genomes/pre_calculate/'+organism_code+'_sgRNA.fa','fasta')
 
 def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_motif_length):
@@ -84,9 +83,8 @@ def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_
     genome_seq=str(genome_seqrecord.seq)
     seq_dict={}
     for indice in seq_list_forward: 
-        start=indice
         end=indice+len(PAM)+non_PAM_motif_length
-        seq=str(genome_seqrecord.seq[start:end].reverse_complement())
+        seq=str(genome_seqrecord.seq[indice:end].reverse_complement())
         if seq not in seq_dict:
             seq_dict[seq]=[]
         seq_dict[seq].append('+('+str(indice+1)+','+str(end)+')')
@@ -123,11 +121,10 @@ def launch_all_genomes(file_all_genomes,PAM,non_PAM_motif_length):
 
 #launch_all_genomes('scripts/reference_genomes_ftp.txt','NGG',20)
 list_test=['GCF_000005845.2_ASM584v2','GCF_000008865.1_ASM886v1','GCF_000026325.1_ASM2632v1','GCF_000026345.1_ASM2634v1','GCF_000183345.1_ASM18334v1','GCF_000299455.1_ASM29945v1','GCF_000012005.1_ASM1200v1','GCF_000006925.2_ASM692v2','GCF_000240185.1_ASM24018v2','GCF_000006945.1_ASM694v1','GCF_000195995.1_ASM19599v1','GCF_000215745.1_ASM21574v1','GCF_000025565.1_ASM2556v1']
-list_test2=['GCF_000005845.2_ASM584v2']
 for organism_code in list_test: 
-    #print(organism_code)
-    #list_forward,list_reverse=find_sgRNA(organism_code,'NGG',20)
-    #concatenate_seq(list_forward,list_reverse,organism_code)
+    print(organism_code)
+    list_forward,list_reverse=find_sgRNA(organism_code,'NGG',20)
+    concatenate_seq(list_forward,list_reverse,organism_code)
     #store_positions(list_forward,list_reverse,organism_code,'NGG',20)
     index_cmd='bowtie2-build reference_genomes/pre_calculate/'+organism_code+'_sgRNA.fa reference_genomes/pre_calculate/'+organism_code+'_sgRNA'
     os.system(index_cmd)
