@@ -67,8 +67,8 @@ def concatenate_seq(seq_list_forward,seq_list_reverse,organism_code):
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
     genome_seq=str(genome_seqrecord.seq)
     new_seq=''
-    for start,end in dic.items(): 
-        new_seq+=genome_seq[start:end]+'N'
+    for start,end in dic_overlap.items(): 
+        new_seq+=genome_seq[start:end]
     
     new_description=genome_seqrecord.description+',just sgRNA'
     new_seq_record=SeqRecord(Seq(new_seq),genome_seqrecord.id,genome_seqrecord.name,new_description)
@@ -90,8 +90,8 @@ def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_
         seq_dict[seq].append('+('+str(indice+1)+','+str(end)+')')
             
     for indice in seq_list_reverse: 
-        start=indice
-        end=indice+len(PAM)+non_PAM_motif_length
+        end=indice+len(PAM)
+        start=indice-non_PAM_motif_length
         seq=genome_seq[start:end]
         if seq not in seq_dict:
             seq_dict[seq]=[]   
@@ -108,7 +108,10 @@ def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_
     out.close()
 
     
-      
+def eliminate_plasmides(organism_code):     
+    fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
+    genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
+    SeqIO.write(genome_seqrecord,'reference_genomes/fasta/' + organism_code +'_genomic.fna','fasta')
 
 def launch_all_genomes(file_all_genomes,PAM,non_PAM_motif_length): 
     f=open(file_all_genomes,'r')     
@@ -123,8 +126,8 @@ def launch_all_genomes(file_all_genomes,PAM,non_PAM_motif_length):
 list_test=['GCF_000005845.2_ASM584v2','GCF_000008865.1_ASM886v1','GCF_000026325.1_ASM2632v1','GCF_000026345.1_ASM2634v1','GCF_000183345.1_ASM18334v1','GCF_000299455.1_ASM29945v1','GCF_000012005.1_ASM1200v1','GCF_000006925.2_ASM692v2','GCF_000240185.1_ASM24018v2','GCF_000006945.1_ASM694v1','GCF_000195995.1_ASM19599v1','GCF_000215745.1_ASM21574v1','GCF_000025565.1_ASM2556v1']
 for organism_code in list_test: 
     print(organism_code)
-    list_forward,list_reverse=find_sgRNA(organism_code,'NGG',20)
-    concatenate_seq(list_forward,list_reverse,organism_code)
+    eliminate_plasmides(organism_code)
+    #list_forward,list_reverse=find_sgRNA(organism_code,'NGG',20)
     #store_positions(list_forward,list_reverse,organism_code,'NGG',20)
-    index_cmd='bowtie2-build reference_genomes/pre_calculate/'+organism_code+'_sgRNA.fa reference_genomes/pre_calculate/'+organism_code+'_sgRNA'
-    os.system(index_cmd)
+    #index_cmd='bowtie2-build reference_genomes/pre_calculate/'+organism_code+'_sgRNA.fa reference_genomes/pre_calculate/'+organism_code+'_sgRNA'
+    #os.system(index_cmd)
