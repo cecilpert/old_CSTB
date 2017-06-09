@@ -25,8 +25,7 @@ class Hit():
     def __init__(self,sequence,genomes_Dict):
         self.sequence=sequence
         self.genomes_Dict=genomes_Dict
-        self.NOTIN_Dict={}
-        self.score=()   ##Holds score as tuple of occurence score (on genomes_IN) and NOTIN score 
+        self.score=0   ##Holds score as tuple of occurence score (on genomes_IN) and NOTIN score 
 
 
 def args_gestion(dict_organism_code):
@@ -198,40 +197,12 @@ def Scorage_triage(hitlist):
     Scoring of the hits found, where positive scores mean stronger sgRNA constructs.
     Complete Hit objects with score and sort the hits with this scores. 
     '''
-    parametre_triage=100
-    sorted_hitlist=[]
-    NOTIN_absence=1000   ##Scorage definitions. Absolute priority on NOTIN absence followed by sorting through exactmatch/mismatches.
-    NOTIN_sub=0.1
-    IN_occ=1
-    for hit in hitlist:
-        IN_score=0
-        NOTIN_score=0
-        for j in hit.genomes_Dict:
-            IN_score+=(len(hit.genomes_Dict[j])*IN_occ)
-        for j in hit.NOTIN_Dict:    ##Will not be evaluated if no NOTIN search as NOTIN_Dict will be empty.
-            if hit.NOTIN_Dict[j]=="None":
-                NOTIN_score+=NOTIN_absence
-            else:
-                count=0
-                for k in hit.NOTIN_Dict[j]:
-                    count-=1    ##The match of an sgRNA on a NOTIN org is down-scored.
-                    if k.split(':')[0]!='Exact match':   ##Implicitly, an exact match is given a score of 0.
-                        NOTIN_score+=number_mismatch(k)*NOTIN_sub
-                NOTIN_score+=count
-        hit.score=(IN_score,NOTIN_score)
-    sorted_hitlist=sorted(hitlist,key=lambda hit:(hit.score[1]+hit.score[0])/2,reverse=True)
+    for hit in hitlist: 
+        for genome in hit.genomes_Dict: 
+            hit_score+=len(hit.genomes_Dict[genome])
+    sorted_hitlist=sorted(hitlist,key=lambda hit:hit.score,reverse=True)
     return(sorted_hitlist)
-
-def number_mismatch(mm): 
-    if mm=='-Mismatch in PAM' or mm=='+Mismatch in PAM': 
-        return 0.1
-    else: 
-        count_mm=0
-        mm=mm.lstrip('-').lstrip('+')  
-        for i in mm: 
-            if i.isalpha(): 
-                count_mm+=1        
-        return(count_mm)   
+  
              
 def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length): 
     '''Write results in a file. 

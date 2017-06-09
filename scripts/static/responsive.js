@@ -444,11 +444,8 @@ $(document).ready(function(){
 		function(data) {
 			if (data.length==3){
 				res=data[0];
-				window.alert(res)
 				not_in=data[1]; 
-				window.alert(not_in)
 				tag=data[2];
-				window.alert(tag)
 			}
 			else {
 			resultFound=0;
