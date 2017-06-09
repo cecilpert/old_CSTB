@@ -144,8 +144,8 @@ def write_to_fasta(dic_seq):
 def add_notin(organism_code,indexs_path,dic_seq): 
     bowtie_command='bowtie2 -x'+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie.sam -L 13 -a --quiet'
     os.system(bowtie_command)
-    new_dic=treat_bowtie_not_in(dic_seq)
-    return new_dic
+    #new_dic=treat_bowtie_not_in(dic_seq)
+    #return new_dic
 
 def add_in(bowtie_path,organism_code,indexs_path,dic_seq,genome,len_sgrna):  
     bowtie_command='bowtie2 -x '+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie.sam -L 13 -a --quiet'  
@@ -268,7 +268,10 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     write_to_fasta(dic_seq)
 
-    if len(genomes_NOT_IN)>=1: 
+    sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
+    add_notin(dict_org_code[sorted_genomes_notin[0]],indexs_path,dic_seq)
+
+    '''if len(genomes_NOT_IN)>=1: 
         sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
         for genome in genomes_NOT_IN: 
             dic_seq=add_notin(dict_org_code[genome],indexs_path,dic_seq)
@@ -303,7 +306,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     ##Output formatting for printing to interface
     output_interface(hit_list[:100],genomes_NOT_IN)
 
-    #os.system('rm -r tmp')
+    #os.system('rm -r tmp')'''
 
 
             
