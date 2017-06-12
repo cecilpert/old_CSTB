@@ -30,34 +30,6 @@ class Hit():
         self.genomes_Dict=genomes_Dict
         self.score=0   ##Holds score as tuple of occurence score (on genomes_IN) and NOTIN score 
 
-class Process_bowtie(Process): 
-    def __init__(self,index_path,num):
-        Process.__init__(self)
-        self.index_path=index_path
-        self.num=num
-
-    def run(self): 
-        print('a')
-        bowtie_command='bowtie2 -x '+self.index_path+' -f tmp/sgRNA'+self.num+'.fa -S tmp/results_bowtie'+self.num+'.sam -L 13 -a --quiet'  
-        os.system(bowtie_command) 
-        print('b')
-
-class Process_treat_bowtie_notin(Process): 
-    def __init__(self,dic_seq,num):
-        Process.__init__(self)
-        self.dic_seq=dic_seq
-        self.num=num
-        
-    def run(self): 
-        print('c')
-        res=open('tmp/results_bowtie'+self.num+'.sam','r')
-        new_dic={}
-        for l in res: 
-            if l[0]!='@': 
-                if l.split('\t')[2]=='*':
-                    seq=l.split('\t')[0]
-                    new_dic[seq]=self.dic_seq[seq]
-        print(new_dic)                             
 
 def args_gestion(dict_organism_code):
     '''Take and treat arguments that user gives in command line'''
@@ -163,23 +135,27 @@ def construct_hitlist(dict_seq):
     return(hits_list)
 
 
-def write_to_fasta_parallel(dic_seq,num_thread): 
+def write_to_fasta_parallel(dic_seq,num_file): 
     '''Write sequences in dic_seq in a fasta file'''
     list_seq=list(dic_seq.keys())
-    sep=len(dic_seq)//num_thread
-    for thr in range(num_thread): 
-        out=open('tmp/sgRNA'+str(thr)+'.fa','w')
+    sep=len(dic_seq)//num_file
+    list_dic_fasta=[]
+    for num in range(num_file): 
+        out=open('tmp/sgRNA'+str(num)+'.fa','w')
+        dic_fasta={'num':num,'input_fasta':'tmp/sgRNA'+str(num)+'.fa','results':None}
+        list_dic_fasta.append(dic_fasta)
         i=0
         for seq in list_seq: 
             while(i<sep): 
                 remove_seq=list_seq.pop()
                 out.write('>'+remove_seq+'\n'+remove_seq+'\n')
                 i+=1
-        if thr==num_thread-1: 
+        if num==num_file-1: 
             if list_seq: 
                 for seq in list_seq: 
                     out.write('>'+remove_seq+'\n'+remove_seq+'\n')   
-        out.close()               
+        out.close()  
+    return(list_dic_fasta)             
   
 
 def run_bowtie(index_path,num): 
@@ -189,7 +165,7 @@ def run_bowtie(index_path,num):
     print('b')
 
 def add_notin(organism_code,indexs_path,dic_seq,num_thread): 
-    out_q=Queue()
+    dic_result={}
     list_process=[]
     for i in range(num_thread): 
         bowtie_process=Process(target=run_bowtie,args=(indexs_path+'/'+organism_code,str(i),))
@@ -199,17 +175,65 @@ def add_notin(organism_code,indexs_path,dic_seq,num_thread):
         process.join()   
 
     list_process=[]    
-    
+    out_q=Queue()
     for i in range(num_thread): 
         treat_process=Process(target=treat_bowtie_not_in,args=(dic_seq,str(i),out_q))
         list_process.append(treat_process)
         treat_process.start()   
 
-    for process in list_process:  
+    for process in list_process: 
         process.join()
-        print(out_q,out_q.qsize())
-        
 
+def createFastaTask(rootFolder, allFastaDict, maxSeqNum):
+    pass
+    #return [{: STRING, outputFile : None}, ...] 
+
+
+def add_notin2(num_thread,list_fasta,organism_code,dic_seq):
+    def worker():
+        while True:
+            e = q.get()
+            fasta_file=e['input_fasta']
+            num_str=str(e['num'])
+            print('begin bowtie')
+            cmd='bowtie2 -x reference_genomes/index2/'+organism_code+' -f '+fasta_file+' -S tmp/results_bowtie'+num_str+'.sam -L 13 -a --quiet' 
+            os.system(cmd)
+            print('end bowtie')
+
+            print('begin treat')
+            res=open('tmp/results_bowtie'+num_str+'.sam','r')
+            dic_result={}
+            for l in res: 
+                if l[0]!='@': 
+                    if l.split('\t')[2]=='*':
+                        seq=l.split('\t')[0]
+                        dic_result[seq]=dic_seq[seq]
+            print('end treat')  
+            e['results']=dic_result
+          #  for term in termTypes:
+          #      if isinstance(term, dict):
+          #          e.isCustom(term, annot=True)
+          #      elif isinstance(term, basestring):
+          #          if term is "matrisome":
+          #              e.isMatrisome(annot=True)
+                #e._boundUniprot()
+
+            q.task_done()
+
+    q = Queue()
+    for i in range(num_thread):
+        t = Thread(target=worker)
+        t.daemon = True
+        t.start()
+
+    for e in list_fasta:
+        q.put(e)
+
+    print('*** Main thread waiting --annotation--' + str(q.qsize()))
+    q.join()
+    print('*** Done')        
+    #for e in list_fasta: 
+    #    print(e['results']) 
     #new_dic=treat_bowtie_not_in(dic_seq)
     #return new_dic    
 
@@ -222,15 +246,15 @@ def add_in(bowtie_path,organism_code,indexs_path,dic_seq,genome,len_sgrna):
 def treat_bowtie_not_in(dic_seq,num_thread,out_q): 
     print('begin treat')
     res=open('tmp/results_bowtie'+num_thread+'.sam','r')
-    count=0
-    new_dic={}
+    dic_result={}
     for l in res: 
         if l[0]!='@': 
             if l.split('\t')[2]=='*':
                 seq=l.split('\t')[0]
-                new_dic[seq]=dic_seq[seq]
-    print('end treat')            
-    out_q.put( ) 
+                dic_result[seq]=dic_seq[seq]
+    print('end treat')  
+    out_q.put(dic_result)          
+    
 
 def treat_bowtie_in(dic_seq,genome,len_sgrna): 
     res=open('tmp/results_bowtie.sam','r')
@@ -326,7 +350,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=2
+    num_thread=4
+    num_file=10
     if len(genomes_IN)!=1:
         #hit_list=search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path)
         sorted_genomes=sort_genomes(genomes_IN,fasta_path,dict_org_code)
@@ -335,10 +360,14 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
 
     dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]],PAM,non_PAM_motif_length)
     eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
-    write_to_fasta_parallel(dic_seq,num_thread)
+    list_fasta=write_to_fasta_parallel(dic_seq,num_file)
+    eprint(list_fasta)
 
+    sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
+    genome=sorted_genomes_notin[0]
+    add_notin2(num_thread,list_fasta,dict_org_code[genome],dic_seq)
 
-    if len(genomes_NOT_IN)>=1: 
+    '''if len(genomes_NOT_IN)>=1: 
         sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
         for genome in genomes_NOT_IN: 
             add_notin(dict_org_code[genome],indexs_path,dic_seq,num_thread)
@@ -351,7 +380,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
             #eprint(str(len(dic_seq))+' hits remain after exclude genome '+genome) 
             #write_to_fasta_parallel(dic_seq,num_thread) 
 
-    '''if len(sorted_genomes)>1: 
+    if len(sorted_genomes)>1: 
         for genome in sorted_genomes[1:]:
             dic_seq=add_in(bowtie_path,dict_org_code[genome],indexs_path,dic_seq,genome,len(PAM)+non_PAM_motif_length)
             if len(dic_seq)==0: 
