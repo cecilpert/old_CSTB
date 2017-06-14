@@ -343,7 +343,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
 
     if len(genomes_NOT_IN)>=1: 
         sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
-        for genome in genomes_NOT_IN: 
+        for genome in sorted_genomes_notin: 
             dic_seq=add_notin_parallel(num_thread,list_fasta,dict_org_code[genome],dic_seq)
             if len(dic_seq)==0: 
                 print("Program terminated&No hits remain after exclude genome "+genome)
