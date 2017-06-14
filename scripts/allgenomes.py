@@ -369,34 +369,57 @@ def order_for_research2(dist_matrix_in,dist_matrix_notin,index,list_order,dic_in
 
 
 def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_order): 
-    if not list_in and not list_notin: 
-        return(list_order)
-
     ref1=dict_org_code[genome]
-    in_compare=-1
-    for gi in list_in: 
-        ref2=dict_org_code[gi]
-        dist=dist_dic[ref1][ref2]
-        print(gi,dist)
-        if dist > in_compare: 
-            in_compare=dist
-            in_compare_genome=gi
-    notin_compare=11
-    for gni in list_notin: 
-        ref2=dict_org_code[gni]   
-        dist=dist_dic[ref1][ref2]
-        if dist < notin_compare: 
-            notin_compare=dist
-            notin_compare_genome=gni
-    
-    if in_compare > notin_compare : 
-        new_genome=in_compare_genome
+    if list_in and list_notin: 
+        in_compare=-1
+        for gi in list_in: 
+            ref2=dict_org_code[gi]
+            dist=dist_dic[ref1][ref2]
+            if dist > in_compare: 
+                in_compare=dist
+                in_compare_genome=gi        
+        notin_compare=11
+        for gni in list_notin: 
+            ref2=dict_org_code[gni]   
+            dist=dist_dic[ref1][ref2]
+            if dist < notin_compare: 
+                notin_compare=dist
+                notin_compare_genome=gni
+
+        if in_compare > notin_compare : 
+            new_genome=in_compare_genome
+            list_order.append((new_genome,'in'))
+            list_in.remove(new_genome)
+        else: 
+            new_genome=notin_compare_genome
+            list_order.append((new_genome,'notin'))   
+            list_notin.remove(new_genome)
+
+    elif list_in: 
+        in_compare=-1
+        for gi in list_in: 
+            ref2=dict_org_code[gi]
+            dist=dist_dic[ref1][ref2]
+            if dist > in_compare: 
+                in_compare=dist
+                in_compare_genome=gi
+        new_genome=in_compare_genome 
         list_order.append((new_genome,'in'))
-        list_in.remove(new_genome)
+        list_in.remove(new_genome)  
+
+    elif list_notin: 
+        notin_compare=11
+        for gni in list_notin: 
+            ref2=dict_org_code[gni]   
+            dist=dist_dic[ref1][ref2]
+            if dist < notin_compare: 
+                notin_compare=dist
+                notin_compare_genome=gni
+            new_genome=notin_compare_genome
+            list_order.append((new_genome,'notin'))   
+            list_notin.remove(new_genome)                  
     else: 
-        new_genome=notin_compare_genome
-        list_order.append((new_genome,'notin'))   
-        list_notin.remove(new_genome)
+        return(list_order)
 
     return order_for_research(list_in,list_notin,new_genome,dict_org_code,dist_dic,list_order)   
 
