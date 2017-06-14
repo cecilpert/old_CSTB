@@ -317,8 +317,8 @@ def output_interface(hit_list,genomes_NOT_IN):
     json+=']'    
     not_in_str=','.join(genomes_NOT_IN)  
 
-    print(json)
-    print(not_in_str)
+    #print(json)
+    #print(not_in_str)
 
 
 def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,dict_org_code):
@@ -329,8 +329,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=4
-    num_file=4
+    num_thread=1
+    num_file=1
     if len(genomes_IN)!=1:
         #hit_list=search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path)
         sorted_genomes=sort_genomes(genomes_IN,fasta_path,dict_org_code)
