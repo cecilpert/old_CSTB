@@ -83,21 +83,22 @@ def distance_dic(dic_lineage):
 	for ref1 in dic_lineage: 
 		dic[ref1]={}
 		for ref2 in dic_lineage: 
-			if not ref1==ref2: 
-				if dic_lineage[ref1][0].species==dic_lineage[ref2][0].species: 
-					dic[ref1][ref2]=1
-				elif dic_lineage[ref1][0].genus==dic_lineage[ref2][0].genus: 
-					dic[ref1][ref2]=2
-				elif dic_lineage[ref1][0].family==dic_lineage[ref2][0].family: 
-					dic[ref1][ref2]=3
-				elif dic_lineage[ref1][0].order==dic_lineage[ref2][0].order: 
-					dic[ref1][ref2]=4	
-				elif dic_lineage[ref1][0].classe==dic_lineage[ref2][0].classe: 
-					dic[ref1][ref2]=5		
-				elif dic_lineage[ref1][0].phylum==dic_lineage[ref2][0].phylum: 
-					dic[ref1][ref2]=6					
-				else: 
-					dic[ref1][ref2]=7
+			if ref1==ref2: 
+				dic[ref1][ref2]=0
+			elif dic_lineage[ref1][0].species==dic_lineage[ref2][0].species: 
+				dic[ref1][ref2]=1
+			elif dic_lineage[ref1][0].genus==dic_lineage[ref2][0].genus: 
+				dic[ref1][ref2]=2
+			elif dic_lineage[ref1][0].family==dic_lineage[ref2][0].family: 
+				dic[ref1][ref2]=3
+			elif dic_lineage[ref1][0].order==dic_lineage[ref2][0].order: 
+				dic[ref1][ref2]=4	
+			elif dic_lineage[ref1][0].classe==dic_lineage[ref2][0].classe: 
+				dic[ref1][ref2]=5		
+			elif dic_lineage[ref1][0].phylum==dic_lineage[ref2][0].phylum: 
+				dic[ref1][ref2]=6					
+			else: 
+				dic[ref1][ref2]=7
 	return dic					
 
 

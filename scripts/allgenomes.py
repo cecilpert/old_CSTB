@@ -7,6 +7,9 @@ from queue import Queue
 import time,argparse,os,sys,re,random
 import cProfile
 import subprocess
+import pickle
+import numpy
+from scipy.cluster.hierarchy import single
 
 
 """
@@ -320,6 +323,140 @@ def output_interface(hit_list,genomes_NOT_IN):
     print(json)
     print(not_in_str)
 
+def create_distance_matrix(list_genome,dict_org_code): 
+    dist_dic=pickle.load(open("reference_genomes/distance_dic.pickle", "rb" ))   
+    complete_array=[]
+    count=0
+    for genome1 in list_genome: 
+        ref1=dict_org_code[genome1]
+        sub_array=[]
+        for genome2 in list_genome: 
+            #print(genome1,genome2)
+            ref2=dict_org_code[genome2]
+            #print(ref1,ref2)
+            sub_array.append(dist_dic[ref1][ref2]) 
+            #print(dist_dic[ref1][ref2])
+        complete_array.append(sub_array)  
+    final_array=numpy.array(complete_array)
+    #del dic_index[0]
+    return final_array
+
+def create_dic_index(list_genome): 
+    dic_index={}
+    count=0
+    for g in list_genome: 
+        dic_index[count]=g  
+        count+=1   
+    return dic_index
+     
+def order_for_research2(dist_matrix_in,dist_matrix_notin,index,list_order,dic_index_in,dic_index_notin): 
+    print('RESEARCH')
+    if not dist_matrix_notin and not dist_matrix_in:  
+        return list_order
+    line_notin=list(dist_matrix_notin[index])
+    line_in=list(dist_matrix_in[index])
+    in_compare=max(line_in)
+    notin_compare=min(line_notin)
+    if in_compare>notin_compare: 
+        new_index=line_in.index(in_compare)
+        list_order.append((dic_index_in[new_index],'in'))
+        dist_matrix_in,dic_index_in=update_matrix_index(new_index,dist_matrix_in,dic_index_in)
+    else: 
+        new_index=line_notin.index(notin_compare)
+        list_order.append((dic_index_notin[new_index],'notin'))
+        dist_matrix_notin,dic_index_notin=update_matrix_index(new_index,dist_matrix_notin,dic_index_notin)
+    return(order_for_research(dist_matrix_in,dist_matrix_notin,new_index,list_order,number_genomes,dic_index_in,dic_index_notin))      
+
+
+def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_order): 
+    if not list_in and not list_notin: 
+        return(list_order)
+
+    ref1=dict_org_code[genome]
+    in_compare=-1
+    for gi in list_in: 
+        ref2=dict_org_code[gi]
+        dist=dist_dic[ref1][ref2]
+        print(gi,dist)
+        if dist > in_compare: 
+            in_compare=dist
+            in_compare_genome=gi
+    notin_compare=11
+    for gni in list_notin: 
+        ref2=dict_org_code[gni]   
+        dist=dist_dic[ref1][ref2]
+        if dist < notin_compare: 
+            notin_compare=dist
+            notin_compare_genome=gni
+    
+    if in_compare > notin_compare : 
+        new_genome=in_compare_genome
+        list_order.append((new_genome,'in'))
+        list_in.remove(new_genome)
+    else: 
+        new_genome=notin_compare_genome
+        list_order.append((new_genome,'notin'))   
+        list_notin.remove(new_genome)
+
+    return order_for_research(list_in,list_notin,new_genome,dict_org_code,dist_dic,list_order)   
+
+def update_matrix_index(index,matrix,dic_index): 
+    new_dic={}
+    #print('INDEX',index)
+    matrix=numpy.delete(matrix,index,1)
+    matrix=numpy.delete(matrix,index,0)
+    for i in dic_index: 
+        if i>index: 
+            new_dic[i-1]=dic_index[i]
+        elif i<index: 
+            new_dic[i]=dic_index[i]    
+    #print(new_dic)        
+    return(matrix,new_dic)
+
+def create_subdic_distance(list_genome,dic_org_code): 
+    dist_dic=pickle.load(open("reference_genomes/distance_dic.pickle", "rb" ))
+    new_dic={}
+    for i in range(len(list_genome)): 
+        genome1=list_genome[i]
+        ref1=dic_org_code[genome1]
+        list_dist=[]
+        list_ref=[]
+        for genome2 in list_genome[i+1:]: 
+            ref2=dic_org_code[genome2]
+            list_dist.append(dist_dic[ref1][ref2])
+            list_ref.append(genome2)
+        if list_ref: 
+            new_dic[genome1]=[list_ref,list_dist]
+    return new_dic     
+
+def order(subdic_in,subdic_notin,ref,mode='first'):
+    print(subdic_in)
+    print(subdic_notin)
+    list_order=[]
+
+    in_compare=max(subdic_in[ref][1]) 
+    notin_compare=min(subdic_notin[ref][1])
+
+    if in_compare > notin_compare: 
+        print('IN')
+    else: 
+        print('NOT IN')  
+        index=subdic_notin[ref][1].index(notin_compare)
+        genome=subdic_notin[ref][0][index]
+        list_order.append((genome,'notin')) 
+        list_order=not_in_order(list_order,subdic_notin,genome)
+        
+
+def not_in_order(list_order,subdic_notin,genome): 
+    if len(list_order)==len(subdic_notin): 
+        return list_order
+
+    compare=max(subdic_notin[genome][1])
+    index=subdic_notin[genome][1].index(compare)
+    genome=subdic_notin[genome][0][index]
+    list_order.append((genome,'notin'))
+    return(not_in_order(list_order,subdic_notin,genome))
+
 
 def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,dict_org_code):
     '''
@@ -329,19 +466,55 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=4
-    num_file=4
+    num_thread=1
+    num_file=1
     if len(genomes_IN)!=1:
         #hit_list=search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path)
         sorted_genomes=sort_genomes(genomes_IN,fasta_path,dict_org_code)
     else: 
         sorted_genomes=genomes_IN    
 
+    if len(genomes_NOT_IN)>=1: 
+        sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)        
+
     dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]],PAM,non_PAM_motif_length)
     eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     list_fasta=write_to_fasta_parallel(dic_seq,num_file)
 
-    if len(genomes_NOT_IN)>=1: 
+    dist_dic=pickle.load(open("reference_genomes/distance_dic.pickle", "rb" )) 
+    list_order=order_for_research(sorted_genomes[1:],sorted_genomes_notin,sorted_genomes[0],dict_org_code,dist_dic,[])
+
+    for i in list_order: 
+        genome=i[0]
+        if i[1]=='notin': 
+            dic_seq=add_notin_parallel(num_thread,list_fasta,dict_org_code[genome],dic_seq)
+            if len(dic_seq)==0: 
+                print("Program terminated&No hits remain after exclude genome "+genome)
+                end_time=time.time()
+                total_time=end_time-start_time
+                eprint('TIME',total_time)
+                sys.exit(1)
+            eprint(str(len(dic_seq))+' hits remain after exclude genome '+genome) 
+            list_fasta=write_to_fasta_parallel(dic_seq,num_file)
+        elif i[1]=='in': 
+            dic_seq=add_in_parallel(num_thread,list_fasta,dict_org_code[genome],dic_seq,genome,len(PAM)+non_PAM_motif_length)
+            if len(dic_seq)==0: 
+                print("Program terminated&No hits remain after include genome "+genome)
+                end_time=time.time()
+                total_time=end_time-start_time
+                eprint('TIME',total_time)
+                sys.exit(1)
+            eprint(str(len(dic_seq))+' hits remain after include genome '+genome)    
+            list_fasta=write_to_fasta_parallel(dic_seq,num_file)        
+    '''upper_triange_notin=numpy.triu(dist_matrix_notin)
+    print(upper_triange_notin)
+    a=single(upper_triange_notin)
+    print(a)
+    print(dic_index_notin[0],dic_index_notin[1])'''
+
+
+
+    '''if len(genomes_NOT_IN)>=1: 
         sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
         for genome in genomes_NOT_IN: 
             dic_seq=add_notin_parallel(num_thread,list_fasta,dict_org_code[genome],dic_seq)
@@ -374,7 +547,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     write_to_file(genomes_IN,genomes_NOT_IN,hit_list[:1000],PAM,non_PAM_motif_length)
 
     ##Output formatting for printing to interface
-    output_interface(hit_list[:100],genomes_NOT_IN)
+    output_interface(hit_list[:100],genomes_NOT_IN)'''
 
     os.system('rm -r tmp')
 
