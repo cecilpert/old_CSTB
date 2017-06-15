@@ -68,16 +68,12 @@ def construct_in(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
     genome_seq=str(genome_seqrecord.seq)
-    eprint('Genome length',len(genome_seq))
     sgRNA='' 
     for i in range(non_PAM_motif_length): 
         sgRNA+='N'
     sgRNA+=PAM    
     seq_list_forward=find_sgRNA_seq(genome_seq,reverse_complement(sgRNA))
     seq_list_reverse=find_sgRNA_seq(genome_seq,sgRNA)
-
-    eprint('Forward',len(seq_list_forward))
-    eprint('Reverse',len(seq_list_reverse))
 
     seq_dict={}
     out_test=open('test.txt','w')
@@ -386,6 +382,7 @@ def main():
     dict_code_organism=intervert(dict_organism_code)      ##Keys/values interchanged relative to line above
     organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
     eprint('---- CSTB complete genomes ----')
+    eprint('Parallelisation')
     construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,organisms_selected,organisms_excluded,dict_organism_code)
     end_time=time.time()
     total_time=end_time-start_time
