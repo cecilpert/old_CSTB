@@ -584,6 +584,8 @@ def main():
     dict_organism_code = construct_dict_organism_assemblyref()   ##Keys: organism, values: genomic reference (ncbi)
     dict_code_organism=intervert(dict_organism_code)      ##Keys/values interchanged relative to line above
     organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
+    eprint(len(organisms_selected),"included genomes")
+    eprint(len(organisms_excluded),'excluded genomes')
     construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,organisms_selected,organisms_excluded,dict_organism_code)
     end_time=time.time()
     total_time=end_time-start_time
