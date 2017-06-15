@@ -71,7 +71,7 @@ def construct_in(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
     genome_seq=str(genome_seqrecord.seq)
-    print(len(genome_seq))
+    print('Genome',len(genome_seq))
     sgRNA='' 
     for i in range(non_PAM_motif_length): 
         sgRNA+='N'
@@ -79,8 +79,8 @@ def construct_in(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
     seq_list_forward=find_sgRNA_seq(genome_seq,reverse_complement(sgRNA))
     seq_list_reverse=find_sgRNA_seq(genome_seq,sgRNA)
 
-    eprint(len(seq_list_forward))
-    eprint(len(seq_list_reverse))
+    eprint('Fwd',len(seq_list_forward))
+    eprint('Rev',len(seq_list_reverse))
 
     seq_dict={}
 
