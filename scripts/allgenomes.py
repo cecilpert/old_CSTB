@@ -71,6 +71,7 @@ def construct_in(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
     genome_seq=str(genome_seqrecord.seq)
+    print(len(genome_seq))
     sgRNA='' 
     for i in range(non_PAM_motif_length): 
         sgRNA+='N'
