@@ -197,7 +197,6 @@ def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
         q.put(e)
 
     q.join()
-    eprint('*** Done')  
     total_results={}      
     for e in list_fasta: 
         total_results.update(e['results'])
@@ -251,7 +250,6 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
         q.put(e)
 
     q.join()
-    eprint('*** Done')  
     total_results={}      
     for e in list_fasta: 
         total_results.update(e['results'])
@@ -483,6 +481,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start = time.time()
     num_thread=4
     num_file=4
+    eprint('Search for',len(genomes_IN),"included genomes and",len(genomes_NOT_IN),'excluded genomes')
+    eprint(num_thread,'threads')
     if len(genomes_IN)!=1:
         #hit_list=search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path)
         sorted_genomes=sort_genomes(genomes_IN,fasta_path,dict_org_code)
@@ -576,8 +576,7 @@ def main():
     dict_organism_code = construct_dict_organism_assemblyref()   ##Keys: organism, values: genomic reference (ncbi)
     dict_code_organism=intervert(dict_organism_code)      ##Keys/values interchanged relative to line above
     organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
-    eprint(len(organisms_selected),"included genomes")
-    eprint(len(organisms_excluded),'excluded genomes')
+    eprint('--- CSTB complete genomes ---')
     construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,organisms_selected,organisms_excluded,dict_organism_code)
     end_time=time.time()
     total_time=end_time-start_time
