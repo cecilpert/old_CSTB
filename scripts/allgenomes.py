@@ -67,35 +67,33 @@ def construct_in(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
     '''
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
-    genome_seq=str(genome_seqrecord.seq)
+    genome_seq=genome_seqrecord.seq
     sgRNA='' 
     for i in range(non_PAM_motif_length): 
         sgRNA+='N'
     sgRNA+=PAM    
-    seq_list_forward=find_sgRNA_seq(genome_seq,reverse_complement(sgRNA))
-    seq_list_reverse=find_sgRNA_seq(genome_seq,sgRNA)
+    seq_list_forward=find_sgRNA_seq(str(genome_seq),reverse_complement(sgRNA))
+    seq_list_reverse=find_sgRNA_seq(str(genome_seq),sgRNA)
 
     seq_dict={}
-    out_test=open('test.txt','w')
 
     for indice in seq_list_forward: 
         end=indice+len(PAM)+non_PAM_motif_length
-        seq=str(genome_seqrecord.seq[indice:end].reverse_complement())
-        if seq not in seq_dict:
+        seq=genome_seq[indice:end].reverse_complement()
+        seq=str(seq)
+        if seq not in seq_dict: 
             seq_dict[seq]={organism:[]}
-        seq_dict[seq][organism].append('+('+str(indice+1)+','+str(end)+')')
-        out_test.write('+('+str(indice+1)+','+str(end)+')')
-            
-    for indice in seq_list_reverse: 
-        end=indice+len(PAM)
-        start=indice-non_PAM_motif_length
-        seq=genome_seq[start:end]
-        if seq not in seq_dict:
-            seq_dict[seq]={organism:[]}  
-        seq_dict[seq][organism].append('-('+str(start+1)+','+str(end)+')')
-        out_test.write('-('+str(start+1)+','+str(end)+')')
+        seq_dict[seq][organism].append('+('+str(indice+1)+','+str(end)+')')    
 
-    out_test.close()   
+    for indice in seq_list_reverse: 
+        end=indice+len(PAM)+non_PAM_motif_length
+        seq=genome_seq[indice:end]
+        seq=str(seq)
+        if seq not in seq_dict: 
+            seq_dict[seq]={organism:[]}
+        seq_dict[seq][organism].append('-('+str(indice+1)+','+str(end)+')') 
+           
+
     return seq_dict
 
 
@@ -149,7 +147,7 @@ def write_to_fasta_parallel(dic_seq,num_file):
         if num==num_file-1: 
             if list_seq: 
                 for seq in list_seq: 
-                    out.write('>'+remove_seq+'\n'+remove_seq+'\n')   
+                    out.write('>'+seq+'\n'+seq+'\n')   
         out.close()  
     return(list_dic_fasta)             
   
@@ -320,8 +318,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=4
-    num_file=4
+    num_thread=1
+    num_file=1
     eprint('Search for '+str(len(genomes_IN))+' included genomes and '+str(len(genomes_NOT_IN))+' excluded genomes')
     eprint('Number threads '+str(num_thread))
     if len(genomes_IN)!=1:
