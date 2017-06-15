@@ -45,11 +45,10 @@ def args_gestion(dict_organism_code):
     organisms_selected=args.gi.split('+')
     organisms_excluded=args.gni.split('+')
     organisms_selected=[i for i in organisms_selected if i in dict_organism_code]
-    organisms_excluded=[i for i in organisms_excluded if i in dict_organism_code]
-    PAM=reverse_complement(args.pam)    ##The PAM is given as 'NGG'; search is as 'CCN'
+    organisms_excluded=[i for i in organisms_excluded if i in dict_organism_code]  ##The PAM is given as 'NGG'; search is as 'CCN'
     non_PAM_motif_length=int(args.sl)
 
-    return organisms_selected,organisms_excluded,PAM,non_PAM_motif_length
+    return organisms_selected,organisms_excluded,args.pam,non_PAM_motif_length
 
 def find_sgRNA_seq(seq,pam):
     '''
@@ -284,7 +283,7 @@ def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
     if gni=='': 
         gni='None'
         not_in=False
-    output.write('#ALL GENOMES\n#Genomes included :'+gi+' ; Genomes excluded :'+gni+'\n'+'#Parameters: PAM:'+reverse_complement(PAM)+' ; sgRNA size:'+str(non_PAM_motif_length)+'\n')
+    output.write('#ALL GENOMES\n#Genomes included :'+gi+' ; Genomes excluded :'+gni+'\n'+'#Parameters: PAM:'+PAM+' ; sgRNA size:'+str(non_PAM_motif_length)+'\n')
     output.write('sgRNA sequence')
     for genome_i in genomes_IN:
         output.write('\t'+genome_i) 
