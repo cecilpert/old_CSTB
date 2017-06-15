@@ -69,35 +69,34 @@ def construct_in(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
     start=time.time()
     fasta_file=fasta_path +'/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
-
-    genome_length=len(genome_seqrecord)
-
     genome_seq=str(genome_seqrecord.seq)
     
-    eprint(reverse_complement(PAM))
-    seq_list_forward=find_sgRNA_seq(genome_seq,PAM)
-    seq_list_reverse=find_sgRNA_seq(genome_seq,reverse_complement(PAM))
+    sgRNA=''
+    for i in range(non_PAM_motif_length): 
+        sgRNA+='N'
+    sgRNA+=PAM    
+
+    seq_list_forward=find_sgRNA_seq(genome_seq,reverse_complement(sgRNA))
+    seq_list_reverse=find_sgRNA_seq(genome_seq,sgRNA)
 
     seq_dict={}
 
     for indice in seq_list_forward: 
         end=indice+len(PAM)+non_PAM_motif_length
-        if not end > genome_length:
-            seq=str(genome_seqrecord.seq[indice:end].reverse_complement())
-            if seq not in seq_dict:
-                seq_dict[seq]={organism:[]}
-            seq_dict[seq][organism].append('+('+str(indice+1)+','+str(end)+')')
+        seq=str(genome_seqrecord.seq[indice:end].reverse_complement())
+        if seq not in seq_dict:
+            seq_dict[seq]={organism:[]}
+        seq_dict[seq][organism].append('+('+str(indice+1)+','+str(end)+')')
             
     for indice in seq_list_reverse: 
         end=indice+len(PAM)
         start=indice-non_PAM_motif_length
-        if not start<=0:
-            seq=genome_seq[start:end]
-            if seq not in seq_dict:
-                seq_dict[seq]={organism:[]}   
-            seq_dict[seq][organism].append('-('+str(start+1)+','+str(end)+')')
+        seq=genome_seq[start:end]
+        if seq not in seq_dict:
+            seq_dict[seq]={organism:[]}   
+        seq_dict[seq][organism].append('-('+str(start+1)+','+str(end)+')')
     end=time.time()
-    return(seq_dict) 
+    return(seq_dict)
 
 
 def sort_genomes(list_genomes,fasta_path,dict_org_code): 
