@@ -155,10 +155,8 @@ def write_to_fasta_parallel(dic_seq,num_file):
   
 
 def run_bowtie(organism_code,fasta_file,num): 
-    eprint('begin bowtie')
     bowtie_tab=['bowtie2','-x reference_genomes/index2/'+organism_code+' -f '+fasta_file+' -S tmp/results_bowtie'+num+'.sam -L 13 -a --quiet ']
     subprocess.call(bowtie_tab)
-    eprint('end bowtie')
 
 def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
     def worker():
@@ -168,15 +166,13 @@ def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
             num_str=str(e['num'])
             run_bowtie(organism_code,fasta_file,num_str)
 
-            eprint('begin treat')
             res=open('tmp/results_bowtie'+num_str+'.sam','r')
             dic_result={}
             for l in res: 
                 if l[0]!='@': 
                     if l.split('\t')[2]=='*':
                         seq=l.split('\t')[0]
-                        dic_result[seq]=dic_seq[seq]
-            eprint('end treat')  
+                        dic_result[seq]=dic_seq[seq] 
             e['results']=dic_result
             res.close()
           #  for term in termTypes:
@@ -198,8 +194,7 @@ def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
     for e in list_fasta:
         q.put(e)
 
-    q.join()
-    eprint('*** Done')  
+    q.join() 
     total_results={}      
     for e in list_fasta: 
         total_results.update(e['results'])
@@ -215,7 +210,6 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
             num_str=str(e['num'])
             run_bowtie(organism_code,fasta_file,num_str)
 
-            eprint('begin treat')
             res=open('tmp/results_bowtie'+num_str+'.sam','r')
             dic_result={}
             for l in res: 
@@ -239,8 +233,7 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
                                 start=l_split[3]
                                 end=int(start)+len_sgrna-1
                                 coord=strand+'('+start+','+str(end)+')'
-                                dic_result[seq][genome].append(coord)                   
-            eprint('end treat')  
+                                dic_result[seq][genome].append(coord)                    
             e['results']=dic_result
             res.close()
             q.task_done()
@@ -255,7 +248,6 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
         q.put(e)
 
     q.join()
-    eprint('*** Done')  
     total_results={}      
     for e in list_fasta: 
         total_results.update(e['results'])
@@ -328,8 +320,10 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=1
-    num_file=1
+    num_thread=4
+    num_file=4
+    eprint('Search for '+str(len(genomes_IN))+' included genomes and '+str(len(genomes_NOT_IN))+' excluded genomes')
+    eprint('Number threads '+str(num_thread))
     if len(genomes_IN)!=1:
         #hit_list=search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path)
         sorted_genomes=sort_genomes(genomes_IN,fasta_path,dict_org_code)
@@ -387,8 +381,7 @@ def main():
     dict_organism_code = construct_dict_organism_assemblyref()   ##Keys: organism, values: genomic reference (ncbi)
     dict_code_organism=intervert(dict_organism_code)      ##Keys/values interchanged relative to line above
     organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
-    eprint(len(organisms_selected),"included genomes")
-    eprint(len(organisms_excluded),'excluded genomes')
+    eprint('---- CSTB complete genomes ----')
     construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,organisms_selected,organisms_excluded,dict_organism_code)
     end_time=time.time()
     total_time=end_time-start_time
