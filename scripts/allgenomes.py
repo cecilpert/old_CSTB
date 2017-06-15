@@ -77,7 +77,6 @@ def construct_in(fasta_path,organism,organism_code,PAM,non_PAM_motif_length):
 
     genome_seq=str(genome_seqrecord.seq)
     
-    eprint(reverse_complement(PAM))
     seq_list_forward=find_sgRNA_seq(genome_seq,PAM)
     seq_list_reverse=find_sgRNA_seq(genome_seq,reverse_complement(PAM))
 
@@ -159,10 +158,8 @@ def write_to_fasta_parallel(dic_seq,num_file):
   
 
 def run_bowtie(organism_code,fasta_file,num): 
-    eprint('begin bowtie')
     bowtie_tab=['bowtie2','-x reference_genomes/index2/'+organism_code+' -f '+fasta_file+' -S tmp/results_bowtie'+num+'.sam -L 13 -a --quiet ']
     subprocess.call(bowtie_tab)
-    eprint('end bowtie')
 
 def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
     def worker():
@@ -172,7 +169,6 @@ def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
             num_str=str(e['num'])
             run_bowtie(organism_code,fasta_file,num_str)
 
-            eprint('begin treat')
             res=open('tmp/results_bowtie'+num_str+'.sam','r')
             dic_result={}
             for l in res: 
@@ -180,7 +176,6 @@ def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
                     if l.split('\t')[2]=='*':
                         seq=l.split('\t')[0]
                         dic_result[seq]=dic_seq[seq]
-            eprint('end treat')  
             e['results']=dic_result
             res.close()
           #  for term in termTypes:
@@ -219,7 +214,6 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
             num_str=str(e['num'])
             run_bowtie(organism_code,fasta_file,num_str)
 
-            eprint('begin treat')
             res=open('tmp/results_bowtie'+num_str+'.sam','r')
             dic_result={}
             for l in res: 
@@ -244,7 +238,6 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
                                 end=int(start)+len_sgrna-1
                                 coord=strand+'('+start+','+str(end)+')'
                                 dic_result[seq][genome].append(coord)                   
-            eprint('end treat')  
             e['results']=dic_result
             res.close()
             q.task_done()
@@ -371,7 +364,6 @@ def order_for_research2(dist_matrix_in,dist_matrix_notin,index,list_order,dic_in
 def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_order): 
     ref1=dict_org_code[genome]
     if list_in and list_notin: 
-        print(1)
         in_compare=-1
         for gi in list_in: 
             ref2=dict_org_code[gi]
@@ -397,7 +389,6 @@ def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_ord
             list_notin.remove(new_genome)
 
     elif list_in: 
-        print(2)
         in_compare=-1
         for gi in list_in: 
             ref2=dict_org_code[gi]
@@ -410,7 +401,6 @@ def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_ord
         list_in.remove(new_genome)  
 
     elif list_notin: 
-        print(3)
         notin_compare=11
         for gni in list_notin: 
             ref2=dict_org_code[gni]   
