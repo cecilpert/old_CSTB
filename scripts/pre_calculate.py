@@ -88,18 +88,19 @@ def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_
     seq_dict={}
     for indice in seq_list_forward: 
         end=indice+len(PAM)+non_PAM_motif_length
-        seq=str(genome_seqrecord.seq[indice:end].reverse_complement())
-        if seq not in seq_dict:
-            seq_dict[seq]=[]
-        seq_dict[seq].append('+('+str(indice+1)+','+str(end)+')')
-            
+        seq=genome_seq[indice:end].reverse_complement()
+        seq=str(seq)
+        if seq not in seq_dict: 
+            seq_dict[seq]={organism:[]}
+        seq_dict[seq][organism].append('+('+str(indice+1)+','+str(end)+')')    
+
     for indice in seq_list_reverse: 
-        end=indice+len(PAM)
-        start=indice-non_PAM_motif_length
-        seq=genome_seq[start:end]
-        if seq not in seq_dict:
-            seq_dict[seq]=[]   
-        seq_dict[seq].append('-('+str(start+1)+','+str(end)+')')
+        end=indice+len(PAM)+non_PAM_motif_length
+        seq=genome_seq[indice:end]
+        seq=str(seq)
+        if seq not in seq_dict: 
+            seq_dict[seq]={organism:[]}
+        seq_dict[seq][organism].append('-('+str(indice+1)+','+str(end)+')')
     
     pickle.dump(seq_dict,open("reference_genomes/pre_calculate/"+organism_code+"_dicpos.pic","wb"))
 
