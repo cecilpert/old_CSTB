@@ -74,7 +74,7 @@ def concatenate_seq(seq_list_forward,seq_list_reverse,organism_code):
     new_seq_record=SeqRecord(Seq(new_seq),genome_seqrecord.id,genome_seqrecord.name,new_description)
     SeqIO.write(new_seq_record,'reference_genomes/pre_calculate/'+organism_code+'_sgRNA.fa','fasta')
 
-def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_motif_length):
+def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_motif_length,organism):
     '''
     Same function as construct_seq_dict except the dictionnary will not be like value=list of coordinates. It add the information about organism with dictionnary values like : dictionnary with key=organism and value=list of coordinates in this organism
     '''
@@ -86,16 +86,18 @@ def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_
         end=indice+len(PAM)+non_PAM_motif_length
         seq=str(genome_seqrecord.seq[indice:end].reverse_complement())
         if seq not in seq_dict:
-            seq_dict[seq]=[]
-        seq_dict[seq].append('+('+str(indice+1)+','+str(end)+')')
+            seq_dict[seq]={}
+            seq_dict[seq][organism]=[]
+        seq_dict[seq][organism].append('+('+str(indice+1)+','+str(end)+')')
             
     for indice in seq_list_reverse: 
         end=indice+len(PAM)
         start=indice-non_PAM_motif_length
         seq=genome_seq[start:end]
         if seq not in seq_dict:
-            seq_dict[seq]=[]   
-        seq_dict[seq].append('-('+str(start+1)+','+str(end)+')')
+            seq_dict[seq]={}
+            seq_dict[seq][organism]=[]   
+        seq_dict[seq][organism].append('-('+str(start+1)+','+str(end)+')')
     
     pickle.dump(seq_dict,open("reference_genomes/pre_calculate/"+organism_code+"_dicpos.pic","wb"))
 
@@ -117,17 +119,10 @@ def launch_all_genomes(file_all_genomes,PAM,non_PAM_motif_length):
     f=open(file_all_genomes,'r')     
     for l in f: 
         organism_code=l.rstrip().split('\t')[1].split('/')[-1]
-        print(organism_code)
-        list_forward,list_reverse=find_sgRNA(organism_code,PAM,non_PAM_motif_length)
-        concatenate_seq(list_forward,list_reverse,organism_code)
+        organism=l.rstrip().split('\t')[0]
+        print(organism_code,organism)
+        if organism_code+"_dicpos.pic" not in os.listdir('reference_genomes/pre_calculate'): 
+            list_forward,list_reverse=find_sgRNA(organism_code,PAM,non_PAM_motif_length)
+            store_positions(list_forward,list_reverse,organism_code,PAM,non_PAM_motif_length,organism)
 
-
-#launch_all_genomes('scripts/reference_genomes_ftp.txt','NGG',20)
-list_test=['GCF_000005845.2_ASM584v2','GCF_000008865.1_ASM886v1','GCF_000026325.1_ASM2632v1','GCF_000026345.1_ASM2634v1','GCF_000183345.1_ASM18334v1','GCF_000299455.1_ASM29945v1','GCF_000012005.1_ASM1200v1','GCF_000006925.2_ASM692v2','GCF_000240185.1_ASM24018v2','GCF_000006945.1_ASM694v1','GCF_000195995.1_ASM19599v1','GCF_000215745.1_ASM21574v1','GCF_000025565.1_ASM2556v1']
-for organism_code in list_test: 
-    #print(organism_code)
-    #list_forward,list_reverse=find_sgRNA(organism_code,'NGG',20)
-    #store_positions(list_forward,list_reverse,organism_code,'NGG',20)
-    index_cmd1='bowtie2-build reference_genomes/fasta/'+organism_code+'_genomic.fna reference_genomes/index2/'+organism_code
-    #index_cmd='bowtie2-build reference_genomes/pre_calculate/'+organism_code+'_sgRNA.fa reference_genomes/pre_calculate/'+organism_code+'_sgRNA'
-    os.system(index_cmd1)
+launch_all_genomes('scripts/reference_genomes_ftp.txt','NGG',20)
