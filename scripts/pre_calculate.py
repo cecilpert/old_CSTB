@@ -118,16 +118,9 @@ def launch_all_genomes(file_all_genomes,PAM,non_PAM_motif_length):
     for l in f: 
         organism_code=l.rstrip().split('\t')[1].split('/')[-1]
         print(organism_code)
-        list_forward,list_reverse=find_sgRNA(organism_code,PAM,non_PAM_motif_length)
-        concatenate_seq(list_forward,list_reverse,organism_code)
+        if organism_code+"_dicpos.pic" not in os.listdir('reference_genomes/pre_calculate'): 
+            list_forward,list_reverse=find_sgRNA(organism_code,PAM,non_PAM_motif_length)
+            store_positions(list_forward,list_reverse,organism_code,PAM,non_PAM_motif_length)
 
 
-#launch_all_genomes('scripts/reference_genomes_ftp.txt','NGG',20)
-list_test=['GCF_000005845.2_ASM584v2','GCF_000008865.1_ASM886v1','GCF_000026325.1_ASM2632v1','GCF_000026345.1_ASM2634v1','GCF_000183345.1_ASM18334v1','GCF_000299455.1_ASM29945v1','GCF_000012005.1_ASM1200v1','GCF_000006925.2_ASM692v2','GCF_000240185.1_ASM24018v2','GCF_000006945.1_ASM694v1','GCF_000195995.1_ASM19599v1','GCF_000215745.1_ASM21574v1','GCF_000025565.1_ASM2556v1']
-for organism_code in list_test: 
-    #print(organism_code)
-    #list_forward,list_reverse=find_sgRNA(organism_code,'NGG',20)
-    #store_positions(list_forward,list_reverse,organism_code,'NGG',20)
-    index_cmd1='bowtie2-build reference_genomes/fasta/'+organism_code+'_genomic.fna reference_genomes/index2/'+organism_code
-    #index_cmd='bowtie2-build reference_genomes/pre_calculate/'+organism_code+'_sgRNA.fa reference_genomes/pre_calculate/'+organism_code+'_sgRNA'
-    os.system(index_cmd1)
+launch_all_genomes('scripts/reference_genomes_ftp.txt','NGG',20)
