@@ -371,6 +371,7 @@ def order_for_research2(dist_matrix_in,dist_matrix_notin,index,list_order,dic_in
 def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_order): 
     ref1=dict_org_code[genome]
     if list_in and list_notin: 
+        print(1)
         in_compare=-1
         for gi in list_in: 
             ref2=dict_org_code[gi]
@@ -396,6 +397,7 @@ def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_ord
             list_notin.remove(new_genome)
 
     elif list_in: 
+        print(2)
         in_compare=-1
         for gi in list_in: 
             ref2=dict_org_code[gi]
@@ -408,6 +410,7 @@ def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_ord
         list_in.remove(new_genome)  
 
     elif list_notin: 
+        print(3)
         notin_compare=11
         for gni in list_notin: 
             ref2=dict_org_code[gni]   
@@ -415,9 +418,9 @@ def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_ord
             if dist < notin_compare: 
                 notin_compare=dist
                 notin_compare_genome=gni
-            new_genome=notin_compare_genome
-            list_order.append((new_genome,'notin'))   
-            list_notin.remove(new_genome)                  
+        new_genome=notin_compare_genome
+        list_order.append((new_genome,'notin'))   
+        list_notin.remove(new_genome)                  
     else: 
         return(list_order)
 
@@ -489,8 +492,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=1
-    num_file=1
+    num_thread=4
+    num_file=4
     if len(genomes_IN)!=1:
         #hit_list=search_common_sgRNAs_by_construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,dict_org_code,bowtie_path,indexs_path)
         sorted_genomes=sort_genomes(genomes_IN,fasta_path,dict_org_code)
