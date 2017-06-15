@@ -20,6 +20,8 @@ def find_PAM(seq,motif):
     indices = [m.start() for m in re.finditer('(?=' + reg_exp + ')', seq, re.I)]
     return indices
 
+
+
 def find_sgRNA(organism_code,PAM,non_PAM_motif_length):
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
@@ -32,6 +34,8 @@ def find_sgRNA(organism_code,PAM,non_PAM_motif_length):
     seq_list_reverse=find_PAM(genome_seq,sgRNA)
 
     return seq_list_forward,seq_list_reverse
+
+
 
 def concatenate_seq(seq_list_forward,seq_list_reverse,organism_code):    
     seq_list_all=seq_list_forward+seq_list_reverse
