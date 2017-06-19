@@ -80,7 +80,7 @@ def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_
     '''
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
-    genome_seq=str(genome_seqrecord.seq)
+    genome_seq=genome_seqrecord.seq
     seq_dict={}
     for indice in seq_list_forward: 
         end=indice+len(PAM)+non_PAM_motif_length
@@ -112,7 +112,7 @@ def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_
 def eliminate_plasmides(organism_code):     
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
-    SeqIO.write(genome_seqrecord,'reference_genomes/fasta/'+organism_code+'_genomic.fna')
+    SeqIO.write(genome_seqrecord,'reference_genomes/fasta/'+organism_code+'_genomic.fna','fasta')
 
 def launch_all_genomes(file_all_genomes,PAM,non_PAM_motif_length): 
     f=open(file_all_genomes,'r')     
@@ -120,6 +120,10 @@ def launch_all_genomes(file_all_genomes,PAM,non_PAM_motif_length):
         organism_code=l.rstrip().split('\t')[1].split('/')[-1]
         organism=l.rstrip().split('\t')[0]
         print(organism_code,organism)
+        eliminate_plasmides(organism_code)
+        if organism_code+'.1.bt2' not in os.listdir('reference_genomes/index2'): 
+            cmd='bowtie2-build reference_genomes/fasta/'+organism_code+'_genomic.fna reference_genomes/index2/'+organism_code
+            os.system(cmd)
         if organism_code+"_dicpos.pic" not in os.listdir('reference_genomes/pre_calculate'): 
             list_forward,list_reverse=find_sgRNA(organism_code,PAM,non_PAM_motif_length)
             store_positions(list_forward,list_reverse,organism_code,PAM,non_PAM_motif_length,organism)
