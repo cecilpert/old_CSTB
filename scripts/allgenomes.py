@@ -306,8 +306,8 @@ def output_interface(hit_list,genomes_NOT_IN):
     json+=']'    
     not_in_str=','.join(genomes_NOT_IN)  
 
-    #print(json)
-    #print(not_in_str)
+    print(json)
+    print(not_in_str)
 
 
 def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,dict_org_code):
@@ -318,8 +318,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=4
-    num_file=4
+    num_thread=1
+    num_file=1
     eprint('Search for '+str(len(genomes_IN))+' included genomes and '+str(len(genomes_NOT_IN))+' excluded genomes')
     eprint('Number threads '+str(num_thread))
     if len(genomes_IN)!=1:
