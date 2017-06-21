@@ -13,3 +13,4 @@ to_download.sh
 scripts/static/results*
 resultsTag.txt
 scripts/pre_calculate.py
+reference_genomes_120/

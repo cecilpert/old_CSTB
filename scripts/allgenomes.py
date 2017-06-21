@@ -379,8 +379,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=1
-    num_file=1
+    num_thread=4
+    num_file=4
     eprint('Search for',len(genomes_IN),"included genomes and",len(genomes_NOT_IN),'excluded genomes')
     eprint(num_thread,'threads')
     if len(genomes_IN)!=1:
