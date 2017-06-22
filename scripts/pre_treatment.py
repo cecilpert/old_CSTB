@@ -211,7 +211,17 @@ def test(dic_taxid):
 
 def json_tree(): 
     print('JSON TREE')
-    os.system('python3 scripts/tax2json.py')            
+    os.system('python3 scripts/tax2json.py')    
+
+def genome_file_for_list(): 
+    dic=json.load(open('reference_genomes/genome_ref_taxid.json','r'))
+    list_genomes=list(dic.keys())
+    list_genomes=sorted(list_genomes)
+    out=open('scripts/static/sortedgenomes.txt','w')
+    for i in list_genomes: 
+        out.write('<OPTION>'+i+'\n')
+    out.close()    
+
 
 ref_bacteria='more_genomes/assembly_summary_bacteria_500.txt'
 dic_taxid=dic_download(ref_bacteria)
@@ -219,5 +229,6 @@ dic_taxid=dic_download(ref_bacteria)
 #test(dic_taxid)
 #index_bowtie_blast(dic_taxid)
 #pre_calculate(dic_taxid)
-distance_matrix(dic_taxid)
-json_tree()
+#distance_matrix(dic_taxid)
+#json_tree()
+genome_file_for_list()

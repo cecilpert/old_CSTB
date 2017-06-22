@@ -1,120 +1,500 @@
-<OPTION>Acinetobacter pittii PHEA-2
-<OPTION>Aeromonas hydrophila subsp. hydrophila ATCC 7966
-<OPTION>Agrobacterium fabrum str. C58
-<OPTION>Amycolatopsis mediterranei U32
-<OPTION>Aquifex aeolicus VF5
-<OPTION>Bacillus anthracis str. Ames
-<OPTION>Bacillus anthracis str. Sterne
-<OPTION>Bacillus cereus ATCC 14579
-<OPTION>Bacillus subtilis subsp. subtilis str. 168
-<OPTION>Bacteroides fragilis YCH46
-<OPTION>Bacteroides thetaiotaomicron VPI-5482
-<OPTION>Bifidobacterium bifidum PRL2010
-<OPTION>Bifidobacterium longum NCC2705
-<OPTION>Bordetella bronchiseptica 253
-<OPTION>Bordetella parapertussis Bpp5
-<OPTION>Bordetella pertussis Tohama I
-<OPTION>Borrelia burgdorferi B31
-<OPTION>Brachybacterium faecium DSM 4810
-<OPTION>Bradyrhizobium diazoefficiens USDA 110
-<OPTION>Buchnera aphidicola str. APS (Acyrthosiphon pisum)
-<OPTION>Burkholderia mallei ATCC 23344
-<OPTION>Burkholderia pseudomallei K96243
-<OPTION>Campylobacter jejuni subsp. jejuni NCTC 11168 = ATCC 700819
-<OPTION>Caulobacter crescentus CB15
-<OPTION>Caulobacter crescentus NA1000
-<OPTION>Chlamydia trachomatis 434/Bu
-<OPTION>Chlamydia trachomatis D/UW-3/CX
-<OPTION>Chlamydophila pneumoniae CWL029
-<OPTION>Chlorobium tepidum TLS
-<OPTION>Chloroflexus aurantiacus J-10-fl
-<OPTION>Clostridioides difficile 630
-<OPTION>Clostridium acetobutylicum ATCC 824
-<OPTION>Clostridium botulinum A str. ATCC 3502
-<OPTION>Clostridium botulinum A str. Hall
-<OPTION>Corynebacterium glutamicum ATCC 13032
-<OPTION>Coxiella burnetii RSA 493
-<OPTION>Deinococcus radiodurans R1
-<OPTION>Desulfovibrio vulgaris str. Hildenborough
-<OPTION>Dictyoglomus turgidum DSM 6724
-<OPTION>Enterobacter aerogenes KCTC 2190
-<OPTION>Enterobacter cloacae subsp. cloacae ATCC 13047
-<OPTION>Enterococcus faecalis V583
-<OPTION>Enterococcus faecium DO
-<OPTION>Escherichia coli IAI39
-<OPTION>Escherichia coli O104:H4 str. 2011C-3493
-<OPTION>Escherichia coli O157:H7 str. Sakai
-<OPTION>Escherichia coli O83:H1 str. NRG 857C
-<OPTION>Escherichia coli UMN026
-<OPTION>Escherichia coli str. K-12 substr. MG1655
-<OPTION>Flavobacterium psychrophilum JIP02/86
-<OPTION>Francisella tularensis subsp. tularensis SCHU S4
-<OPTION>Fusobacterium nucleatum subsp. nucleatum ATCC 25586
-<OPTION>Gardnerella vaginalis ATCC 14019
-<OPTION>Geobacter sulfurreducens PCA
-<OPTION>Gloeobacter violaceus PCC 7421
-<OPTION>Haemophilus influenzae Rd KW20
-<OPTION>Helicobacter pylori 26695
-<OPTION>Ketogulonicigenium vulgare WSH-001
-<OPTION>Klebsiella pneumoniae subsp. pneumoniae HS11286
-<OPTION>Lactobacillus acidophilus NCFM
-<OPTION>Lactobacillus paracasei ATCC 334
-<OPTION>Lactobacillus plantarum WCFS1
-<OPTION>Lactobacillus salivarius UCC118
-<OPTION>Lactococcus lactis subsp. lactis Il1403
-<OPTION>Legionella pneumophila subsp. pneumophila str. Philadelphia 1
-<OPTION>Leptospira interrogans serovar Lai str. 56601
-<OPTION>Listeria monocytogenes EGD-e
-<OPTION>Mesoplasma florum L1
-<OPTION>Mesorhizobium ciceri biovar biserrulae WSM1271
-<OPTION>Moorella thermoacetica ATCC 39073
-<OPTION>Mycobacterium abscessus
-<OPTION>Mycobacterium bovis AF2122/97
-<OPTION>Mycobacterium leprae TN
-<OPTION>Mycobacterium smegmatis str. MC2 155
-<OPTION>Mycobacterium tuberculosis H37Rv
-<OPTION>Mycoplasma mycoides subsp. mycoides SC str. PG1
-<OPTION>Mycoplasma pneumoniae M129
-<OPTION>Neisseria gonorrhoeae FA 1090
-<OPTION>Neisseria meningitidis MC58
-<OPTION>Prochlorococcus marinus subsp. marinus str. CCMP1375
-<OPTION>Pseudomonas aeruginosa PAO1
-<OPTION>Pseudomonas putida KT2440
-<OPTION>Pseudomonas syringae pv. syringae B728a
-<OPTION>Rhodobacter sphaeroides 2.4.1
-<OPTION>Rhodopirellula baltica SH 1
-<OPTION>Rhodospirillum rubrum ATCC 11170
-<OPTION>Rickettsia prowazekii str. Madrid E
-<OPTION>Salinibacter ruber DSM 13855
-<OPTION>Salmonella enterica subsp. enterica serovar Typhi str. CT18
-<OPTION>Salmonella enterica subsp. enterica serovar Typhimurium str. LT2
-<OPTION>Shewanella oneidensis MR-1
-<OPTION>Shigella dysenteriae Sd197
-<OPTION>Shigella flexneri 2a str. 301
-<OPTION>Sinorhizobium fredii NGR234
-<OPTION>Sinorhizobium medicae WSM419
-<OPTION>Sinorhizobium meliloti 1021
-<OPTION>Staphylococcus aureus subsp. aureus NCTC 8325
-<OPTION>Staphylococcus epidermidis ATCC 12228
-<OPTION>Streptococcus agalactiae 2603V/R
-<OPTION>Streptococcus mitis B6
-<OPTION>Streptococcus mutans UA159
-<OPTION>Streptococcus pneumoniae R6
-<OPTION>Streptococcus pyogenes M1 GAS
-<OPTION>Streptococcus sanguinis SK36
-<OPTION>Streptococcus suis BM407
-<OPTION>Streptomyces coelicolor A3(2)
-<OPTION>Thermanaerovibrio acidaminovorans DSM 6589
-<OPTION>Thermodesulfovibrio yellowstonii DSM 11347
-<OPTION>Thermosynechococcus elongatus BP-1
-<OPTION>Thermotoga maritima MSB8
-<OPTION>Thermus thermophilus HB8
-<OPTION>Treponema denticola ATCC 35405
-<OPTION>Vibrio cholerae O1 biovar El Tor str. N16961
-<OPTION>Vibrio fischeri ES114
-<OPTION>Vibrio parahaemolyticus RIMD 2210633
-<OPTION>Xanthomonas campestris pv. campestris str. ATCC 33913
-<OPTION>Yersinia enterocolitica subsp. enterocolitica 8081
-<OPTION>Yersinia pestis CO92
-<OPTION>[Bacillus thuringiensis] serovar konkukian str. 97-27
-<OPTION>[Pseudomonas syringae] pv. tomato str. DC3000
+<OPTION>Acetobacter pasteurianus IFO 3283-01 GCF_000010825.1
+<OPTION>Acetobacter pasteurianus IFO 3283-01-42C GCF_000010945.1
+<OPTION>Acetobacter pasteurianus IFO 3283-03 GCF_000010845.1
+<OPTION>Acetobacter pasteurianus IFO 3283-07 GCF_000010865.1
+<OPTION>Acetobacter pasteurianus IFO 3283-12 GCF_000010965.1
+<OPTION>Acetobacter pasteurianus IFO 3283-22 GCF_000010885.1
+<OPTION>Acetobacter pasteurianus IFO 3283-26 GCF_000010905.1
+<OPTION>Acetobacter pasteurianus IFO 3283-32 GCF_000010925.1
+<OPTION>Acidiphilium cryptum JF-5 GCF_000016725.1
+<OPTION>Acidothermus cellulolyticus 11B GCF_000015025.1
+<OPTION>Acidovorax citrulli AAC00-1 GCF_000015325.1
+<OPTION>Acidovorax sp. JS42 GCF_000015545.1
+<OPTION>Actinobacillus pleuropneumoniae serovar 3 str. JL03 GCF_000016685.1
+<OPTION>Actinobacillus pleuropneumoniae serovar 5b str. L20 GCF_000015885.1
+<OPTION>Actinobacillus succinogenes 130Z GCF_000017245.1
+<OPTION>Aeromonas hydrophila subsp. hydrophila ATCC 7966 GCF_000014805.1
+<OPTION>Agrobacterium radiobacter K84 GCF_000016265.1
+<OPTION>Agrobacterium vitis S4 GCF_000016285.1
+<OPTION>Alcanivorax borkumensis SK2 GCF_000009365.1
+<OPTION>Alkalilimnicola ehrlichii MLHE-1 GCF_000014785.1
+<OPTION>Alkaliphilus metalliredigens QYMF GCF_000016985.1
+<OPTION>Anaeromyxobacter dehalogenans 2CP-C GCF_000013385.1
+<OPTION>Anaeromyxobacter sp. Fw109-5 GCF_000017505.1
+<OPTION>Anaplasma marginale str. St. Maries GCF_000011945.1
+<OPTION>Anaplasma phagocytophilum str. HZ GCF_000013125.1
+<OPTION>Aquifex aeolicus VF5 GCF_000008625.1
+<OPTION>Arcobacter butzleri RM4018 GCF_000014025.1
+<OPTION>Aster yellows witches'-broom phytoplasma AYWB GCF_000012225.1
+<OPTION>Azorhizobium caulinodans ORS 571 GCF_000010525.1
+<OPTION>Azospirillum sp. B510 GCF_000010725.1
+<OPTION>Bacillus anthracis str. 'Ames Ancestor' GCF_000008445.1
+<OPTION>Bacillus anthracis str. Ames GCF_000007845.1
+<OPTION>Bacillus anthracis str. Sterne GCF_000008165.1
+<OPTION>Bacillus cereus ATCC 10987 GCF_000008005.1
+<OPTION>Bacillus cereus ATCC 14579 GCF_000007825.1
+<OPTION>Bacillus cereus E33L GCF_000011625.1
+<OPTION>Bacillus cereus Q1 GCF_000013065.1
+<OPTION>Bacillus clausii KSM-K16 GCF_000009825.1
+<OPTION>Bacillus cytotoxicus NVH 391-98 GCF_000017425.1
+<OPTION>Bacillus halodurans C-125 GCF_000011145.1
+<OPTION>Bacillus licheniformis DSM 13 = ATCC 14580 GCF_000008425.1
+<OPTION>Bacillus licheniformis DSM 13 = ATCC 14580 GCF_000011645.1
+<OPTION>Bacillus pseudofirmus OF4 GCF_000005825.2
+<OPTION>Bacillus pumilus SAFR-032 GCF_000017885.4
+<OPTION>Bacillus subtilis subsp. subtilis str. 168 GCF_000009045.1
+<OPTION>Bacillus thuringiensis str. Al Hakam GCF_000015065.1
+<OPTION>Bacillus velezensis FZB42 GCF_000015785.1
+<OPTION>Bacteroides fragilis YCH46 GCF_000009925.1
+<OPTION>Bacteroides thetaiotaomicron VPI-5482 GCF_000011065.1
+<OPTION>Bacteroides vulgatus ATCC 8482 GCF_000012825.1
+<OPTION>Bartonella bacilliformis KC583 GCF_000015445.1
+<OPTION>Baumannia cicadellinicola str. Hc (Homalodisca coagulata) GCF_000013185.1
+<OPTION>Bifidobacterium adolescentis ATCC 15703 GCF_000010425.1
+<OPTION>Bifidobacterium longum DJO10A GCF_000008945.1
+<OPTION>Bifidobacterium longum NCC2705 GCF_000007525.1
+<OPTION>Borrelia burgdorferi B31 GCF_000008685.2
+<OPTION>Borrelia turicatae 91E135 GCF_000012085.1
+<OPTION>Bradyrhizobium diazoefficiens USDA 110 GCF_000011365.1
+<OPTION>Bradyrhizobium sp. BTAi1 GCF_000015165.1
+<OPTION>Brevibacillus brevis NBRC 100599 GCF_000010165.1
+<OPTION>Brucella abortus bv. 1 str. 9-941 GCF_000008145.1
+<OPTION>Brucella melitensis bv. 1 str. 16M GCF_000007125.1
+<OPTION>Brucella ovis ATCC 25840 GCF_000016845.1
+<OPTION>Brucella suis 1330 GCF_000007505.1
+<OPTION>Buchnera aphidicola str. APS (Acyrthosiphon pisum) GCF_000009605.1
+<OPTION>Buchnera aphidicola str. Bp (Baizongia pistaciae) GCF_000007725.1
+<OPTION>Buchnera aphidicola str. Sg (Schizaphis graminum) GCF_000007365.1
+<OPTION>Burkholderia cenocepacia AU 1054 GCF_000014085.1
+<OPTION>Burkholderia cenocepacia J2315 GCF_000009485.1
+<OPTION>Burkholderia lata GCF_000012945.1
+<OPTION>Burkholderia mallei ATCC 23344 GCF_000011705.1
+<OPTION>Burkholderia mallei NCTC 10229 GCF_000015605.1
+<OPTION>Burkholderia mallei NCTC 10247 GCF_000015625.1
+<OPTION>Burkholderia mallei SAVP1 GCF_000015465.1
+<OPTION>Burkholderia multivorans ATCC 17616 GCF_000010545.1
+<OPTION>Burkholderia pseudomallei 1106a GCF_000015925.1
+<OPTION>Burkholderia pseudomallei 1710b GCF_000012785.1
+<OPTION>Burkholderia pseudomallei 668 GCF_000015905.1
+<OPTION>Burkholderia pseudomallei K96243 GCF_000011545.1
+<OPTION>Burkholderia thailandensis E264 GCF_000012365.1
+<OPTION>Caldanaerobacter subterraneus subsp. tengcongensis MB4 GCF_000007085.1
+<OPTION>Caldicellulosiruptor saccharolyticus DSM 8903 GCF_000016545.1
+<OPTION>Campylobacter concisus 13826 GCF_000017725.2
+<OPTION>Campylobacter curvus 525.92 GCF_000017465.2
+<OPTION>Campylobacter fetus subsp. fetus 82-40 GCF_000015085.1
+<OPTION>Campylobacter hominis ATCC BAA-381 GCF_000017585.1
+<OPTION>Campylobacter jejuni RM1221 GCF_000011865.1
+<OPTION>Campylobacter jejuni subsp. doylei 269.97 GCF_000017485.1
+<OPTION>Campylobacter jejuni subsp. jejuni 81-176 GCF_000015525.1
+<OPTION>Campylobacter jejuni subsp. jejuni 81116 GCF_000017905.1
+<OPTION>Campylobacter jejuni subsp. jejuni NCTC 11168 = ATCC 700819 GCF_000009085.1
+<OPTION>Candidatus Azobacteroides pseudotrichonymphae genomovar. CFP2 GCF_000010645.1
+<OPTION>Candidatus Blochmannia pennsylvanicus str. BPEN GCF_000011745.1
+<OPTION>Candidatus Koribacter versatilis Ellin345 GCF_000014005.1
+<OPTION>Candidatus Pelagibacter ubique HTCC1062 GCF_000012345.1
+<OPTION>Candidatus Ruthia magnifica str. Cm (Calyptogena magnifica) GCF_000015105.1
+<OPTION>Candidatus Solibacter usitatus Ellin6076 GCF_000014905.1
+<OPTION>Candidatus Vesicomyosocius okutanii HA GCF_000010405.1
+<OPTION>Carboxydothermus hydrogenoformans Z-2901 GCF_000012865.1
+<OPTION>Caulobacter crescentus CB15 GCF_000006905.1
+<OPTION>Chelativorans sp. BNC1 GCF_000014245.1
+<OPTION>Chlamydia felis Fe/C-56 GCF_000009945.1
+<OPTION>Chlamydia muridarum str. Nigg GCF_000006685.1
+<OPTION>Chlamydia trachomatis A/HAR-13 GCF_000012125.1
+<OPTION>Chlamydia trachomatis D/UW-3/CX GCF_000008725.1
+<OPTION>Chlamydophila caviae GPIC GCF_000007605.1
+<OPTION>Chlamydophila pneumoniae CWL029 GCF_000008745.1
+<OPTION>Chlamydophila pneumoniae J138 GCF_000011165.1
+<OPTION>Chlamydophila pneumoniae TW-183 GCF_000007205.1
+<OPTION>Chlorobium chlorochromatii CaD3 GCF_000012585.1
+<OPTION>Chlorobium luteolum DSM 273 GCF_000012485.1
+<OPTION>Chlorobium phaeobacteroides DSM 266 GCF_000015125.1
+<OPTION>Chlorobium phaeovibrioides DSM 265 GCF_000016085.1
+<OPTION>Chlorobium tepidum TLS GCF_000006985.1
+<OPTION>Chromobacterium violaceum ATCC 12472 GCF_000007705.1
+<OPTION>Clostridioides difficile 630 GCF_000009205.1
+<OPTION>Clostridium acetobutylicum ATCC 824 GCF_000008765.1
+<OPTION>Clostridium beijerinckii NCIMB 8052 GCF_000016965.1
+<OPTION>Clostridium botulinum A str. ATCC 19397 GCF_000017025.1
+<OPTION>Clostridium botulinum A str. Hall GCF_000017045.1
+<OPTION>Clostridium botulinum F str. Langeland GCF_000017065.1
+<OPTION>Clostridium kluyveri DSM 555 GCF_000016505.1
+<OPTION>Clostridium kluyveri NBRC 12016 GCF_000010265.1
+<OPTION>Clostridium novyi NT GCF_000014125.1
+<OPTION>Clostridium perfringens ATCC 13124 GCF_000013285.1
+<OPTION>Clostridium perfringens str. 13 GCF_000009685.1
+<OPTION>Clostridium tetani E88 GCF_000007625.1
+<OPTION>Colwellia psychrerythraea 34H GCF_000012325.1
+<OPTION>Corynebacterium efficiens YS-314 GCF_000011305.1
+<OPTION>Corynebacterium glutamicum ATCC 13032 GCF_000011325.1
+<OPTION>Corynebacterium glutamicum R GCF_000010225.1
+<OPTION>Corynebacterium jeikeium K411 GCF_000006605.1
+<OPTION>Coxiella burnetii Dugway 5J108-111 GCF_000017105.1
+<OPTION>Coxiella burnetii RSA 493 GCF_000007765.2
+<OPTION>Cronobacter sakazakii ATCC BAA-894 GCF_000017665.1
+<OPTION>Cyanothece sp. ATCC 51142 GCF_000017845.1
+<OPTION>Cytophaga hutchinsonii ATCC 33406 GCF_000014145.1
+<OPTION>Dechloromonas aromatica RCB GCF_000012425.1
+<OPTION>Deferribacter desulfuricans SSM1 GCF_000010985.1
+<OPTION>Dehalococcoides mccartyi 195 GCF_000011905.1
+<OPTION>Dehalococcoides mccartyi BAV1 GCF_000016705.1
+<OPTION>Dehalococcoides mccartyi CBDB1 GCF_000009025.1
+<OPTION>Deinococcus radiodurans R1 GCF_000008565.1
+<OPTION>Desulfitobacterium hafniense Y51 GCF_000010045.1
+<OPTION>Desulfotomaculum reducens MI-1 GCF_000016165.1
+<OPTION>Desulfovibrio alaskensis G20 GCF_000012665.1
+<OPTION>Desulfovibrio magneticus RS-1 GCF_000010665.1
+<OPTION>Desulfovibrio vulgaris DP4 GCF_000015485.1
+<OPTION>Dichelobacter nodosus VCS1703A GCF_000015345.1
+<OPTION>Ehrlichia canis str. Jake GCF_000012565.1
+<OPTION>Ehrlichia chaffeensis str. Arkansas GCF_000013145.1
+<OPTION>Enterobacter sp. 638 GCF_000016325.1
+<OPTION>Enterococcus faecalis V583 GCF_000007785.1
+<OPTION>Erythrobacter litoralis HTCC2594 GCF_000013005.1
+<OPTION>Escherichia coli 536 GCF_000013305.1
+<OPTION>Escherichia coli APEC O1 GCF_000014845.1
+<OPTION>Escherichia coli B str. REL606 GCF_000017985.1
+<OPTION>Escherichia coli BL21(DE3) GCF_000009565.1
+<OPTION>Escherichia coli CFT073 GCF_000007445.1
+<OPTION>Escherichia coli HS GCF_000017765.1
+<OPTION>Escherichia coli O103:H2 str. 12009 GCF_000010745.1
+<OPTION>Escherichia coli O111:H- str. 11128 GCF_000010765.1
+<OPTION>Escherichia coli O139:H28 str. E24377A GCF_000017745.1
+<OPTION>Escherichia coli O157:H7 str. Sakai GCF_000008865.1
+<OPTION>Escherichia coli SE11 GCF_000010385.1
+<OPTION>Escherichia coli SE15 GCF_000010485.1
+<OPTION>Escherichia coli UTI89 GCF_000013265.1
+<OPTION>Escherichia coli str. K-12 substr. MG1655 GCF_000005845.2
+<OPTION>Escherichia coli str. K-12 substr. W3110 GCF_000010245.2
+<OPTION>Fervidobacterium nodosum Rt17-B1 GCF_000017545.1
+<OPTION>Finegoldia magna ATCC 29328 GCF_000010185.1
+<OPTION>Flavobacterium johnsoniae UW101 GCF_000016645.1
+<OPTION>Francisella tularensis subsp. holarctica FTNF002-00 GCF_000017785.1
+<OPTION>Francisella tularensis subsp. holarctica LVS GCF_000009245.1
+<OPTION>Francisella tularensis subsp. holarctica OSU18 GCF_000011405.1
+<OPTION>Francisella tularensis subsp. holarctica OSU18 GCF_000014605.1
+<OPTION>Francisella tularensis subsp. novicida U112 GCF_000014645.1
+<OPTION>Francisella tularensis subsp. tularensis FSC198 GCF_000009325.1
+<OPTION>Francisella tularensis subsp. tularensis SCHU S4 GCF_000008985.1
+<OPTION>Francisella tularensis subsp. tularensis WY96-3418 GCF_000016105.1
+<OPTION>Frankia casuarinae GCF_000013345.1
+<OPTION>Fusobacterium nucleatum subsp. nucleatum ATCC 25586 GCF_000007325.1
+<OPTION>Gemmatimonas aurantiaca T-27 GCF_000010305.1
+<OPTION>Geobacillus kaustophilus HTA426 GCF_000009785.1
+<OPTION>Geobacillus thermodenitrificans NG80-2 GCF_000015745.1
+<OPTION>Geobacter metallireducens GS-15 GCF_000012925.1
+<OPTION>Geobacter sulfurreducens PCA GCF_000007985.2
+<OPTION>Geobacter uraniireducens Rf4 GCF_000016745.1
+<OPTION>Gloeobacter violaceus PCC 7421 GCF_000011385.1
+<OPTION>Gluconobacter oxydans 621H GCF_000011685.1
+<OPTION>Granulibacter bethesdensis CGDNIH1 GCF_000014285.1
+<OPTION>Haemophilus ducreyi 35000HP GCF_000007945.1
+<OPTION>Haemophilus influenzae 86-028NP GCF_000012185.1
+<OPTION>Haemophilus influenzae PittEE GCF_000016465.1
+<OPTION>Haemophilus somnus 129PT GCF_000011785.1
+<OPTION>Hahella chejuensis KCTC 2396 GCF_000012985.1
+<OPTION>Halorhodospira halophila SL1 GCF_000015585.1
+<OPTION>Helicobacter acinonychis str. Sheeba GCF_000009305.1
+<OPTION>Helicobacter hepaticus ATCC 51449 GCF_000007905.1
+<OPTION>Helicobacter pylori 26695 GCF_000008525.1
+<OPTION>Helicobacter pylori 51 GCF_000011725.1
+<OPTION>Helicobacter pylori HPAG1 GCF_000013245.1
+<OPTION>Helicobacter pylori J99 GCF_000008785.1
+<OPTION>Hydrogenobacter thermophilus TK-6 GCF_000010785.1
+<OPTION>Hyphomonas neptunium ATCC 15444 GCF_000013025.1
+<OPTION>Idiomarina loihiensis L2TR GCF_000008465.1
+<OPTION>Jannaschia sp. CCS1 GCF_000013565.1
+<OPTION>Janthinobacterium sp. Marseille GCF_000013625.1
+<OPTION>Kineococcus radiotolerans SRS30216 = ATCC BAA-149 GCF_000017305.1
+<OPTION>Klebsiella pneumoniae subsp. pneumoniae MGH 78578 GCF_000016305.1
+<OPTION>Klebsiella pneumoniae subsp. pneumoniae NTUH-K2044 GCF_000009885.1
+<OPTION>Kocuria rhizophila DC2201 GCF_000010285.1
+<OPTION>Lactobacillus acidophilus NCFM GCF_000011985.1
+<OPTION>Lactobacillus brevis ATCC 367 GCF_000014465.1
+<OPTION>Lactobacillus delbrueckii subsp. bulgaricus ATCC BAA-365 GCF_000014405.1
+<OPTION>Lactobacillus fermentum IFO 3956 GCF_000010145.1
+<OPTION>Lactobacillus gasseri ATCC 33323 = JCM 1131 GCF_000014425.1
+<OPTION>Lactobacillus helveticus DPC 4571 GCF_000015385.1
+<OPTION>Lactobacillus johnsonii NCC 533 GCF_000008065.1
+<OPTION>Lactobacillus paracasei ATCC 334 GCF_000014525.1
+<OPTION>Lactobacillus reuteri DSM 20016 GCF_000016825.1
+<OPTION>Lactobacillus reuteri JCM 1112 GCF_000010005.1
+<OPTION>Lactobacillus rhamnosus GG GCF_000011045.1
+<OPTION>Lactobacillus salivarius UCC118 GCF_000008925.1
+<OPTION>Lactococcus lactis subsp. cremoris MG1363 GCF_000009425.1
+<OPTION>Lactococcus lactis subsp. cremoris SK11 GCF_000014545.1
+<OPTION>Lactococcus lactis subsp. lactis Il1403 GCF_000006865.1
+<OPTION>Legionella pneumophila subsp. pneumophila str. Philadelphia 1 GCF_000008485.1
+<OPTION>Leifsonia xyli subsp. xyli str. CTCB07 GCF_000007665.1
+<OPTION>Leptospira biflexa serovar Patoc strain 'Patoc 1 (Ames)' GCF_000017605.1
+<OPTION>Leptospira biflexa serovar Patoc strain 'Patoc 1 (Paris)' GCF_000017685.1
+<OPTION>Leptospira borgpetersenii serovar Hardjo-bovis str. JB197 GCF_000013965.1
+<OPTION>Leptospira borgpetersenii serovar Hardjo-bovis str. L550 GCF_000013945.1
+<OPTION>Leptospira interrogans serovar Copenhageni str. Fiocruz L1-130 GCF_000007685.1
+<OPTION>Leuconostoc mesenteroides subsp. mesenteroides ATCC 8293 GCF_000014445.1
+<OPTION>Listeria monocytogenes serotype 4b str. F2365 GCF_000008285.1
+<OPTION>Macrococcus caseolyticus JCSC5402 GCF_000010585.1
+<OPTION>Magnetococcus marinus MC-1 GCF_000014865.1
+<OPTION>Magnetospirillum magneticum AMB-1 GCF_000009985.1
+<OPTION>Mannheimia succiniciproducens MBEL55E GCF_000007745.1
+<OPTION>Maricaulis maris MCS10 GCF_000014745.1
+<OPTION>Marinobacter hydrocarbonoclasticus VT8 GCF_000015365.1
+<OPTION>Marinomonas sp. MWYL1 GCF_000017285.1
+<OPTION>Mesoplasma florum L1 GCF_000008305.1
+<OPTION>Mesorhizobium loti MAFF303099 GCF_000009625.1
+<OPTION>Methylibium petroleiphilum PM1 GCF_000015725.1
+<OPTION>Methylobacillus flagellatus KT GCF_000013705.1
+<OPTION>Methylococcus capsulatus str. Bath GCF_000008325.1
+<OPTION>Microcystis aeruginosa NIES-843 GCF_000010625.1
+<OPTION>Moorella thermoacetica ATCC 39073 GCF_000013105.1
+<OPTION>Mycobacterium avium 104 GCF_000014985.1
+<OPTION>Mycobacterium avium subsp. paratuberculosis K-10 GCF_000007865.1
+<OPTION>Mycobacterium bovis BCG str. Pasteur 1173P2 GCF_000009445.1
+<OPTION>Mycobacterium bovis BCG str. Tokyo 172 GCF_000010685.1
+<OPTION>Mycobacterium gilvum PYR-GCK GCF_000016365.1
+<OPTION>Mycobacterium smegmatis str. MC2 155 GCF_000015005.1
+<OPTION>Mycobacterium sp. JLS GCF_000016005.1
+<OPTION>Mycobacterium sp. KMS GCF_000015405.1
+<OPTION>Mycobacterium sp. MCS GCF_000014165.1
+<OPTION>Mycobacterium tuberculosis CDC1551 GCF_000008585.1
+<OPTION>Mycobacterium tuberculosis F11 GCF_000016925.1
+<OPTION>Mycobacterium tuberculosis H37Ra GCF_000016145.1
+<OPTION>Mycobacterium vanbaalenii PYR-1 GCF_000015305.1
+<OPTION>Mycoplasma capricolum subsp. capricolum ATCC 27343 GCF_000012765.1
+<OPTION>Mycoplasma hyopneumoniae 232 GCF_000008405.1
+<OPTION>Mycoplasma hyopneumoniae 7448 GCF_000008225.1
+<OPTION>Mycoplasma hyopneumoniae J GCF_000008205.1
+<OPTION>Mycoplasma mobile 163K GCF_000008365.1
+<OPTION>Mycoplasma mycoides subsp. mycoides SC str. PG1 GCF_000011445.1
+<OPTION>Mycoplasma penetrans HF-2 GCF_000011225.1
+<OPTION>Mycoplasma synoviae 53 GCF_000008245.1
+<OPTION>Myxococcus xanthus DK 1622 GCF_000012685.1
+<OPTION>Neisseria gonorrhoeae FA 1090 GCF_000006845.1
+<OPTION>Neisseria meningitidis 053442 GCF_000014105.1
+<OPTION>Neisseria meningitidis FAM18 GCF_000009465.1
+<OPTION>Neisseria meningitidis MC58 GCF_000008805.1
+<OPTION>Neisseria meningitidis Z2491 GCF_000009105.1
+<OPTION>Neorickettsia sennetsu str. Miyayama GCF_000013165.1
+<OPTION>Nitratiruptor sp. SB155-2 GCF_000010325.1
+<OPTION>Nitrobacter hamburgensis X14 GCF_000013885.1
+<OPTION>Nitrobacter winogradskyi Nb-255 GCF_000012725.1
+<OPTION>Nitrosococcus oceani ATCC 19707 GCF_000012805.1
+<OPTION>Nitrosomonas europaea ATCC 19718 GCF_000009145.1
+<OPTION>Nitrosomonas eutropha C91 GCF_000014765.1
+<OPTION>Nocardia farcinica IFM 10152 GCF_000009805.1
+<OPTION>Nocardioides sp. JS614 GCF_000015265.1
+<OPTION>Nostoc sp. PCC 7120 GCF_000009705.1
+<OPTION>Novosphingobium aromaticivorans DSM 12444 GCF_000013325.1
+<OPTION>Oceanobacillus iheyensis HTE831 GCF_000011245.1
+<OPTION>Ochrobactrum anthropi ATCC 49188 GCF_000017405.1
+<OPTION>Oenococcus oeni PSU-1 GCF_000014385.1
+<OPTION>Onion yellows phytoplasma OY-M GCF_000009845.1
+<OPTION>Orientia tsutsugamushi str. Ikeda GCF_000010205.1
+<OPTION>Paenarthrobacter aurescens TC1 GCF_000014925.1
+<OPTION>Parabacteroides distasonis ATCC 8503 GCF_000012845.1
+<OPTION>Paraburkholderia xenovorans LB400 GCF_000013645.1
+<OPTION>Parvibaculum lavamentivorans DS-1 GCF_000017565.1
+<OPTION>Pasteurella multocida subsp. multocida str. Pm70 GCF_000006825.1
+<OPTION>Pectobacterium atrosepticum SCRI1043 GCF_000011605.1
+<OPTION>Pediococcus pentosaceus ATCC 25745 GCF_000014505.1
+<OPTION>Pelobacter carbinolicus DSM 2380 GCF_000012885.1
+<OPTION>Pelobacter propionicus DSM 2379 GCF_000015045.1
+<OPTION>Phenylobacterium zucineum HLK1 GCF_000017265.1
+<OPTION>Polaromonas naphthalenivorans CJ2 GCF_000015505.1
+<OPTION>Polaromonas sp. JS666 GCF_000013865.1
+<OPTION>Polynucleobacter asymbioticus QLW-P1DMWA-1 GCF_000016345.1
+<OPTION>Porphyromonas gingivalis ATCC 33277 GCF_000010505.1
+<OPTION>Porphyromonas gingivalis W83 GCF_000007585.1
+<OPTION>Prochlorococcus marinus str. AS9601 GCF_000015645.1
+<OPTION>Prochlorococcus marinus str. MIT 9301 GCF_000015965.1
+<OPTION>Prochlorococcus marinus str. MIT 9312 GCF_000012645.1
+<OPTION>Prochlorococcus marinus str. MIT 9313 GCF_000011485.1
+<OPTION>Prochlorococcus marinus str. MIT 9515 GCF_000015665.1
+<OPTION>Prochlorococcus marinus str. NATL1A GCF_000015685.1
+<OPTION>Prochlorococcus marinus str. NATL2A GCF_000012465.1
+<OPTION>Prochlorococcus marinus subsp. marinus str. CCMP1375 GCF_000007925.1
+<OPTION>Prochlorococcus marinus subsp. pastoris str. CCMP1986 GCF_000011465.1
+<OPTION>Propionibacterium acnes KPA171202 GCF_000008345.1
+<OPTION>Pseudoalteromonas atlantica T6c GCF_000014225.1
+<OPTION>Pseudomonas aeruginosa PA7 GCF_000017205.1
+<OPTION>Pseudomonas aeruginosa PAO1 GCF_000006765.1
+<OPTION>Pseudomonas aeruginosa UCBPP-PA14 GCF_000014625.1
+<OPTION>Pseudomonas fluorescens Pf0-1 GCF_000012445.1
+<OPTION>Pseudomonas fluorescens SBW25 GCF_000009225.2
+<OPTION>Pseudomonas mendocina ymp GCF_000016565.1
+<OPTION>Pseudomonas protegens Pf-5 GCF_000012265.1
+<OPTION>Pseudomonas putida F1 GCF_000016865.1
+<OPTION>Pseudomonas putida KT2440 GCF_000007565.2
+<OPTION>Pseudomonas savastanoi pv. phaseolicola 1448A GCF_000012205.1
+<OPTION>Pseudomonas stutzeri A1501 GCF_000013785.1
+<OPTION>Pseudomonas syringae pv. syringae B728a GCF_000012245.1
+<OPTION>Pseudothermotoga lettingae TMO GCF_000017865.1
+<OPTION>Psychrobacter arcticus 273-4 GCF_000012305.1
+<OPTION>Psychrobacter cryohalolentis K5 GCF_000013905.1
+<OPTION>Psychrobacter sp. PRwf-1 GCF_000016885.1
+<OPTION>Psychromonas ingrahamii 37 GCF_000015285.1
+<OPTION>Ralstonia eutropha H16 GCF_000009285.1
+<OPTION>Ralstonia solanacearum GMI1000 GCF_000009125.1
+<OPTION>Rhizobium leguminosarum bv. viciae 3841 GCF_000009265.1
+<OPTION>Rhodobacter sphaeroides ATCC 17025 GCF_000016405.1
+<OPTION>Rhodobacter sphaeroides ATCC 17029 GCF_000015985.1
+<OPTION>Rhodococcus erythropolis PR4 GCF_000010105.1
+<OPTION>Rhodococcus jostii RHA1 GCF_000014565.1
+<OPTION>Rhodococcus opacus B4 GCF_000010805.1
+<OPTION>Rhodoferax ferrireducens T118 GCF_000013605.1
+<OPTION>Rhodopseudomonas palustris BisA53 GCF_000014825.1
+<OPTION>Rhodopseudomonas palustris BisB18 GCF_000013745.1
+<OPTION>Rhodopseudomonas palustris BisB5 GCF_000013685.1
+<OPTION>Rhodopseudomonas palustris HaA2 GCF_000013365.1
+<OPTION>Rhodospirillum centenum SW GCF_000016185.1
+<OPTION>Rhodospirillum rubrum ATCC 11170 GCF_000013085.1
+<OPTION>Rickettsia bellii RML369-C GCF_000012385.1
+<OPTION>Rickettsia canadensis str. McKiel GCF_000014345.1
+<OPTION>Rickettsia conorii str. Malish 7 GCF_000007025.1
+<OPTION>Rickettsia felis URRWXCal2 GCF_000012145.1
+<OPTION>Rickettsia massiliae MTU5 GCF_000016625.1
+<OPTION>Rickettsia rickettsii str. Iowa GCF_000017445.4
+<OPTION>Rickettsia typhi str. Wilmington GCF_000008045.1
+<OPTION>Roseiflexus castenholzii DSM 13941 GCF_000017805.1
+<OPTION>Roseiflexus sp. RS-1 GCF_000016665.1
+<OPTION>Roseobacter denitrificans OCh 114 GCF_000014045.1
+<OPTION>Rothia mucilaginosa DY-18 GCF_000011025.1
+<OPTION>Rubrobacter xylanophilus DSM 9941 GCF_000014185.1
+<OPTION>Ruegeria pomeroyi DSS-3 GCF_000011965.2
+<OPTION>Ruegeria sp. TM1040 GCF_000014065.1
+<OPTION>Ruminiclostridium thermocellum ATCC 27405 GCF_000015865.1
+<OPTION>Saccharophagus degradans 2-40 GCF_000013665.1
+<OPTION>Salinibacter ruber DSM 13855 GCF_000013045.1
+<OPTION>Salinispora tropica CNB-440 GCF_000016425.1
+<OPTION>Salmonella enterica subsp. enterica serovar Choleraesuis str. SC-B67 GCF_000008105.1
+<OPTION>Salmonella enterica subsp. enterica serovar Enteritidis str. P125109 GCF_000009505.1
+<OPTION>Salmonella enterica subsp. enterica serovar Gallinarum str. 287/91 GCF_000009525.1
+<OPTION>Salmonella enterica subsp. enterica serovar Newport str. SL254 GCF_000016045.1
+<OPTION>Salmonella enterica subsp. enterica serovar Paratyphi A str. ATCC 9150 GCF_000011885.1
+<OPTION>Salmonella enterica subsp. enterica serovar Typhi str. Ty2 GCF_000007545.1
+<OPTION>Salmonella enterica subsp. enterica serovar Typhimurium str. LT2 GCF_000006945.2
+<OPTION>Shewanella amazonensis SB2B GCF_000015245.1
+<OPTION>Shewanella baltica OS155 GCF_000015845.1
+<OPTION>Shewanella baltica OS185 GCF_000017325.1
+<OPTION>Shewanella denitrificans OS217 GCF_000013765.1
+<OPTION>Shewanella frigidimarina NCIMB 400 GCF_000014705.1
+<OPTION>Shewanella loihica PV-4 GCF_000016065.1
+<OPTION>Shewanella piezotolerans WP3 GCF_000014885.1
+<OPTION>Shewanella putrefaciens CN-32 GCF_000016585.1
+<OPTION>Shewanella sp. MR-4 GCF_000014685.1
+<OPTION>Shewanella sp. MR-7 GCF_000014665.1
+<OPTION>Shewanella sp. W3-18-1 GCF_000015185.1
+<OPTION>Shigella boydii Sb227 GCF_000012025.1
+<OPTION>Shigella dysenteriae Sd197 GCF_000012005.1
+<OPTION>Shigella flexneri 2a str. 2457T GCF_000007405.1
+<OPTION>Shigella flexneri 2a str. 301 GCF_000006925.2
+<OPTION>Shigella flexneri 5 str. 8401 GCF_000013585.1
+<OPTION>Sinorhizobium medicae WSM419 GCF_000017145.1
+<OPTION>Sinorhizobium meliloti 1021 GCF_000006965.1
+<OPTION>Sodalis glossinidius str. 'morsitans' GCF_000010085.1
+<OPTION>Sphingomonas wittichii RW1 GCF_000016765.1
+<OPTION>Sphingopyxis alaskensis RB2256 GCF_000013985.1
+<OPTION>Staphylococcus aureus RF122 GCF_000009005.1
+<OPTION>Staphylococcus aureus subsp. aureus COL GCF_000012045.1
+<OPTION>Staphylococcus aureus subsp. aureus JH1 GCF_000017125.1
+<OPTION>Staphylococcus aureus subsp. aureus JH9 GCF_000016805.1
+<OPTION>Staphylococcus aureus subsp. aureus MRSA252 GCF_000011505.1
+<OPTION>Staphylococcus aureus subsp. aureus MSSA476 GCF_000011525.1
+<OPTION>Staphylococcus aureus subsp. aureus MW2 GCF_000011265.1
+<OPTION>Staphylococcus aureus subsp. aureus Mu3 GCF_000010445.1
+<OPTION>Staphylococcus aureus subsp. aureus Mu50 GCF_000009665.1
+<OPTION>Staphylococcus aureus subsp. aureus N315 GCF_000009645.1
+<OPTION>Staphylococcus aureus subsp. aureus NCTC 8325 GCF_000013425.1
+<OPTION>Staphylococcus aureus subsp. aureus ST398 GCF_000009585.1
+<OPTION>Staphylococcus aureus subsp. aureus USA300_FPR3757 GCF_000013465.1
+<OPTION>Staphylococcus aureus subsp. aureus USA300_TCH1516 GCF_000017085.1
+<OPTION>Staphylococcus aureus subsp. aureus str. Newman GCF_000010465.1
+<OPTION>Staphylococcus carnosus subsp. carnosus TM300 GCF_000009405.1
+<OPTION>Staphylococcus epidermidis ATCC 12228 GCF_000007645.1
+<OPTION>Staphylococcus epidermidis RP62A GCF_000011925.1
+<OPTION>Staphylococcus haemolyticus JCSC1435 GCF_000009865.1
+<OPTION>Staphylococcus saprophyticus subsp. saprophyticus ATCC 15305 GCF_000010125.1
+<OPTION>Streptococcus agalactiae 2603V/R GCF_000007265.1
+<OPTION>Streptococcus agalactiae A909 GCF_000012705.1
+<OPTION>Streptococcus dysgalactiae subsp. equisimilis GGS_124 GCF_000010705.1
+<OPTION>Streptococcus gordonii str. Challis substr. CH1 GCF_000017005.1
+<OPTION>Streptococcus mutans UA159 GCF_000007465.2
+<OPTION>Streptococcus pneumoniae D39 GCF_000014365.1
+<OPTION>Streptococcus pneumoniae R6 GCF_000007045.1
+<OPTION>Streptococcus pneumoniae TIGR4 GCF_000006885.1
+<OPTION>Streptococcus pyogenes M1 GAS GCF_000006785.2
+<OPTION>Streptococcus pyogenes MGAS10270 GCF_000013505.1
+<OPTION>Streptococcus pyogenes MGAS10394 GCF_000011665.1
+<OPTION>Streptococcus pyogenes MGAS10750 GCF_000013545.1
+<OPTION>Streptococcus pyogenes MGAS2096 GCF_000013525.1
+<OPTION>Streptococcus pyogenes MGAS315 GCF_000007425.1
+<OPTION>Streptococcus pyogenes MGAS5005 GCF_000011765.3
+<OPTION>Streptococcus pyogenes MGAS6180 GCF_000012165.1
+<OPTION>Streptococcus pyogenes MGAS8232 GCF_000007285.1
+<OPTION>Streptococcus pyogenes MGAS9429 GCF_000013485.1
+<OPTION>Streptococcus pyogenes SSI-1 GCF_000011285.1
+<OPTION>Streptococcus pyogenes str. Manfredo GCF_000009385.1
+<OPTION>Streptococcus sanguinis SK36 GCF_000014205.1
+<OPTION>Streptococcus thermophilus CNRZ1066 GCF_000011845.1
+<OPTION>Streptococcus thermophilus LMD-9 GCF_000014485.1
+<OPTION>Streptococcus thermophilus LMG 18311 GCF_000011825.1
+<OPTION>Streptococcus uberis 0140J GCF_000009545.1
+<OPTION>Streptomyces avermitilis MA-4680 = NBRC 14893 GCF_000009765.2
+<OPTION>Streptomyces griseus subsp. griseus NBRC 13350 GCF_000010605.1
+<OPTION>Sulfurimonas denitrificans DSM 1251 GCF_000012965.1
+<OPTION>Sulfurovum sp. NBC37-1 GCF_000010345.1
+<OPTION>Symbiobacterium thermophilum IAM 14863 GCF_000009905.1
+<OPTION>Synechococcus elongatus PCC 6301 GCF_000010065.1
+<OPTION>Synechococcus elongatus PCC 7942 GCF_000012525.1
+<OPTION>Synechococcus sp. CC9311 GCF_000014585.1
+<OPTION>Synechococcus sp. CC9605 GCF_000012625.1
+<OPTION>Synechococcus sp. CC9902 GCF_000012505.1
+<OPTION>Synechococcus sp. JA-2-3B'a(2-13) GCF_000013225.1
+<OPTION>Synechococcus sp. JA-3-3Ab GCF_000013205.1
+<OPTION>Synechocystis sp. PCC 6803 GCF_000009725.1
+<OPTION>Syntrophobacter fumaroxidans MPOB GCF_000014965.1
+<OPTION>Syntrophomonas wolfei subsp. wolfei str. Goettingen G311 GCF_000014725.1
+<OPTION>Syntrophus aciditrophicus SB GCF_000013405.1
+<OPTION>Thermobifida fusca YX GCF_000012405.1
+<OPTION>Thermosipho melanesiensis BI429 GCF_000016905.1
+<OPTION>Thermosynechococcus elongatus BP-1 GCF_000011345.1
+<OPTION>Thermotoga maritima MSB8 GCF_000008545.1
+<OPTION>Thermotoga petrophila RKU-1 GCF_000016785.1
+<OPTION>Thermus thermophilus HB27 GCF_000008125.1
+<OPTION>Thiobacillus denitrificans ATCC 25259 GCF_000012745.1
+<OPTION>Thiomicrospira crunogena XCL-2 GCF_000012605.1
+<OPTION>Treponema denticola ATCC 35405 GCF_000008185.1
+<OPTION>Treponema pallidum subsp. pallidum str. Nichols GCF_000008605.1
+<OPTION>Trichodesmium erythraeum IMS101 GCF_000014265.1
+<OPTION>Tropheryma whipplei str. Twist GCF_000007485.1
+<OPTION>Ureaplasma parvum serovar 3 str. ATCC 700970 GCF_000006625.1
+<OPTION>Verminephrobacter eiseniae EF01-2 GCF_000015565.1
+<OPTION>Vibrio campbellii ATCC BAA-1116 GCF_000017705.1
+<OPTION>Vibrio cholerae O1 biovar El Tor str. N16961 GCF_000006745.1
+<OPTION>Vibrio cholerae O395 GCF_000016245.1
+<OPTION>Vibrio fischeri ES114 GCF_000011805.1
+<OPTION>Vibrio vulnificus YJ016 GCF_000009745.1
+<OPTION>Wigglesworthia glossinidia endosymbiont of Glossina brevipalpis GCF_000008885.1
+<OPTION>Wolbachia endosymbiont of Drosophila melanogaster GCF_000008025.1
+<OPTION>Wolbachia endosymbiont strain TRS of Brugia malayi GCF_000008385.1
+<OPTION>Xanthobacter autotrophicus Py2 GCF_000017645.1
+<OPTION>Xanthomonas axonopodis pv. citri str. 306 GCF_000007165.1
+<OPTION>Xanthomonas campestris pv. campestris str. 8004 GCF_000012105.1
+<OPTION>Xanthomonas campestris pv. campestris str. ATCC 33913 GCF_000007145.1
+<OPTION>Xanthomonas campestris pv. vesicatoria str. 85-10 GCF_000009165.1
+<OPTION>Xanthomonas oryzae pv. oryzae KACC 10331 GCF_000007385.1
+<OPTION>Xanthomonas oryzae pv. oryzae MAFF 311018 GCF_000010025.1
+<OPTION>Xylella fastidiosa 9a5c GCF_000006725.1
+<OPTION>Xylella fastidiosa Temecula1 GCF_000007245.1
+<OPTION>Yersinia enterocolitica subsp. enterocolitica 8081 GCF_000009345.1
+<OPTION>Yersinia pestis Antiqua GCF_000013825.1
+<OPTION>Yersinia pestis CO92 GCF_000009065.1
+<OPTION>Yersinia pestis KIM10+ GCF_000006645.1
+<OPTION>Yersinia pestis Nepal516 GCF_000013805.1
+<OPTION>Yersinia pestis Pestoides F GCF_000016445.1
+<OPTION>Yersinia pestis biovar Microtus str. 91001 GCF_000007885.1
+<OPTION>Yersinia pseudotuberculosis IP 31758 GCF_000016945.1
+<OPTION>Zymomonas mobilis subsp. mobilis ZM4 = ATCC 31821 GCF_000007105.1
+<OPTION>[Bacillus thuringiensis] serovar konkukian str. 97-27 GCF_000008505.1
+<OPTION>[Pseudomonas syringae] pv. tomato str. DC3000 GCF_000007805.1

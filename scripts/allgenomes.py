@@ -102,7 +102,7 @@ def sort_genomes(list_genomes,fasta_path,dict_org_code):
     '''Sort genomes by ascending size'''
     tmp_list=[]
     for genome in list_genomes: 
-        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome] +'_genomic.fna', 'fasta'))
+        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'))
         tmp_list.append((len(fasta_genome.seq),genome))
     genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0])]   ##Sort by ascending size
     return(genomes_sorted)
@@ -111,7 +111,7 @@ def sort_genomes_desc(list_genomes,fasta_path,dict_org_code):
     '''Sort genomes by ascending size'''
     tmp_list=[]
     for genome in list_genomes: 
-        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome] +'_genomic.fna', 'fasta'))
+        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'))
         tmp_list.append((len(fasta_genome.seq),genome))
     genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0],reverse=True)]   ##Sort by ascending size
     return(genomes_sorted)    
@@ -314,18 +314,18 @@ def output_interface(hit_list,genomes_NOT_IN):
 
 
 def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_order): 
-    ref1=dict_org_code[genome]
+    ref1=dict_org_code[genome][0]
     if list_in and list_notin: 
         in_compare=-1
         for gi in list_in: 
-            ref2=dict_org_code[gi]
+            ref2=dict_org_code[gi][0]
             dist=dist_dic[ref1][ref2]
             if dist > in_compare: 
                 in_compare=dist
                 in_compare_genome=gi        
         notin_compare=11
         for gni in list_notin: 
-            ref2=dict_org_code[gni]   
+            ref2=dict_org_code[gni][0]   
             dist=dist_dic[ref1][ref2]
             if dist < notin_compare: 
                 notin_compare=dist
@@ -343,7 +343,7 @@ def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_ord
     elif list_in: 
         in_compare=-1
         for gi in list_in: 
-            ref2=dict_org_code[gi]
+            ref2=dict_org_code[gi][0]
             dist=dist_dic[ref1][ref2]
             if dist > in_compare: 
                 in_compare=dist
@@ -355,7 +355,7 @@ def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_ord
     elif list_notin: 
         notin_compare=11
         for gni in list_notin: 
-            ref2=dict_org_code[gni]   
+            ref2=dict_org_code[gni][0]   
             dist=dist_dic[ref1][ref2]
             if dist < notin_compare: 
                 notin_compare=dist
@@ -377,8 +377,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=4
-    num_file=4
+    num_thread=1
+    num_file=1
     eprint('Search for',len(genomes_IN),"included genomes and",len(genomes_NOT_IN),'excluded genomes')
     eprint(num_thread,'threads')
     if len(genomes_IN)!=1:
@@ -387,9 +387,11 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
         sorted_genomes=genomes_IN    
 
     if len(genomes_NOT_IN)>=1: 
-        sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)        
+        sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)    
+    else: 
+        sorted_genomes_notin=[]        
 
-    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]],PAM,non_PAM_motif_length)
+    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]][0],PAM,non_PAM_motif_length)
     eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     list_fasta=write_to_fasta_parallel(dic_seq,num_file)
 
@@ -399,7 +401,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     for i in list_order: 
         genome=i[0]
         if i[1]=='notin': 
-            dic_seq=add_notin_parallel(num_thread,list_fasta,dict_org_code[genome],dic_seq)
+            dic_seq=add_notin_parallel(num_thread,list_fasta,dict_org_code[genome][0],dic_seq)
             if len(dic_seq)==0: 
                 print("Program terminated&No hits remain after exclude genome "+genome)
                 end_time=time.time()
@@ -410,7 +412,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
             list_fasta=write_to_fasta_parallel(dic_seq,num_file)
             
         elif i[1]=='in': 
-            dic_seq=add_in_parallel(num_thread,list_fasta,dict_org_code[genome],dic_seq,genome,len(PAM)+non_PAM_motif_length)
+            dic_seq=add_in_parallel(num_thread,list_fasta,dict_org_code[genome][0],dic_seq,genome,len(PAM)+non_PAM_motif_length)
             if len(dic_seq)==0: 
                 print("Program terminated&No hits remain after include genome "+genome)
                 end_time=time.time()
@@ -441,7 +443,6 @@ def main():
     fasta_path = './reference_genomes/fasta'
     bowtie_path='./bowtie-1.1.2/bowtie'
     dict_organism_code = json.load(open('reference_genomes/genome_ref_taxid.json','r'))  ##Keys: organism, values: genomic reference (ncbi)
-    dict_code_organism=intervert(dict_organism_code)      ##Keys/values interchanged relative to line above
     organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
     eprint('--- CSTB complete genomes ---')
     eprint('Parallelisation with distance matrix')
