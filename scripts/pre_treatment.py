@@ -214,6 +214,7 @@ def json_tree():
     os.system('python3 scripts/tax2json.py')    
 
 def genome_file_for_list(): 
+    print('GENOME FILE FOR LIST')
     dic=json.load(open('reference_genomes/genome_ref_taxid.json','r'))
     list_genomes=list(dic.keys())
     list_genomes=sorted(list_genomes)
@@ -223,12 +224,12 @@ def genome_file_for_list():
     out.close()    
 
 
-ref_bacteria='more_genomes/assembly_summary_bacteria_500.txt'
+ref_bacteria='more_genomes/assembly_summary_bacteria_1000.txt'
 dic_taxid=dic_download(ref_bacteria)
-#eliminate_plasmides(dic_taxid)
-#test(dic_taxid)
-#index_bowtie_blast(dic_taxid)
-#pre_calculate(dic_taxid)
-#distance_matrix(dic_taxid)
-#json_tree()
+'''eliminate_plasmides(dic_taxid)
+test(dic_taxid)'''
+index_bowtie_blast(dic_taxid)
+pre_calculate(dic_taxid)
+distance_matrix(dic_taxid)
+json_tree()
 genome_file_for_list()

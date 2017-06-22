@@ -498,3 +498,503 @@ Pseudothermotoga lettingae TMO
 Bacillus pumilus SAFR-032
 Campylobacter jejuni subsp. jejuni 81116
 Escherichia coli B str. REL606
+Frankia sp. EAN1pec
+Shewanella sediminis HAW-EB3
+Citrobacter koseri ATCC BAA-895
+Prochlorococcus marinus str. MIT 9215
+Serratia proteamaculans 568
+Acaryochloris marina MBIC11017
+Streptococcus pyogenes NZ131
+Dinoroseobacter shibae DFL 12 = DSM 16493
+Streptococcus suis GZ1
+Rickettsia akari str. Hartford
+Rickettsia rickettsii str. 'Sheila Smith'
+Rickettsia bellii OSU 85-389
+Salinispora arenicola CNS-205
+Shewanella pealeana ATCC 700345
+Alkaliphilus oremlandii OhILAs
+Mycobacterium marinum M
+Salmonella enterica subsp. enterica serovar Paratyphi C str. RKS4594
+Desulfococcus oleovorans Hxd3
+Candidatus Desulforudis audaxviator MP104C
+Acinetobacter baumannii ACICU
+Burkholderia multivorans ATCC 17616
+Brucella canis ATCC 23365
+Sinorhizobium fredii NGR234
+Petrotoga mobilis SJ95
+Salmonella enterica subsp. arizonae serovar 62:z4,z23:-
+Delftia acidovorans SPH-1
+Lachnoclostridium phytofermentans ISDg
+Salmonella enterica subsp. enterica serovar Paratyphi B str. SPB7
+Brucella abortus S19
+Coxiella burnetii RSA 331
+Shewanella baltica OS195
+Acholeplasma laidlawii PG-8A
+Yersinia pestis Angola
+Bacillus weihenstephanensis KBAB4
+Methylobacterium extorquens PA1
+Chloroflexus aurantiacus J-10-fl
+Renibacterium salmoninarum ATCC 33209
+Brucella suis ATCC 23445
+Francisella tularensis subsp. mediasiatica FSC147
+Thermotoga neapolitana DSM 4359
+Streptococcus pneumoniae 70585
+Streptococcus pneumoniae JJA
+Streptococcus pneumoniae P1031
+Streptococcus pneumoniae Taiwan19F-14
+Anoxybacillus flavithermus WK1
+Thermoanaerobacter sp. X514
+Thermoanaerobacter pseudethanolicus ATCC 33223
+Pseudomonas putida GB-1
+Caulobacter sp. K31
+Heliobacterium modesticaldum Ice1
+Shewanella halifaxensis HAW-EB4
+Campylobacter lari RM2100
+Cellvibrio japonicus Ueda107
+Lactobacillus casei str. Zhang
+Streptococcus pneumoniae Hungary19A-6
+Francisella philomiragia subsp. philomiragia ATCC 25017
+Clostridium botulinum B1 str. Okra
+Xylella fastidiosa M12
+Ureaplasma parvum serovar 3 str. ATCC 27815
+Methylobacterium sp. 4-46
+Escherichia coli ATCC 8739
+Haemophilus somnus 2336
+Escherichia coli str. K-12 substr. DH10B
+Pseudomonas putida W619
+Yersinia pseudotuberculosis YPIII
+Synechococcus sp. PCC 7002
+Burkholderia cenocepacia MC0-3
+Shewanella woodyi ATCC 51908
+Clostridium botulinum A3 str. Loch Maree
+Klebsiella pneumoniae 342
+Xanthomonas oryzae pv. oryzae PXO99A
+Thermotoga sp. RQ2
+Escherichia coli SMS-3-5
+Methylacidiphilum infernorum V4
+Borrelia duttonii Ly
+Borrelia recurrentis A1
+Methylobacterium radiotolerans JCM 2831
+Polynucleobacter necessarius subsp. necessarius STIR1
+Xylella fastidiosa M23
+Leptothrix cholodnii SP-6
+Streptococcus pneumoniae G54
+Beijerinckia indica subsp. indica ATCC 9039
+Coxiella burnetii CbuG_Q212
+Coxiella burnetii CbuK_Q154
+Exiguobacterium sibiricum 255-15
+Burkholderia ambifaria MC40-6
+Methylobacterium populi BJ001
+Opitutus terrae PB90-1
+Streptococcus pneumoniae CGSP14
+Natranaerobius thermophilus JW/NM-WN-LF
+Nostoc punctiforme PCC 73102
+Paraburkholderia phymatum STM815
+Mycoplasma arthritidis 158L3-1
+Yersinia pseudotuberculosis PB1/+
+Neisseria gonorrhoeae NCCP11945
+Paraburkholderia phytofirmans PsJN
+Elusimicrobium minutum Pei191
+Clostridium botulinum B str. Eklund 17B (NRP)
+Shigella boydii CDC 3083-94
+Ralstonia pickettii 12J
+Akkermansia muciniphila ATCC BAA-835
+Helicobacter pylori Shi470
+Rhizobium etli CIAT 652
+Clostridium botulinum E3 str. Alaska E43
+Anaplasma marginale str. Florida
+Sulfurihydrogenibium sp. YO3AOP1
+Clostridium botulinum Ba4 str. 657
+Desulfobacterium autotrophicum HRM2
+Geobacter lovleyi SZ
+Actinobacillus pleuropneumoniae serovar 7 str. AP76
+Bifidobacterium longum subsp. infantis ATCC 15697 = JCM 1222 = DSM 20088
+Rhodopseudomonas palustris TIE-1
+Chlorobium limicola DSM 245
+Halothermothrix orenii H 168
+Chlorobaculum parvum NCIB 8327
+Chloroherpeton thalassium ATCC 35110
+Chlorobium phaeobacteroides BS1
+Candidatus Amoebophilus asiaticus 5a2
+Alteromonas mediterranea DE
+[Eubacterium rectale] ATCC 33656
+Prosthecochloris aestuarii DSM 271
+Pelodictyon phaeoclathratiforme BU-1
+Stenotrophomonas maltophilia R551-3
+Deinococcus deserti VCD115
+Salmonella enterica subsp. enterica serovar Heidelberg str. SL476
+Geobacter bemidjiensis Bem
+Salmonella enterica subsp. enterica serovar Schwarzengrund str. CVM19633
+Streptococcus equi subsp. zooepidemicus MGCS10565
+Hydrogenobaculum sp. Y04AAS1
+Anaeromyxobacter sp. K
+Acidithiobacillus ferrooxidans ATCC 53993
+Edwardsiella tarda EIB202
+Salmonella enterica subsp. enterica serovar Agona str. SL483
+Salmonella enterica subsp. enterica serovar Dublin str. CT_02021853
+Coprothermobacter proteolyticus DSM 5265
+Dictyoglomus thermophilum H-6-12
+Thermodesulfovibrio yellowstonii DSM 11347
+Rhodobacter sphaeroides KD131
+Laribacter hongkongensis HLHK9
+Azotobacter vinelandii DJ
+Buchnera aphidicola str. Tuc7 (Acyrthosiphon pisum)
+Buchnera aphidicola str. 5A (Acyrthosiphon pisum)
+Escherichia coli O157:H7 str. EC4115
+Acinetobacter baumannii AB307-0294
+Helicobacter pylori G27
+Listeria monocytogenes HCC23
+Bacillus cereus B4264
+Bacillus cereus AH187
+Acinetobacter baumannii AB0057
+Ureaplasma urealyticum serovar 10 str. ATCC 33699
+Thermosipho africanus TCF52B
+Bacillus cereus G9842
+Gluconacetobacter diazotrophicus PA1 5
+Rhizobium leguminosarum bv. trifolii WSM2304
+Oligotropha carboxidovorans OM5
+Desulfovibrio vulgaris str. 'Miyazaki F'
+Borrelia burgdorferi ZS7
+Bifidobacterium animalis subsp. lactis AD011
+Bacillus anthracis str. CDC 684
+Helicobacter pylori P12
+Acidithiobacillus ferrooxidans ATCC 23270
+Sulfurihydrogenibium azorense Az-Fu1
+Persephonella marina EX-H1
+Vibrio cholerae M66-2
+Vibrio cholerae O395
+Dictyoglomus turgidum DSM 6724
+Shewanella baltica OS223
+Thermomicrobium roseum DSM 5159
+Nautilia profundicola AmH
+Methylocella silvestris BL2
+Thauera sp. MZ1T
+Bacillus cereus AH820
+Cyanothece sp. PCC 8801
+Cyanothece sp. PCC 7424
+Methylobacterium extorquens CM4
+Rhodobacter capsulatus SB 1003
+Haemophilus parasuis SH0165
+Desulfatibacillum alkenivorans AK-01
+Desulfitobacterium hafniense DCB-2
+Chloroflexus aggregans DSM 9485
+Thioalkalivibrio sulfidiphilus HL-EbGr7
+Caulobacter crescentus NA1000
+Pseudarthrobacter chlorophenolicus A6
+Cyanothece sp. PCC 7425
+[Clostridium] cellulolyticum H10
+Methylobacterium nodulans ORS 2060
+Brachyspira hyodysenteriae WA1
+Desulfovibrio desulfuricans subsp. desulfuricans str. ATCC 27774
+Anaeromyxobacter dehalogenans 2CP-1
+Salmonella enterica subsp. enterica serovar Typhimurium str. 14028S
+Chloroflexus sp. Y-400-fl
+Escherichia coli O157:H7 str. TW14359
+Shigella flexneri 2002017
+Geobacter daltonii FRC-32
+Wolbachia sp. wRi
+Acidovorax ebreus TPSY
+Caldicellulosiruptor bescii DSM 6725
+Escherichia coli BW2952
+Bacillus cereus 03BB102
+Neorickettsia risticii str. Illinois
+Acidobacterium capsulatum ATCC 51196
+Vibrio cholerae MJ-1236
+Blattabacterium sp. (Blattella germanica) str. Bge
+Brucella melitensis ATCC 23457
+Burkholderia glumae BGR1
+Escherichia coli BL21(DE3)
+Methylobacterium extorquens AM1
+Bifidobacterium animalis subsp. lactis Bl-04
+Bartonella grahamii as4aup
+Brucella microti CCM 4915
+Clostridium botulinum A2 str. Kyoto
+Rickettsia prowazekii str. Rp22
+Yersinia pestis D106004
+Yersinia pestis D182038
+Yersinia pestis Z176003
+Bacillus anthracis str. A0248
+Edwardsiella ictaluri 93-146
+Corynebacterium aurimucosum ATCC 700975
+Listeria monocytogenes 08-5923
+Bifidobacterium animalis subsp. lactis DSM 10140
+Aggregatibacter aphrophilus NJ8700
+Rickettsia africae ESF-5
+Teredinibacter turnerae T7901
+Exiguobacterium sp. AT1b
+Tolumonas auensis DSM 9187
+Lactobacillus plantarum JDM1
+Beutenbergia cavernae DSM 12333
+Dyadobacter fermentans DSM 18053
+Corynebacterium kroppenstedtii DSM 44385
+Mycoplasma mycoides subsp. capri str. GM12
+Rhizobium leguminosarum bv. trifolii WSM1325
+Micrococcus luteus NCTC 2665
+Desulfomicrobium baculatum DSM 4028
+Actinosynnema mirum DSM 43827
+Acidimicrobium ferrooxidans DSM 10331
+Capnocytophaga ochracea DSM 7271
+Francisella tularensis subsp. tularensis NE061598
+Kosmotoga olearia TBF 19.5.1
+Variovorax paradoxus S110
+Escherichia coli DH1
+Geobacillus sp. WCH70
+Brachybacterium faecium DSM 4810
+Ralstonia pickettii 12D
+Desulfovibrio salexigens DSM 2638
+Zunongwangia profunda SM-A87
+Paenibacillus sp. JDR-2
+Pectobacterium carotovorum subsp. carotovorum PC1
+Mycobacterium tuberculosis KZN 1435
+Geobacter sp. M21
+Escherichia coli 'BL21-Gold(DE3)pLysS AG'
+Mycoplasma mycoides subsp. capri str. GM12
+Methylotenera mobilis JLW8
+Flavobacteriaceae bacterium 3519-10
+Methylovorus glucosetrophus SIP3-4
+Candidatus Liberibacter asiaticus str. psy62
+Hirschia baltica ATCC 49814
+Helicobacter pylori 52
+Pedobacter heparinus DSM 2366
+Cryptobacterium curtum DSM 15641
+Saccharomonospora viridis DSM 43017
+Slackia heliotrinireducens DSM 20476
+Leptotrichia buccalis C-1013-b
+Kytococcus sedentarius DSM 20547
+Chitinophaga pinensis DSM 2588
+Catenulispora acidiphila DSM 44928
+Cyanothece sp. PCC 8802
+Jonesia denitrificans DSM 20603
+Kangiella koreensis DSM 16069
+Anaerococcus prevotii DSM 20548
+Robiginitalea biformata HTCC2501
+Chlamydophila pneumoniae LPCoLN
+Candidatus Accumulibacter phosphatis clade IIA str. UW-1
+Desulfotomaculum acetoxidans DSM 771
+Atopobium parvulum DSM 20469
+Zymomonas mobilis subsp. mobilis NCIMB 11163
+Eggerthella lenta DSM 2243
+Alicyclobacillus acidocaldarius subsp. acidocaldarius DSM 446
+Desulfohalobium retbaense DSM 5692
+Kribbella flavida DSM 17836
+Nakamurella multipartita DSM 44233
+Thermomonospora curvata DSM 43183
+Sebaldella termitidis ATCC 33386
+Meiothermus ruber DSM 1279
+Bifidobacterium dentium Bd1
+Candidatus Puniceispirillum marinum IMCC1322
+Anaplasma centrale str. Israel
+Stackebrandtia nassauensis DSM 44728
+Streptobacillus moniliformis DSM 12112
+Staphylococcus aureus subsp. aureus ED98
+Ammonifex degensii KC4
+Pectobacterium parmentieri WPP163
+Fibrobacter succinogenes subsp. succinogenes S85
+Paenibacillus sp. Y412MC10
+Geobacillus sp. Y412MC61
+Nitrosococcus halophilus Nc 4
+Halothiobacillus neapolitanus c2
+Gordonia bronchialis DSM 43247
+Haliangium ochraceum DSM 14365
+Vibrio antiquarius
+Rhodothermus marinus DSM 4252
+Streptosporangium roseum DSM 43021
+Sulfurospirillum deleyianum DSM 6946
+Thermanaerovibrio acidaminovorans DSM 6589
+Sanguibacter keddieii DSM 10542
+Veillonella parvula DSM 2008
+Xylanimonas cellulosilytica DSM 15894
+Sphaerobacter thermophilus DSM 20745
+Thermobaculum terrenum ATCC BAA-798
+Dehalococcoides mccartyi VS
+Lactococcus lactis subsp. lactis KF147
+Dickeya zeae Ech586
+Staphylococcus lugdunensis HKU09-01
+Thermotoga naphthophila RKU-10
+Candidatus Atelocyanobacterium thalassa isolate ALOHA
+Staphylococcus aureus 04-02981
+Escherichia coli O55:H7 str. CB9615
+Pirellula staleyi DSM 6068
+Gardnerella vaginalis 409-05
+Mageeibacillus indolicus UPII9-5
+Bifidobacterium animalis subsp. lactis BB-12
+Conexibacter woesei DSM 14684
+Acidaminococcus fermentans DSM 20731
+Geodermatophilus obscurus DSM 43160
+Mycoplasma gallisepticum str. R(high)
+Mycoplasma gallisepticum str. F
+Pantoea ananatis LMG 20103
+Campylobacter jejuni subsp. jejuni IA3902
+Klebsiella variicola At-22
+Allochromatium vinosum DSM 180
+Thioalkalivibrio sp. K90mix
+Enterobacter cloacae subsp. cloacae ATCC 13047
+Dehalococcoides mccartyi GT
+Thermocrinis albus DSM 14484
+Thermoanaerobacter italicus Ab9
+Sideroxydans lithotrophicus ES-1
+Denitrovibrio acetiphilus DSM 12809
+Escherichia coli IHE3034
+Propionibacterium acnes SK137
+Bacillus megaterium DSM 319
+Bacillus megaterium QM B1551
+Mycoplasma crocodyli MP145
+Aminobacterium colombiense DSM 12261
+Coraliomargarita akajimensis DSM 45221
+Prevotella ruminicola 23
+Desulfotalea psychrophila LSv54
+Aromatoleum aromaticum EbN1
+Bacteroides fragilis NCTC 9343
+Ehrlichia ruminantium str. Welgevonden
+Chlamydia abortus S26/3
+Lactobacillus sakei subsp. sakei 23K
+Pseudoalteromonas haloplanktis TAC125
+Pseudomonas entomophila L48
+Herminiimonas arsenicoxydans
+Bradyrhizobium sp. ORS 278
+Erwinia tasmaniensis Et1/99
+Candidatus Phytoplasma mali
+Escherichia fergusonii ATCC 35469
+Escherichia coli 55989
+Escherichia coli IAI1
+Escherichia coli IAI39
+Leuconostoc citreum KM20
+Mycobacterium liflandii 128FXT
+Lactobacillus casei BL23
+Lactobacillus rhamnosus GG
+Lactobacillus rhamnosus Lc 705
+Escherichia coli O127:H6 str. E2348/69
+Salmonella enterica subsp. enterica serovar Paratyphi A str. AKU_12601
+Streptococcus equi subsp. equi 4047
+Streptococcus equi subsp. zooepidemicus
+Pseudomonas aeruginosa LESB58
+Streptococcus pneumoniae ATCC 700669
+Mycobacterium leprae Br4923
+Listeria monocytogenes serotype 4b str. CLIP 80459
+Streptococcus suis SC84
+Streptococcus suis BM407
+Chlamydia trachomatis B/TZ1A828/OT
+Chlamydia trachomatis B/Jali20/OT
+Neisseria meningitidis 8013
+Salmonella enterica subsp. enterica serovar Typhimurium str. D23580
+Staphylococcus aureus subsp. aureus TW20
+Cronobacter turicensis z3032
+Citrobacter rodentium ICC168
+Escherichia coli 042
+Listeria seeligeri serovar 1/2b str. SLCC3954
+Streptococcus mitis B6
+Streptococcus gallolyticus UCN34
+Erwinia amylovora ATCC 49946
+Xenorhabdus bovienii SS-2004
+Erwinia pyrifoliae Ep1/96
+Haemophilus influenzae Rd KW20
+Mycoplasma genitalium G37
+Mycoplasma pneumoniae M129
+Vibrio vulnificus CMCP6
+Candidatus Blochmannia floridanus
+Bartonella quintana str. Toulouse
+Bartonella henselae str. Houston-1
+Acinetobacter sp. ADP1
+Yersinia pseudotuberculosis IP 32953
+Legionella pneumophila str. Paris
+Legionella pneumophila str. Lens
+Ehrlichia ruminantium str. Gardel
+Ehrlichia ruminantium str. Welgevonden
+Brucella abortus 2308
+Chromohalobacter salexigens DSM 3043
+Lawsonia intracellularis PHE/MN1-00
+Lactobacillus delbrueckii subsp. bulgaricus ATCC 11842 = JCM 1002
+Frankia alni ACN14a
+Listeria welshimeri serovar 6b str. SLCC5334
+Gramella forsetii KT0803
+Azoarcus sp. BH72
+Saccharopolyspora erythraea NRRL 2338
+Clavibacter michiganensis subsp. michiganensis NCPPB 382
+Synechococcus sp. WH 7803
+Synechococcus sp. RCC307
+Orientia tsutsugamushi str. Boryong
+Clostridium botulinum A str. ATCC 3502
+Mycoplasma agalactiae PG2
+Flavobacterium psychrophilum JIP02/86
+Gluconacetobacter diazotrophicus PA1 5
+Sorangium cellulosum So ce56
+Bordetella petrii
+Chlamydia trachomatis L2b/UCH-1/proctitis
+Chlamydia trachomatis 434/Bu
+Mycobacterium abscessus
+Clavibacter michiganensis subsp. sepedonicus
+Acinetobacter baumannii AYE
+Candidatus Phytoplasma australiense
+Corynebacterium urealyticum DSM 7109
+Proteus mirabilis HI4320
+Bordetella avium 197N
+Xanthomonas campestris pv. campestris
+Stenotrophomonas maltophilia K279a
+Methylobacterium extorquens DM4
+Neisseria meningitidis alpha14
+Clostridioides difficile CD196
+Mycoplasma hominis ATCC 23114
+Xanthomonas albilineans GPE PC73
+Mycoplasma agalactiae
+Salinibacter ruber M8
+Buchnera aphidicola BCc
+Escherichia coli O26:H11 str. 11368
+Sphingobium japonicum UT26S
+Streptomyces scabiei 87.22
+Shewanella violacea DSS12
+Helicobacter pylori B38
+Lactobacillus johnsonii FI9785
+Vibrio tasmaniensis LGP32
+Thermus thermophilus HB8
+Erwinia amylovora CFBP1430
+Streptococcus mutans NN2025
+Propionibacterium freudenreichii subsp. shermanii CIRM-BIA1
+Legionella longbeachae NSW150
+Streptococcus suis P1/7
+Helicobacter mustelae 12198
+Agrobacterium fabrum str. C58
+Rhizobium etli CFN 42
+Planctopirus limnophila DSM 3776
+Meiothermus silvanus DSM 9946
+Bacillus thuringiensis BMB171
+Desulfurivibrio alkaliphilus AHT 2
+Tsukamurella paurometabola DSM 20162
+Arcobacter nitrofigilis DSM 7299
+Moraxella catarrhalis BBH18
+Caulobacter segnis ATCC 21756
+Bifidobacterium longum subsp. longum JDM301
+Clostridium botulinum F str. 230613
+Arcanobacterium haemolyticum DSM 20595
+Streptomyces bingchenggensis BCW-1
+Syntrophothermus lipocalidus DSM 12680
+Truepera radiovictrix DSM 17093
+Geobacillus sp. C56-T3
+Chlamydia trachomatis D-EC
+Leuconostoc kimchii IMSNU 11154
+Shigella sonnei Ss046
+Legionella pneumophila str. Corby
+Leptospira interrogans serovar Lai str. 56601
+Mycoplasma gallisepticum str. R(low)
+Thiomonas intermedia K12
+Legionella pneumophila 2300/99 Alcoy
+Thermobispora bispora DSM 43833
+Chlamydia trachomatis E/150
+Chlamydia trachomatis G/9768
+Chlamydia trachomatis G/11222
+Chlamydia trachomatis G/11074
+Chlamydia trachomatis E/11023
+Bifidobacterium animalis subsp. lactis V9
+Waddlia chondrophila WSU 86-1044
+Chlamydia trachomatis G/9301
+Segniliparus rotundus DSM 44985
+Brachyspira murdochii DSM 12563
+Cellulomonas flavigena DSM 20109
+Burkholderia sp. CCGE1002
+Kyrpidia tusciae DSM 2912
+Starkeya novella DSM 506
+Thermincola potens JR
+Thermoanaerobacter mathranii subsp. mathranii str. A3
+Nocardiopsis dassonvillei subsp. dassonvillei DSM 43111
+Chlamydia trachomatis D-LC
+Methylotenera versatilis 301
+Candidatus Riesia pediculicola USDA
