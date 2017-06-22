@@ -319,8 +319,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=1
-    num_file=1
+    num_thread=4
+    num_file=4
     eprint('Search for '+str(len(genomes_IN))+' included genomes and '+str(len(genomes_NOT_IN))+' excluded genomes')
     eprint('Number threads '+str(num_thread))
     if len(genomes_IN)!=1:
@@ -329,7 +329,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     else: 
         sorted_genomes=genomes_IN    
 
-    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0][0]],PAM,non_PAM_motif_length)
+    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]][0],PAM,non_PAM_motif_length)
     eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     list_fasta=write_to_fasta_parallel(dic_seq,num_file)
 
