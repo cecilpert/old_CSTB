@@ -132,66 +132,6 @@ def construct_hitlist(dict_seq):
 
 def write_to_fasta_parallel(dic_seq,num_file): 
     '''Write sequences in dic_seq in a fasta file'''
-<<<<<<< HEAD
-    out=open('tmp/sgRNA.fa','w')
-    count=0
-    for seq in dic_seq: 
-        count+=1
-        out.write('>'+seq+'\n'+seq+'\n')
-    out.close()            
-
-def add_notin(organism_code,indexs_path,dic_seq): 
-    bowtie_command='bowtie2 -x'+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie.sam -L 13 -a --quiet'
-    os.system(bowtie_command)
-    #new_dic=treat_bowtie_not_in(dic_seq)
-    #return new_dic
-
-def add_in(bowtie_path,organism_code,indexs_path,dic_seq,genome,len_sgrna):  
-    bowtie_command='bowtie2 -x '+indexs_path+'2/'+organism_code+' -f tmp/sgRNA.fa -S tmp/results_bowtie.sam -L 13 -a --quiet'  
-    os.system(bowtie_command)
-    new_dic=treat_bowtie_in(dic_seq,genome,len_sgrna)   
-    return new_dic
-
-def treat_bowtie_not_in(dic_seq): 
-    res=open('tmp/results_bowtie.sam','r')
-    count=0
-    new_dic={}
-    for l in res: 
-        if l[0]!='@': 
-            if l.split('\t')[2]=='*':
-                seq=l.split('\t')[0]
-                new_dic[seq]=dic_seq[seq]
-    return new_dic  
-
-def treat_bowtie_in(dic_seq,genome,len_sgrna): 
-    res=open('tmp/results_bowtie.sam','r')
-    count=0
-    new_dic={}
-    for l in res: 
-        if l[0]!='@': 
-            if l.split('\t')[2]!='*':
-                l_split=l.split('\t')
-                cigar=l_split[5]
-                if cigar=='23M': 
-                    mm=l_split[-2]
-                    if mm.split(':')[-1]=='23': 
-                        seq=l_split[0]
-                        if seq not in new_dic: 
-                            new_dic[seq]=dic_seq[seq]
-                        if genome not in new_dic[seq]: 
-                            new_dic[seq][genome]=[]    
-                        seq_align=l_split[9]
-                        if seq != seq_align: 
-                            strand='+'
-                        else:
-                            strand='-'  
-                        start=l_split[3]
-                        end=int(start)+len_sgrna-1
-                        coord=strand+'('+start+','+str(end)+')'
-                        new_dic[seq][genome].append(coord)
-    return new_dic                    
-   
-=======
     list_seq=list(dic_seq.keys())
     sep=len(dic_seq)//num_file
     list_dic_fasta=[]
@@ -313,7 +253,6 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
 
     return total_results
                  
->>>>>>> parallel
 def Scorage_triage(hitlist):
     '''
     Scoring of the hits found, where positive scores mean stronger sgRNA constructs.
@@ -321,11 +260,7 @@ def Scorage_triage(hitlist):
     '''
     for hit in hitlist: 
         for genome in hit.genomes_Dict: 
-<<<<<<< HEAD
-            hit_score+=len(hit.genomes_Dict[genome])
-=======
             hit.score+=len(hit.genomes_Dict[genome])
->>>>>>> parallel
     sorted_hitlist=sorted(hitlist,key=lambda hit:hit.score,reverse=True)
     return(sorted_hitlist)
   
@@ -398,10 +333,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     list_fasta=write_to_fasta_parallel(dic_seq,num_file)
 
-    sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
-    add_notin(dict_org_code[sorted_genomes_notin[0]],indexs_path,dic_seq)
-
-    '''if len(genomes_NOT_IN)>=1: 
+    if len(genomes_NOT_IN)>=1: 
         sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
         for genome in sorted_genomes_notin: 
             dic_seq=add_notin_parallel(num_thread,list_fasta,dict_org_code[genome][0],dic_seq)
@@ -436,11 +368,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     ##Output formatting for printing to interface
     output_interface(hit_list[:100],genomes_NOT_IN)
 
-<<<<<<< HEAD
-    #os.system('rm -r tmp')'''
-=======
     os.system('rm -r tmp')
->>>>>>> parallel
 
 
             
