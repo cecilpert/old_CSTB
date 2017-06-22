@@ -1,6 +1,6 @@
 import sys
 from ete3 import Tree,NCBITaxa
-from functionbase import construct_dict_organism_assemblyref
+import json
 
 """
 Last change : 5pm 11 dec. 2016
@@ -34,31 +34,36 @@ def get_json(node):
 
 if __name__ == '__main__':
 
-	Dict=construct_dict_organism_assemblyref()	##This Dictionary contains as keys the names of all the bacterial genomes in the database.
+	Dict=json.load(open('reference_genomes/genome_ref_taxid.json','r'))	##This Dictionary contains as keys the names of all the bacterial genomes in the database.
 	
 	ncbi = NCBITaxa()
 	allspe = []
-	
-	# get taxid from species name list, then save them into a list
-	#file = open(sys.argv[1],'r')
-	for sp in Dict.keys():
-		ID = ncbi.get_name_translator([sp])
-		ID = int(ID[sp][0])
-		allspe.append(ID)
-	#file.close()
 
+	list_ID=[]
+
+	invert_dic={}
+	
+	for sp in Dict:
+		ID = int(Dict[sp][1])
+		allspe.append(ID)
+		invert_dic[ID]=sp		
+	
 	# Build topologic tree
 	treeTopo = ncbi.get_topology(allspe)
 
+
 	# Convert to Newick tree as string format
 	treeNwk = treeTopo.write(format_root_node=True, format=8)
+	#print(treeNwk)
 
 	# build tree object from Newick format string
 	newTree = Tree(treeNwk, format=1)	# in = str
-	
 	# get nodes and leaves name
 	for i in newTree.iter_descendants():
-		i.name = ncbi.get_taxid_translator([int(i.name)])[int(i.name)]
+		if int(i.name) in invert_dic: 
+			i.name=invert_dic[int(i.name)]
+		else: 	
+			i.name = ncbi.get_taxid_translator([int(i.name)])[int(i.name)]
 	# get root's name
 	newTree.name = ncbi.get_taxid_translator([int(newTree.name)])[int(newTree.name)]
 	

@@ -5,11 +5,9 @@ from threading import Thread
 from multiprocessing import Process
 from queue import Queue
 import time,argparse,os,sys,re,random
-import cProfile
 import subprocess
 import pickle
-import numpy
-from scipy.cluster.hierarchy import single
+import json
 
 
 """
@@ -442,7 +440,7 @@ def main():
     indexs_path = './reference_genomes/index2'
     fasta_path = './reference_genomes/fasta'
     bowtie_path='./bowtie-1.1.2/bowtie'
-    dict_organism_code = construct_dict_organism_assemblyref()   ##Keys: organism, values: genomic reference (ncbi)
+    dict_organism_code = json.load(open('reference_genomes/genome_ref_taxid.json','r'))  ##Keys: organism, values: genomic reference (ncbi)
     dict_code_organism=intervert(dict_organism_code)      ##Keys/values interchanged relative to line above
     organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
     eprint('--- CSTB complete genomes ---')

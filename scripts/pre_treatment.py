@@ -2,6 +2,8 @@ import os
 from Bio import SeqIO
 from ete3 import NCBITaxa
 import pickle 
+from functionbase import reverse_complement
+import re, json
 
 class Lineage: 
     def __init__(self):
@@ -16,21 +18,22 @@ def dic_download(ref_bacteria):
     print('DOWNLOAD')
     out=open('to_download.sh','w')
     taxfile=open('scripts/taxfile.txt','w')
-    reffile=open('scripts/reference_genomes_ftp.txt','w')
     count=0
     f=open(ref_bacteria,'r')
     cmd=''
     dic_taxid={}
+    dic_ref={}
     for l in f: 
         count+=1
         l_split=l.rstrip().split('\t')
         name=l_split[7]
+        short_ref=l_split[0]
         taxfile.write(name+'\n')
         ftp_link=l_split[19]
-        reffile.write(name+'\t'+ftp_link+'\n')
         ref=ftp_link.split('/')[-1]
         taxid=l_split[5]
         dic_taxid[ref]=taxid
+        dic_ref[name+' '+short_ref]=[ref,taxid]
         ftp_suffix=ftp_link.split('/')[-1]+'_genomic.fna'
         genome_link='https://'+ftp_link.split('//')[1]+'/'+ftp_suffix
         if ftp_suffix not in os.listdir('reference_genomes/fasta'): 
@@ -41,8 +44,8 @@ def dic_download(ref_bacteria):
     out.write(cmd)
     out.close()     
     taxfile.close()
-    reffile.close()
     f.close()
+    json.dump(dic_ref,open('reference_genomes/genome_ref_taxid.json','w'),indent=4)
     os.system('bash to_download.sh')
     os.system('rm to_download.sh')
     return dic_taxid 
@@ -50,9 +53,15 @@ def dic_download(ref_bacteria):
 
 def eliminate_plasmides(list_ref):     
     print('PLASMIDES')
+    count=0
     for organism_code in list_ref: 
+        count+=1
+        print(count)
         fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
-        genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
+        genome_seqrecord=[]
+        for seq_record in SeqIO.parse(fasta_file,'fasta'):
+            if 'plasmid' not in seq_record.description: 
+                genome_seqrecord.append(seq_record)
         SeqIO.write(genome_seqrecord,'reference_genomes/fasta/'+organism_code+'_genomic.fna','fasta')
 
 def index_bowtie_blast(list_ref): 
@@ -75,7 +84,7 @@ def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_
     '''
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
-    genome_seq=str(genome_seqrecord.seq)
+    genome_seq=genome_seqrecord.seq
     seq_dict={}
     for indice in seq_list_forward: 
         end=indice+len(PAM)+non_PAM_motif_length
@@ -95,6 +104,23 @@ def store_positions(seq_list_forward,seq_list_reverse,organism_code,PAM,non_PAM_
     
     pickle.dump(seq_dict,open("reference_genomes/pre_calculate/"+organism_code+"_dicpos.pic","wb"))
 
+
+def build_expression(seq):
+    result = ''
+    iupac_code={'R':'[AG]', 'Y':'[CT]', 'S':'[GC]', 'W':'[AT]', 'K':'[GT]', 'M':'[AC]', 'B':'[CGT]', 'D':'[AGT]', 'H':'[ACT]', 'V':'[ACG]', 'N':'[ACGT]'}
+    for c in seq:
+        if c in iupac_code:
+            result = result + iupac_code[c]
+        else:
+            result = result + c
+    return result
+
+def find_PAM(seq,motif): 
+    list_seq=[]
+    reg_exp = build_expression(motif) 
+    indices = [m.start() for m in re.finditer('(?=' + reg_exp + ')', seq, re.I)]
+    return indices    
+
 def find_sgRNA(organism_code,PAM,non_PAM_motif_length):
     fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
     genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
@@ -110,7 +136,10 @@ def find_sgRNA(organism_code,PAM,non_PAM_motif_length):
 
 def pre_calculate(list_ref): 
     print('PRECALCULATE')
+    count=0
     for ref in list_ref: 
+        count+=1
+        print(count)
         if ref+'_dicpos.pic' not in os.listdir('reference_genomes/pre_calculate'): 
             list_forward,list_reverse=find_sgRNA(ref,'NGG',20)
             store_positions(list_forward,list_reverse,ref,'NGG',20)
@@ -170,11 +199,25 @@ def distance_matrix(dic_taxid):
     dic_lineage=create_lineage_objects(dic_taxid)
     dist_dic=distance_dic(dic_lineage)
     pickle.dump(dist_dic, open( "reference_genomes/distance_dic.pickle", "wb" ) )
-    
 
-ref_bacteria='more_genomes/assembly_summary_bacteria_1000.txt'
+def test(dic_taxid): 
+    print('CHECK FOR :')
+    for ref in dic_taxid: 
+        count=0
+        for seqrecord in SeqIO.parse('reference_genomes/fasta/'+ref+'_genomic.fna','fasta'): 
+            count+=1    
+        if count>1: 
+            print(ref)
+
+def json_tree(): 
+    print('JSON TREE')
+    os.system('python3 scripts/tax2json.py')            
+
+ref_bacteria='more_genomes/assembly_summary_bacteria_500.txt'
 dic_taxid=dic_download(ref_bacteria)
 #eliminate_plasmides(dic_taxid)
+#test(dic_taxid)
 #index_bowtie_blast(dic_taxid)
 #pre_calculate(dic_taxid)
 distance_matrix(dic_taxid)
+json_tree()
