@@ -7,6 +7,7 @@ from queue import Queue
 import time,argparse,os,sys,re,random
 import cProfile
 import subprocess
+import json
 
 
 """
@@ -101,7 +102,7 @@ def sort_genomes(list_genomes,fasta_path,dict_org_code):
     '''Sort genomes by ascending size'''
     tmp_list=[]
     for genome in list_genomes: 
-        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome] +'_genomic.fna', 'fasta'))
+        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'))
         tmp_list.append((len(fasta_genome.seq),genome))
     genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0])]   ##Sort by ascending size
     return(genomes_sorted)
@@ -110,7 +111,7 @@ def sort_genomes_desc(list_genomes,fasta_path,dict_org_code):
     '''Sort genomes by ascending size'''
     tmp_list=[]
     for genome in list_genomes: 
-        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome] +'_genomic.fna', 'fasta'))
+        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'))
         tmp_list.append((len(fasta_genome.seq),genome))
     genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0],reverse=True)]   ##Sort by ascending size
     return(genomes_sorted)    
@@ -371,8 +372,8 @@ def output_interface(hit_list,genomes_NOT_IN):
     json+=']'    
     not_in_str=','.join(genomes_NOT_IN)  
 
-    #print(json)
-    #print(not_in_str)
+    print(json)
+    print(not_in_str)
 
 
 def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,dict_org_code):
@@ -383,8 +384,8 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     start_time=time.time()
     os.system('mkdir tmp')
     start = time.time()
-    num_thread=1
-    num_file=1
+    num_thread=4
+    num_file=4
     eprint('Search for '+str(len(genomes_IN))+' included genomes and '+str(len(genomes_NOT_IN))+' excluded genomes')
     eprint('Number threads '+str(num_thread))
     if len(genomes_IN)!=1:
@@ -393,7 +394,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     else: 
         sorted_genomes=genomes_IN    
 
-    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]],PAM,non_PAM_motif_length)
+    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]][0],PAM,non_PAM_motif_length)
     eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     list_fasta=write_to_fasta_parallel(dic_seq,num_file)
 
@@ -403,7 +404,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
     '''if len(genomes_NOT_IN)>=1: 
         sorted_genomes_notin=sort_genomes_desc(genomes_NOT_IN,fasta_path,dict_org_code)
         for genome in sorted_genomes_notin: 
-            dic_seq=add_notin_parallel(num_thread,list_fasta,dict_org_code[genome],dic_seq)
+            dic_seq=add_notin_parallel(num_thread,list_fasta,dict_org_code[genome][0],dic_seq)
             if len(dic_seq)==0: 
                 print("Program terminated&No hits remain after exclude genome "+genome)
                 end_time=time.time()
@@ -415,7 +416,7 @@ def construction(indexs_path,fasta_path,bowtie_path,PAM,non_PAM_motif_length,gen
    
     if len(sorted_genomes)>1: 
         for genome in sorted_genomes[1:]:
-            dic_seq=add_in_parallel(num_thread,list_fasta,dict_org_code[genome],dic_seq,genome,len(PAM)+non_PAM_motif_length)
+            dic_seq=add_in_parallel(num_thread,list_fasta,dict_org_code[genome][0],dic_seq,genome,len(PAM)+non_PAM_motif_length)
             if len(dic_seq)==0: 
                 print("Program terminated&No hits remain after include genome "+genome)
                 end_time=time.time()
@@ -448,8 +449,7 @@ def main():
     indexs_path = './reference_genomes/index2'
     fasta_path = './reference_genomes/fasta'
     bowtie_path='./bowtie-1.1.2/bowtie'
-    dict_organism_code = construct_dict_organism_assemblyref()   ##Keys: organism, values: genomic reference (ncbi)
-    dict_code_organism=intervert(dict_organism_code)      ##Keys/values interchanged relative to line above
+    dict_organism_code = json.load(open('reference_genomes/genome_ref_taxid.json','r'))   ##Keys: organism, values: genomic reference (ncbi)   ##Keys/values interchanged relative to line above
     organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
     eprint('---- CSTB complete genomes ----')
     eprint('Parallelisation')
