@@ -1,3 +1,4 @@
+from __future__ import print_function
 import time,os
 from Bio import SeqIO
 
@@ -5,7 +6,7 @@ def construct_dict_organism_assemblyref():
     try:
         genomes = open('./scripts/reference_genomes_ftp.txt','r')
     except:
-        print("Problème à l'ouverture du fichier")
+        print("File opening error")
         exit(1)
 
     dic = {}
@@ -25,7 +26,7 @@ def construct_list_organism_ftp():
     try:
         genomes = open('./scripts/reference_genomes_ftp.txt','r')
     except:
-        print("Problème à l'ouverture du fichier")
+        print("File opening error")
         exit(1)
     org_assembly_list=[]
     for genome in genomes:
@@ -95,24 +96,24 @@ def reverse_complement_mismatch(i,len_sgrna):
     new_mismatch=':'.join(n_i)
     return new_mismatch
 
-def corrected_mismatch(mm,len_sgrna,strand): 
+def corrected_mismatch(mm,len_sgrna,strand):
     mm_split=mm.split(':')
-    mm_split[0]=str(len_sgrna-int(mm_split[0]))  
-    if strand=='+': 
+    mm_split[0]=str(len_sgrna-int(mm_split[0]))
+    if strand=='+':
         mm_split[1]='>'.join([reverse_complement(j) for j in mm_split[1].split('>')])
-    else: 
-        mm_split[1]='>'.join([j for j in mm_split[1].split('>')])    
+    else:
+        mm_split[1]='>'.join([j for j in mm_split[1].split('>')])
     new_mismatch=':'.join(mm_split)
-    return new_mismatch    
+    return new_mismatch
 
 def cumulative_length(genomes_in,dict_org_code):
     '''Function used for profiling the code, return the cumulative length of all genomes given'''
     cumulative_length=0
-    for genome in genomes_in: 
+    for genome in genomes_in:
         count=0
         code=dict_org_code[genome]
         for seq_record in SeqIO.parse('reference_genomes/fasta/'+code+'_genomic.fna','fasta'):
-            if count==0: 
+            if count==0:
                 cumulative_length=cumulative_length+len(seq_record)
-            count+=1 
-    return cumulative_length    
+            count+=1
+    return cumulative_length

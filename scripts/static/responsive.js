@@ -11,22 +11,22 @@ function verifyFasta(seq){
 			if(nbre_seq>1){
 				error='More than 1 sequence'
 				return [error,0]
-			}		
-		}		
+			}
+		}
 		else{
 			for (j=0;j<sequence_split[i].length;j++){
 				if (!(authorized.includes(sequence_split[i][j]))){
 					error="Wrong sequence. Only nucleotide characters authorized"
-					return [error,0] 
+					return [error,0]
 				}
 				else{
 					seq_finale+=sequence_split[i][j]
 				}
 			}
 
-		}		
+		}
 	}
-	return [error,seq_finale] 
+	return [error,seq_finale]
 }
 
 function loadFile(id){
@@ -38,7 +38,7 @@ function loadFile(id){
 			if ( input.files && input.files[0] ) {
 				file = input.files[0]; // The file
 				fr = new FileReader(); // FileReader instance
-				
+
 				fr.readAsText( file );
 				fr.onload = function () {
 					// Do stuff on onload, use fr.result for contents of file
@@ -50,7 +50,7 @@ function loadFile(id){
 				// Handle errors here
 				alert( "File not selected or browser incompatible." )
 			}
-}	
+}
 
 function readTextFile(file)	//Found at http://stackoverflow.com/questions/14446447/javascript-read-local-text-file
 {
@@ -73,8 +73,11 @@ function readTextFile(file)	//Found at http://stackoverflow.com/questions/144464
     rawFile.send(null);
 }
 
-function display_download(file)
-{
+function display_download(tag) {
+    onDownload(tag)
+    return;
+
+
     var rawFile = new XMLHttpRequest();
     rawFile.open("GET", file, false);
     rawFile.onreadystatechange = function ()
@@ -92,8 +95,9 @@ function display_download(file)
 }
 
 function onDownload(data) {
-     var to_display=encodeURIComponent(data)
-     $('#result-file').html('<a href="data:application/txt;charset=utf-8,'+to_display+'"download="results.txt">Download results</a>')                                     
+    //var to_display=encodeURIComponent(data)
+    //$('#result-file').html('<a href="data:application/txt;charset=utf-8,'+to_display+'"download="results.txt">Download results</a>')
+    $('#result-file').html('<a href="download/' + data +'" >Download results</a>')
 }
 
 // Modif begin
@@ -127,7 +131,7 @@ $(document).ready(function(){
 //TREE IMPLEMENTATION
 
 	var includeIdList = []
-	var excludeIdList = []		
+	var excludeIdList = []
 	var includeNameList = []	// this is the list contain the names of IN organisms
 	var excludeNameList = []	// this is the list contain the names of NOT IN organisms
 	var disabledExc = []
@@ -235,24 +239,24 @@ $(document).ready(function(){
 	var genomes_IN=[];
 	var genomes_NOTIN=[]
 	//Which store the target and excluded organisms.
-	
+
 	//This array will hold a copy of filled genomes_IN for output generation.
 	var conserve_genomes_IN=[];
-	
+
 	//This array will store all the selectable organisms on initiation.
 	var choices=[];
 	//
-	
+
 	//This will store data callbacks from HTTP requests.
 	var res='';
 	var seq='';
 	var resultFound=1;
-	
+
 	$("#INList option").each(function(){
 	choices.push($(this).text());
 	});
-	
-	
+
+
 	$("#rstbtn").click(function(){	//Resets the interface to what it looks like when it is initially loaded.
 		var genomes_IN=[];
 		var genomes_NOTIN=[];
@@ -291,7 +295,7 @@ $(document).ready(function(){
 	$('#search_notin').val('');
 	$('#seq').val('');
 
-	
+
 	$("#submit_trees").click(function(){
 		genomes_IN=includeNameList;
 		genomes_NOTIN=excludeNameList;
@@ -321,11 +325,11 @@ $(document).ready(function(){
 		}
 		$("#submitbtn").show();
 	});
-	
+
 	//Set hovertext for genomes IN selection box
 	$("#INList").attr('title', 'You can select multiple options at once');
 	//
-	
+
 	$("#AddIN").click(function(){
 		$("#submit_trees").hide();
 		$("#reset_trees").hide();
@@ -342,8 +346,8 @@ $(document).ready(function(){
 			$("#InView").append(n);	//Adds the contents of 'names' array into the 'InView'
 			$("#INList option:contains('"+names[i]+"')").remove();
 		};
-	});	
-	
+	});
+
 	$("#RemoveIN").click(function(){
 		var names=[];
 		$("#InView option:selected").each(function(){
@@ -355,8 +359,8 @@ $(document).ready(function(){
 			$("#INList").append(n);
 			$("#InView option:contains('"+names[i]+"')").remove();
 		};
-	});	
-	
+	});
+
 	$("#ValIN").click(function(){
 		var foo=[];
 		$("#IN").hide();
@@ -376,7 +380,7 @@ $(document).ready(function(){
 		};
 		$("#NOTIN").show();
 	});
-	
+
 	$("#AddNOTIN").click(function(){
 		$("#ShowNOTIN").show();
 		$("#ValNOTIN").show();
@@ -392,13 +396,13 @@ $(document).ready(function(){
 			$("#NOTINList option:contains('"+names[i]+"')").remove();
 		};
 		});
-		
+
 	$("#NoneNOTIN").click(function(){
 		$("#RemoveNOTIN").hide();
 		$("#ShowNOTIN").show();
 		$("#ValNOTIN").show();
 	});
-	
+
 	$("#RemoveNOTIN").click(function(){
 		var names=[];
 		$("#NotInView option:selected").each(function(){
@@ -410,9 +414,9 @@ $(document).ready(function(){
 			$("#NOTINList").append(n);
 			$("#NotInView option:contains('"+names[i]+"')").remove();
 		};
-	});	
-	
-	
+	});
+
+
 	$("#ValNOTIN").click(function(){
 		var foo=[];
 		$("#NOTIN").hide();
@@ -427,8 +431,8 @@ $(document).ready(function(){
 		}
 		$("#submitbtn").show();
 	});
-		
-		
+
+
 	$("#submitbtn").click(function(){
 		$("#Searchoptions").hide();
 		$("#AllG").hide();
@@ -444,7 +448,7 @@ $(document).ready(function(){
 		function(data) {
 			if (data.length==3){
 				res=data[0];
-				not_in=data[1]; 
+				not_in=data[1];
 				tag=data[2];
 			}
 			else {
@@ -460,10 +464,10 @@ $(document).ready(function(){
 					out+='<tr><th>Genomes: </th><th>Coordinates: </th></tr>';
 					for (j=0;j<obj[i].in.length;j++){
 						out+='<tr><td>'+obj[i].in[j].org+'</td> <td>'+obj[i].in[j].coords+'</td></tr>';
-					}	
-				}	
+					}
+				}
 			$("#ResTable").html(out);
-			display_download("./static/results"+tag+".txt")	//Link to where the output file is held; used for downloading the results.
+			display_download(tag)	//Link to where the output file is held; used for downloading the results.
 			//Same file used for AllG and SpecG options.
 			}
 			else{		//Display no matching results output.
@@ -477,7 +481,7 @@ $(document).ready(function(){
 	});
 
 
-	//**SPECGENE CODE**// 
+	//**SPECGENE CODE**//
 
 	var sequence='';
 	var gref='';
@@ -495,19 +499,19 @@ $(document).ready(function(){
 	$("#INList_sg option").each(function(){
 		choices.push($(this).text());
 	});
-	
+
 	$('#load-file').click(function(){
 		$('a[name=error-load]').hide()
 		fastaname=$("#fasta-file").val()
 
 		if(fastaname==''){
-			$('a[name=error-load]').show()	
+			$('a[name=error-load]').show()
 			$('a[name=error-load]').html('No file selected')
 			return
 		}
 		else{
 			loadFile('#fasta-file')
-		}	
+		}
 	});
 
 	$('#next').click(function(){
@@ -525,7 +529,7 @@ $(document).ready(function(){
 		// YOLO
 		$('#ShowSeq').html("<h5 class='w3-container w3-light-green'>Your query:</h5><div class='w3-margin'>"+sequence+"</div>")
 		//A embellir+mettre dans le HTML?
-		
+
 		$('#spec_tips').hide()
 		$('a[name=error-fasta]').hide()
 		$("#Sequenceupload").hide()
@@ -549,7 +553,7 @@ $(document).ready(function(){
 		else{
 			$('#GREF').hide()
 			$('#IN_sg').show()
-		}	
+		}
 		document.getElementById("showGref").innerHTML = '<b> Your origin genome : </b>'+gref;
 		$("#INList_sg option:contains('"+gref+"')").remove()
 	});
@@ -607,7 +611,7 @@ $(document).ready(function(){
 			$("#NOTINList_sg").append(n);
 		};
 		$("#NOTIN_sg").show();
-	});	
+	});
 
 	$("#AddNOTIN_sg").click(function(){
 		$("#ShowNOTIN_sg").show();
@@ -624,13 +628,13 @@ $(document).ready(function(){
 			$("#NOTINList_sg option:contains('"+names[i]+"')").remove();
 		};
 	});
-	
+
 	$("#NoneNOTIN_sg").click(function(){
 		$("#RemoveNOTIN_sg").hide();
 		$("#ShowNOTIN_sg").show();
 		$("#ValNOTIN_sg").show();
 	});
-	
+
 	$("#RemoveNOTIN_sg").click(function(){
 		var names=[];
 		$("#NotInView_sg option:selected").each(function(){
@@ -659,7 +663,7 @@ $(document).ready(function(){
 
 
 	var out_specGene=''	//Holds the HTML Table content for output display.
-	
+
 
 	$('#submit_sg').click(function(){
 
@@ -673,7 +677,7 @@ $(document).ready(function(){
 		var sgrna_length=$("select[name='sgrna-length'] > option:selected").val();
 		var mismatch_og=$("select[name='max-mismatch-og'] > option:selected").val();
 		var mismatch_nin=$("select[name='max-mismatch-notin'] > option:selected").val();
-		//ERRORS 
+		//ERRORS
 		var errors=false
 
 		try{
@@ -703,7 +707,7 @@ $(document).ready(function(){
 			return
 		}
 
-		$('#SpecG').hide(); 
+		$('#SpecG').hide();
 		$('#Waiting').show();
 		var N=JSON.stringify(n_gene);
 		var PID=JSON.stringify(percent_id);
@@ -714,7 +718,7 @@ $(document).ready(function(){
 		var MISMATCH=JSON.stringify(max_mismatch);
 		var PAM=JSON.stringify(pam);
 		var LENGTH=JSON.stringify(sgrna_length);
-		 
+
 		$.getJSON($SCRIPT_ROOT+'/specific_gene',{seq:SEQ,gin:GIN,gnotin:GNOTIN,gref:GREF,n:N,pid:PID,max_mismatch:MISMATCH,pam:PAM,sgrna_length:LENGTH,max_mm_og:mismatch_og,max_mm_notin:mismatch_nin},function(data){
 			if (data.length==3){	//If the Spec Gene search program terminated, the return data type is not 'string' but 'object'.
 				res_specGene=data[0]
@@ -731,7 +735,7 @@ $(document).ready(function(){
 					Not_In_search=1
 				}
 
-				if (Multiple_search==1){ //there is more than 1 genome 
+				if (Multiple_search==1){ //there is more than 1 genome
 
 					for (i=0;i<obj_specGene.length;i++){
 						var other_orgs=obj_specGene[i].otherorgs.split("%")
@@ -739,8 +743,8 @@ $(document).ready(function(){
 						out_specGene+='<tr><th>Genomes: '+'</th><th>Coordinates: '+'</th></tr>';
 						out_specGene+='<tr><td>'+obj_specGene[i].reforg+'</td><td>'+obj_specGene[i].on_off+'</td><tr>';
 
-						
-						
+
+
 						for (j=0;j<other_orgs.length;j++){
 							focus_org=other_orgs[j]
 							var occs=obj_specGene[i].other_on_off[0][focus_org]	//Brackets [] allows access to name stored in variable focus_org.
@@ -765,18 +769,18 @@ $(document).ready(function(){
 					}
 				}
 
-				else{ //there is only one genome 
+				else{ //there is only one genome
 
 					for (i=0;i<obj_specGene.length;i++){
 						out_specGene+='<tr><th>Construct: '+obj_specGene[i].refsequence+'</th></tr>';
 						out_specGene+='<tr><td>Reference: '+obj_specGene[i].reforg+'\t Coordinates: '+obj_specGene[i].on_off+'</td></tr>';
-						
+
 						if (Not_In_search==1){	//Not In Results Display
 							out_specGene+='<tr><th>Not In</th></tr>';
 							var Not_Ins=obj_specGene[i].not_in_genomes.split("%")
 							var Not_in_write=''
 							for(k=0;k<Not_Ins.length;k++){
-								
+
 								if (obj_specGene[i].not_in[0][Not_Ins[k]]==""){
 									Not_in_write='<b>Present, exact match</b>'
 								}
@@ -790,10 +794,10 @@ $(document).ready(function(){
 							}
 						}
 					}
-				
+
 				}
 				$("#ResTable").html(out_specGene);
-				display_download("./static/results"+tag+".txt")	//Link to where the output file is held; used for downloading the results.
+				display_download(tag)	//Link to where the output file is held; used for downloading the results.
 				//Same file used for AllG and SpecG options.
 
 			}
@@ -802,13 +806,13 @@ $(document).ready(function(){
 				$("#Result").show();
 				$("#output").text(data[0]+'\n'+data[1]);
 			}
-		});	
+		});
 	genomes_IN=[];	//These ready the lists
 	genomes_NOTIN=[];	//for the next request.
 	});
-		
-	
-});	
+
+
+});
 
 function reloadpage() {
     location.reload();
