@@ -12,4 +12,4 @@ scripts/reference_genomes_ftp.txt
 to_download.sh
 scripts/static/results*
 resultsTag.txt
-reference_genomes_120/
+reference_genomes*
