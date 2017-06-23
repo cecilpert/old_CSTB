@@ -224,7 +224,7 @@ def genome_file_for_list():
     out.close()    
 
 
-ref_bacteria='more_genomes/assembly_summary_bacteria_1000.txt'
+ref_bacteria='more_genomes/assembly_summary_bacteria_10.txt'
 dic_taxid=dic_download(ref_bacteria)
 '''eliminate_plasmides(dic_taxid)
 test(dic_taxid)'''
