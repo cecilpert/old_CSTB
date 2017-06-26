@@ -93,33 +93,35 @@ def construct_in(fasta_path, organism, organism_code, PAM, non_PAM_motif_length)
     Same function as construct_seq_dict except the dictionnary will not be like value=list of coordinates. It add the information about organism with dictionnary values like : dictionnary with key=organism and value=list of coordinates in this organism
     '''
     fasta_file=fasta_path + '/' + organism_code +'_genomic.fna'
-    genome_seqrecord=next(SeqIO.parse(fasta_file, 'fasta'))
-    genome_seq=genome_seqrecord.seq
+
     sgRNA=''
     for i in range(non_PAM_motif_length):
         sgRNA+='N'
     sgRNA+=PAM
-    seq_list_forward=find_sgRNA_seq(str(genome_seq),reverse_complement(sgRNA))
-    seq_list_reverse=find_sgRNA_seq(str(genome_seq),sgRNA)
 
     seq_dict={}
 
-    for indice in seq_list_forward:
-        end=indice+len(PAM)+non_PAM_motif_length
-        seq=genome_seq[indice:end].reverse_complement()
-        seq=str(seq)
-        if seq not in seq_dict:
-            seq_dict[seq]={organism:[]}
-        seq_dict[seq][organism].append('+('+str(indice+1)+','+str(end)+')')
+    for genome_seqrecord in SeqIO.parse(fasta_file,'fasta'): 
+        genome_seq=genome_seqrecord.seq
+        ref=genome_seqrecord.id
+        seq_list_forward=find_sgRNA_seq(str(genome_seq),reverse_complement(sgRNA))
+        seq_list_reverse=find_sgRNA_seq(str(genome_seq),sgRNA)
 
-    for indice in seq_list_reverse:
-        end=indice+len(PAM)+non_PAM_motif_length
-        seq=genome_seq[indice:end]
-        seq=str(seq)
-        if seq not in seq_dict:
-            seq_dict[seq]={organism:[]}
-        seq_dict[seq][organism].append('-('+str(indice+1)+','+str(end)+')')
+        for indice in seq_list_forward:
+            end=indice+len(PAM)+non_PAM_motif_length
+            seq=genome_seq[indice:end].reverse_complement()
+            seq=str(seq)
+            if seq not in seq_dict:
+                seq_dict[seq]={organism:[]}
+            seq_dict[seq][organism].append(ref+':+('+str(indice+1)+','+str(end)+')')
 
+        for indice in seq_list_reverse:
+            end=indice+len(PAM)+non_PAM_motif_length
+            seq=genome_seq[indice:end]
+            seq=str(seq)
+            if seq not in seq_dict:
+                seq_dict[seq]={organism:[]}
+            seq_dict[seq][organism].append(ref+':-('+str(indice+1)+','+str(end)+')')
 
     return seq_dict
 
@@ -128,8 +130,10 @@ def sort_genomes(list_genomes,fasta_path,dict_org_code):
     '''Sort genomes by ascending size'''
     tmp_list=[]
     for genome in list_genomes:
-        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'))
-        tmp_list.append((len(fasta_genome.seq),genome))
+        len_genome=0
+        for seq_record in SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'): 
+            len_genome+=len(seq_record)
+        tmp_list.append((len_genome,genome))
     genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0])]   ##Sort by ascending size
     return(genomes_sorted)
 
@@ -137,8 +141,10 @@ def sort_genomes_desc(list_genomes,fasta_path,dict_org_code):
     '''Sort genomes by ascending size'''
     tmp_list=[]
     for genome in list_genomes:
-        fasta_genome=next(SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'))
-        tmp_list.append((len(fasta_genome.seq),genome))
+        len_genome=0
+        for seq_record in SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'): 
+            len_genome+=len(seq_record)
+        tmp_list.append((len_genome,genome))
     genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0],reverse=True)]   ##Sort by ascending size
     return(genomes_sorted)
 
@@ -147,6 +153,7 @@ def construct_hitlist(dict_seq):
     Will construct an object Hit for each sequence in dictionnary, and store all Hits in a list.
     These function only fill the attributes sequence and genomes_Dict of the object
     '''
+    eprint('-- Construct final list --')
     hits_list=[]
     count=0
     for seq in dict_seq:
@@ -185,7 +192,7 @@ def write_to_fasta_parallel(dic_seq, num_file):
 
 def run_bowtie(organism_code,fasta_file,num):
     resultFile = WORKDIR + '/results_bowtie' + num + '.sam'
-    bowtie_tab=['bowtie2','-x ' + REF_GEN_DIR + '/index2/' + organism_code + ' -f ' + fasta_file + ' -S ' + resultFile + ' -L 13 -a --quiet ']
+    bowtie_tab=['bowtie2','-x ' + REF_GEN_DIR + '/index2/' + organism_code + '/' + organism_code + ' -f ' + fasta_file + ' -S ' + resultFile + ' -L 13 -a --quiet ']
     subprocess.call(bowtie_tab)
     return resultFile
 
@@ -251,6 +258,7 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
                         cigar=l_split[5]
                         if cigar=='23M':
                             mm=l_split[-2]
+                            ref=l_split[2]
                             if mm.split(':')[-1]=='23':
                                 seq=l_split[0]
                                 if seq not in dic_result:
@@ -264,7 +272,7 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
                                     strand='-'
                                 start=l_split[3]
                                 end=int(start)+len_sgrna-1
-                                coord=strand+'('+start+','+str(end)+')'
+                                coord=ref+':'+strand+'('+start+','+str(end)+')'
                                 dic_result[seq][genome].append(coord)
             e['results']=dic_result
             res.close()
@@ -291,6 +299,7 @@ def Scorage_triage(hitlist):
     Scoring of the hits found, where positive scores mean stronger sgRNA constructs.
     Complete Hit objects with score and sort the hits with this scores.
     '''
+    eprint('-- Sort hits --')
     for hit in hitlist:
         for genome in hit.genomes_Dict:
             hit.score+=len(hit.genomes_Dict[genome])
@@ -306,6 +315,7 @@ def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
     # Change new tag to uuid
     # Specify results folder
     #output=open('./scripts/static/results'+new_tag+'.txt','w')
+    eprint('-- Write results to file --')
     responseResultFile = WORKDIR + '/results_allgenome.txt'
     output=open(responseResultFile,'w')
     not_in=True
@@ -331,6 +341,7 @@ def output_interface(hit_list):
     Reformat the results to print them in json format.
     There will be parsed in javascript to display it in interface.
     '''
+    eprint('-- Construct results for graphical interface --')
     json_result_file=WORKDIR+'/results.json'
     #print(json_result_file)
     list_dic=[]
@@ -404,6 +415,28 @@ def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_ord
 
     return order_for_research(list_in,list_notin,new_genome,dict_org_code,dist_dic,list_order)
 
+def unzip_files(list_genomes,dict_org_code):
+    eprint('-- Unzip selected genomes --')
+    cmd1='gzip -d '
+    cmd2='gzip -r -d '
+    for genome in list_genomes:
+        ref=dict_org_code[genome][0] 
+        cmd1+=REF_GEN_DIR+'/fasta/'+ref+'_genomic.fna.gz '
+        cmd2+=REF_GEN_DIR+'/index2/'+ref+' '
+    eprint(cmd1)    
+    #os.system(cmd1)
+    #os.system(cmd2)   
+
+def zip_files(list_genomes,dict_org_code):
+    eprint('-- Re-zip selected genomes --')
+    cmd1='gzip '
+    cmd2='gzip -r '
+    for genome in list_genomes:
+        ref=dict_org_code[genome][0] 
+        cmd1+=REF_GEN_DIR+'/fasta/'+ref+'_genomic.fna '
+        cmd2+=REF_GEN_DIR+'/index2/'+ref+' '      
+    os.system(cmd1)
+    os.system(cmd2)   
 
 def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,dict_org_code):
     '''
@@ -412,10 +445,12 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
     '''
     start_time=time.time()
     start = time.time()
-    num_thread=1
-    num_file=1
-    eprint('Search for',len(genomes_IN),"included genomes and",len(genomes_NOT_IN),'excluded genomes')
-    eprint(num_thread,'threads')
+    num_thread=4
+    num_file=4
+    eprint('## Search for',len(genomes_IN),"included genomes and",len(genomes_NOT_IN),'excluded genomes with',num_thread,'thread(s) ##')
+
+    unzip_files(genomes_IN+genomes_NOT_IN,dict_org_code)
+
     if len(genomes_IN)!=1:
         sorted_genomes=sort_genomes(genomes_IN,fasta_path,dict_org_code)
     else:
@@ -426,6 +461,7 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
     else:
         sorted_genomes_notin=[]
 
+    eprint('-- RESEARCH --')    
     dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]][0],PAM,non_PAM_motif_length)
     eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     list_fasta=write_to_fasta_parallel(dic_seq,num_file)
@@ -435,6 +471,7 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
     with open(distFile, 'r') as f:
         dist_dic = json.load(f)
     #dist_dic=json.load(open(pickleFile, "rb" ))
+    eprint('-- Determinate order for research -- ')
     list_order=order_for_research(sorted_genomes[1:],sorted_genomes_notin,sorted_genomes[0],dict_org_code,dist_dic,[])
 
     for i in list_order:
@@ -446,6 +483,7 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
                 end_time=time.time()
                 total_time=end_time-start_time
                 eprint('TIME',total_time)
+                zip_files(genomes_NOT_IN+genomes_IN,dict_org_code)
                 sys.exit(1)
             eprint(str(len(dic_seq))+' hits remain after exclude genome '+genome)
             list_fasta=write_to_fasta_parallel(dic_seq,num_file)
@@ -457,17 +495,20 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
                 end_time=time.time()
                 total_time=end_time-start_time
                 eprint('TIME',total_time)
+                zip_files(genomes_NOT_IN+genomes_IN,dict_org_code)
                 sys.exit(1)
             eprint(str(len(dic_seq))+' hits remain after include genome '+genome)
             list_fasta=write_to_fasta_parallel(dic_seq,num_file)
 
+    zip_files(genomes_IN+genomes_NOT_IN,dict_org_code)       
+    print(len(dic_seq))        
 
     hit_list=construct_hitlist(dic_seq)
 
     hit_list=Scorage_triage(hit_list)
 
     ##Put results in local file for access via the interface.
-    write_to_file(genomes_IN,genomes_NOT_IN,hit_list[:1000],PAM,non_PAM_motif_length)
+    write_to_file(genomes_IN,genomes_NOT_IN,hit_list[:10000],PAM,non_PAM_motif_length)
 
     ##Output formatting for printing to interface
     output_interface(hit_list[:100])
@@ -492,7 +533,7 @@ def main():
     global WORKDIR
     WORKDIR = setupWorkSpace(parameters)
 
-    eprint('--- CSTB complete genomes ---')
+    eprint('---- CSTB complete genomes ----')
     eprint('Parallelisation with distance matrix')
     construction(fasta_path,PAM,non_PAM_motif_length,organisms_selected,organisms_excluded,dict_organism_code)
     end_time=time.time()

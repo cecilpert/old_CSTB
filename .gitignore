@@ -12,6 +12,6 @@ scripts/reference_genomes_ftp.txt
 to_download.sh
 scripts/static/results*
 resultsTag.txt
-scripts/pre_calculate.py
-reference_genomes_120/
 reference_genomes*
+scripts/static/sortedgenomes.txt 
+scripts/static/jsontree.json

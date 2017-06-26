@@ -61,24 +61,16 @@ def ret():
 			res=f.read()
 		print(res)
 		not_in=lines[0].strip()
-		return jsonify(res,not_in,tag)
+		number_hits=lines[2].strip()
+		return jsonify(res,not_in,tag,number_hits)
 
 
 @app.route('/download', defaults={'path': ''})
 @app.route('/download/<path:path>')
 def downloadResultFile(path):
 	print ('Trying to server download request w/ key : %s' % path)
-	filePath='/Users/cecilehilpert/CSTB/'+path+'/results_allgenome.txt'
-	#filePath = CACHE_FOLDER + '/' + path + '/results_allgenome.txt'
-	#print(filePath)
-	return send_file(filePath, mimetype='plain/text')
-
-
-#@app.route('/download/aea6c1e6-5811-11e7-8c72-842b2b716ace')
-#def downloadResultFile():
-	#print(str(request.args))
-#	print("download route")
-#	print(request.args.lists()[0])
+	filePath=CACHE_FOLDER+'/'+path+'/results_allgenome.txt'
+	return send_file(filePath, mimetype='plaintext')
 
 
 @app.route('/specific_gene')

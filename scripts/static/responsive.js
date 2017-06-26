@@ -430,20 +430,33 @@ $(document).ready(function(){
 		var SGRNA=$("select[name='sgrna-length_AllG'] > option:selected").val();
 		$.getJSON($SCRIPT_ROOT+'/allgenomes',{gi:GIN,gni:GNOTIN,max_mismatch:MISMATCH,pam:PAM,sgrna_length:SGRNA},
 		function(data) {
-			window.alert('DONE')
-			if (data.length==3){
+			if (data.length==4){
 				res=data[0];
-				window.alert(res)
 				not_in=data[1];
 				tag=data[2];
+				number_hits=data[3]
 			}
 			else {
 			resultFound=0;
 			}
 			if(resultFound==1){
 				var obj=JSON.parse(res);
-				window.alert(obj.length)
-				var out='<tr><th colspan=2>All hits are absent (based on Bowtie2 alignment) from excluded genomes : '+not_in+'</th></tr><tr><td colspan=2></td></th>';
+				var out='<tr><th colspan=2>' + number_hits + ' hits have been found for this research' ;
+				if (parseInt(number_hits)>100){
+					out+='. Only the best 100 are written below. Download the result file to get more hits'
+
+				} 
+				if (parseInt(number_hits)>10000){
+					out+=' (only the best 10 000 are written to this file)'
+
+				}
+				out+='.</th></tr><tr><td colspan=2></td></th>' ; 
+				if (not_in!=''){
+					out+='<tr><th colspan=2>All hits are absent (based on Bowtie2 alignment) from excluded genome(s) : '+not_in+'</th></tr><tr><td colspan=2></td></th>';
+				}
+				else{
+					out+='<tr><th colspan=2>No excluded genomes selected. </th></tr><tr><td colspan=2></td></th>'
+				}
 				$("#Waiting").fadeOut();
 				$("#Result").show();
 				for (i=0;i<obj.length;i++){

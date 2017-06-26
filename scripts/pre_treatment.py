@@ -18,13 +18,11 @@ def dic_download(ref_bacteria):
     print('DOWNLOAD')
     out=open('to_download.sh','w')
     taxfile=open('scripts/taxfile.txt','w')
-    count=0
     f=open(ref_bacteria,'r')
     cmd=''
     dic_taxid={}
     dic_ref={}
     for l in f: 
-        count+=1
         l_split=l.rstrip().split('\t')
         name=l_split[7]
         short_ref=l_split[0]
@@ -68,12 +66,16 @@ def index_bowtie_blast(list_ref):
     print('INDEX')
     out=open('index.sh','w')
     for ref in list_ref: 
-        if ref+'.1.bt2' not in os.listdir('reference_genomes/index2'): 
-            cmd='bowtie2-build reference_genomes/fasta/'+ref+'_genomic.fna reference_genomes/index2/'+ref
+        if ref not in os.listdir('reference_genomes/index2'): 
+            #cmd='gunzip reference_genomes/fasta/'+ftp_suffix+'.gz\n'
+            cmd='mkdir reference_genomes/index2/'+ref+'\n'
+            cmd+='bowtie2-build reference_genomes/fasta/'+ref+'_genomic.fna reference_genomes/index2/'+ref+'/'+ref+'\n'
+            #cmd+='gzip reference_genomes/fasta/'+ftp_suffix+'\n'
+            cmd+='gzip -r reference_genomes/index2/'+ref+'\n'
             out.write(cmd+'\n')
-        if ref+'_genomic.fna.nin' not in os.listdir('reference_genomes/fasta'): 
+        '''if ref+'_genomic.fna.nin' not in os.listdir('reference_genomes/fasta'): 
             cmd='makeblastdb -in reference_genomes/fasta/'+ref+'_genomic.fna -dbtype nucl'  
-            out.write(cmd+'\n')     
+            out.write(cmd+'\n')'''     
     out.close()   
     os.system('bash index.sh')
     os.system('rm index.sh')  
@@ -198,7 +200,7 @@ def distance_matrix(dic_taxid):
     print('DISTANCE MATRIX')
     dic_lineage=create_lineage_objects(dic_taxid)
     dist_dic=distance_dic(dic_lineage)
-    pickle.dump(dist_dic, open( "reference_genomes/distance_dic.pickle", "wb" ) )
+    json.dump(dist_dic, open( "reference_genomes/distance_dic.json", "w" ),indent=4 )
 
 def test(dic_taxid): 
     print('CHECK FOR :')
@@ -223,13 +225,18 @@ def genome_file_for_list():
         out.write('<OPTION>'+i+'\n')
     out.close()    
 
+def zip_fasta(): 
+    cmd='gzip -r reference_genomes/fasta' 
+    os.system(cmd)     
 
-ref_bacteria='more_genomes/assembly_summary_bacteria_10.txt'
+
+ref_bacteria='more_genomes/assembly_summary_bacteria_ref_genomes.txt'
 dic_taxid=dic_download(ref_bacteria)
-'''eliminate_plasmides(dic_taxid)
-test(dic_taxid)'''
+#eliminate_plasmides(dic_taxid)
+#test(dic_taxid)
 index_bowtie_blast(dic_taxid)
-pre_calculate(dic_taxid)
+zip_fasta()
+#pre_calculate(dic_taxid)
 distance_matrix(dic_taxid)
 json_tree()
 genome_file_for_list()
