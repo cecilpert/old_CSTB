@@ -1,10 +1,10 @@
-from __future__ import print_function
+#from __future__ import print_function
 from Bio.Seq import Seq
 from Bio import SeqIO
 from functionbase import *
 from threading import Thread
 from multiprocessing import Process
-from Queue import Queue
+from queue import Queue
 import time,argparse,os,sys,re,random
 import subprocess
 import pickle
@@ -52,6 +52,7 @@ def args_gestion():
     args=parser.parse_args()
     ##
     return args
+
 
 def setupApplication(parameters, dict_organism_code):
     organisms_selected=parameters.gi.split('+')
@@ -304,7 +305,6 @@ def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
     #new_tag=timestamp()
     # Change new tag to uuid
     # Specify results folder
-    print(TASK_KEY)
     #output=open('./scripts/static/results'+new_tag+'.txt','w')
     responseResultFile = WORKDIR + '/results_allgenome.txt'
     output=open(responseResultFile,'w')
@@ -325,26 +325,28 @@ def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
             output.write('\t'+','.join(hit.genomes_Dict[gi]))
         output.write('\n')
     output.close()
-def output_interface(hit_list,genomes_NOT_IN):
+
+def output_interface(hit_list):
     '''
     Reformat the results to print them in json format.
     There will be parsed in javascript to display it in interface.
     '''
-    json='['
-    for hit in hit_list:
-        json+='{"sequence":"'+hit.sequence+'","in":['
-        for genome in hit.genomes_Dict:
-            json+='{"org":"'+genome+'","coords":"'
-            coords=';'.join(hit.genomes_Dict[genome])
-            json+=coords+'"},'
-        json=json.rstrip(',')
-        json+=']},'
-    json=json.rstrip(',')
-    json+=']'
-    not_in_str=','.join(genomes_NOT_IN)
+    json_result_file=WORKDIR+'/results.json'
+    #print(json_result_file)
+    list_dic=[]
 
-    print(json)
-    print(not_in_str)
+    for hit in hit_list:
+        dic_json={'sequence':hit.sequence,'occurences':[]}
+        list_coords=[]
+        for genome in hit.genomes_Dict: 
+            dic_coords={'org':genome,'coords':hit.genomes_Dict[genome]}
+            list_coords.append(dic_coords)
+        dic_json['occurences']=list_coords    
+        list_dic.append(dic_json)
+
+    
+    with open(json_result_file,'w') as f: 
+        json.dump(list_dic,f)
 
 
 def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_order):
@@ -468,7 +470,7 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
     write_to_file(genomes_IN,genomes_NOT_IN,hit_list[:1000],PAM,non_PAM_motif_length)
 
     ##Output formatting for printing to interface
-    output_interface(hit_list[:100],genomes_NOT_IN)
+    output_interface(hit_list[:100])
 
 def main():
 
@@ -485,6 +487,8 @@ def main():
     dict_organism_code = readOrganismCode(REF_GEN_DIR + '/genome_ref_taxid.json')  ##Keys: organism, values: genomic reference (ncbi)
    # organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
     organisms_selected, organisms_excluded, PAM, non_PAM_motif_length = setupApplication(parameters, dict_organism_code)
+    print(','.join(organisms_excluded))
+    print(TASK_KEY)
     global WORKDIR
     WORKDIR = setupWorkSpace(parameters)
 

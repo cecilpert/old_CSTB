@@ -76,22 +76,6 @@ function readTextFile(file)	//Found at http://stackoverflow.com/questions/144464
 function display_download(tag) {
     onDownload(tag)
     return;
-
-
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
-    rawFile.onreadystatechange = function ()
-    {
-        if(rawFile.readyState === 4)
-        {
-            if(rawFile.status === 200 || rawFile.status == 0)
-            {
-                var allText = rawFile.responseText;
-                onDownload(allText)
-            }
-        }
-    }
-    rawFile.send(null);
 }
 
 function onDownload(data) {
@@ -446,8 +430,10 @@ $(document).ready(function(){
 		var SGRNA=$("select[name='sgrna-length_AllG'] > option:selected").val();
 		$.getJSON($SCRIPT_ROOT+'/allgenomes',{gi:GIN,gni:GNOTIN,max_mismatch:MISMATCH,pam:PAM,sgrna_length:SGRNA},
 		function(data) {
+			window.alert('DONE')
 			if (data.length==3){
 				res=data[0];
+				window.alert(res)
 				not_in=data[1];
 				tag=data[2];
 			}
@@ -456,14 +442,15 @@ $(document).ready(function(){
 			}
 			if(resultFound==1){
 				var obj=JSON.parse(res);
+				window.alert(obj.length)
 				var out='<tr><th colspan=2>All hits are absent (based on Bowtie2 alignment) from excluded genomes : '+not_in+'</th></tr><tr><td colspan=2></td></th>';
 				$("#Waiting").fadeOut();
 				$("#Result").show();
 				for (i=0;i<obj.length;i++){
-					out+='<tr><th colspan=2>Construct: '+obj[i].sequence+'</th></tr>';
+					out+='<tr><th colspan=2>Sequence: '+obj[i].sequence+'</th></tr>';
 					out+='<tr><th>Genomes: </th><th>Coordinates: </th></tr>';
-					for (j=0;j<obj[i].in.length;j++){
-						out+='<tr><td>'+obj[i].in[j].org+'</td> <td>'+obj[i].in[j].coords+'</td></tr>';
+					for (j=0;j<obj[i].occurences.length;j++){
+						out+='<tr><td>'+obj[i].occurences[j].org+'</td> <td>'+obj[i].occurences[j].coords+'</td></tr>';
 					}
 				}
 			$("#ResTable").html(out);
@@ -720,6 +707,7 @@ $(document).ready(function(){
 		var LENGTH=JSON.stringify(sgrna_length);
 
 		$.getJSON($SCRIPT_ROOT+'/specific_gene',{seq:SEQ,gin:GIN,gnotin:GNOTIN,gref:GREF,n:N,pid:PID,max_mismatch:MISMATCH,pam:PAM,sgrna_length:LENGTH,max_mm_og:mismatch_og,max_mm_notin:mismatch_nin},function(data){
+			
 			if (data.length==3){	//If the Spec Gene search program terminated, the return data type is not 'string' but 'object'.
 				res_specGene=data[0]
 				tag=data[1]
