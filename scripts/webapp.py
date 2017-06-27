@@ -124,7 +124,7 @@ def ret_specific_gene():
 	mm_nin=mm_nin.replace('"','')
 
 	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/specificgene.py -seq " + seq + " -gi " + gin + " -gni " + gnotin + " -n " + n + " -ip " + percent_id + " -mm " + max_mismatch + " -pam " + pam + " -sl " + sgrna_length + " -mmog " + mm_og + " -mmnin " + mm_nin
-
+	print(command)
 	output=os.popen(command,'r')
 	all_lines=output.readlines()	##List containing all print statements in specific gene script.
 	#print(all_lines)

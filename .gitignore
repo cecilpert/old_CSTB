@@ -13,5 +13,6 @@ to_download.sh
 scripts/static/results*
 resultsTag.txt
 reference_genomes*
-scripts/static/sortedgenomes.txt 
-scripts/static/jsontree.json
+sortedgenomes.txt
+scripts/static/jsontree*
+scripts/static/sortedgenomes*

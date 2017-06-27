@@ -34,10 +34,11 @@ def dic_download(ref_bacteria):
         dic_ref[name+' '+short_ref]=[ref,taxid]
         ftp_suffix=ftp_link.split('/')[-1]+'_genomic.fna'
         genome_link='https://'+ftp_link.split('//')[1]+'/'+ftp_suffix
-        if ftp_suffix not in os.listdir('reference_genomes/fasta'): 
+        if ref not in os.listdir('reference_genomes/fasta'): 
+            cmd+='mkdir reference_genomes/fasta/'+ref+'\n'
             cmd+='curl --remote-name --remote-time '+genome_link+'.gz\n'
-            cmd+='mv '+ftp_suffix+'.gz reference_genomes/fasta/\n'
-            cmd+='gunzip reference_genomes/fasta/'+ftp_suffix+'.gz\n'
+            cmd+='mv '+ftp_suffix+'.gz reference_genomes/fasta/'+ref+'/\n'
+            cmd+='gunzip reference_genomes/fasta/'+ref+'/'+ftp_suffix+'.gz\n'
                 
     out.write(cmd)
     out.close()     
@@ -66,16 +67,14 @@ def index_bowtie_blast(list_ref):
     print('INDEX')
     out=open('index.sh','w')
     for ref in list_ref: 
+        cmd=''
         if ref not in os.listdir('reference_genomes/index2'): 
             #cmd='gunzip reference_genomes/fasta/'+ftp_suffix+'.gz\n'
-            cmd='mkdir reference_genomes/index2/'+ref+'\n'
-            cmd+='bowtie2-build reference_genomes/fasta/'+ref+'_genomic.fna reference_genomes/index2/'+ref+'/'+ref+'\n'
-            #cmd+='gzip reference_genomes/fasta/'+ftp_suffix+'\n'
-            cmd+='gzip -r reference_genomes/index2/'+ref+'\n'
-            out.write(cmd+'\n')
-        '''if ref+'_genomic.fna.nin' not in os.listdir('reference_genomes/fasta'): 
-            cmd='makeblastdb -in reference_genomes/fasta/'+ref+'_genomic.fna -dbtype nucl'  
-            out.write(cmd+'\n')'''     
+            cmd+='mkdir reference_genomes/index2/'+ref+'\n'
+            cmd+='bowtie2-build reference_genomes/fasta/'+ref+'/'+ref+'_genomic.fna reference_genomes/index2/'+ref+'/'+ref+'\n'
+        if ref+'_genomic.fna.nin.gz' not in os.listdir('reference_genomes/fasta/'+ref): 
+            cmd+='makeblastdb -in reference_genomes/fasta/'+ref+'/'+ref+'_genomic.fna -dbtype nucl\n'  
+        out.write(cmd+'\n')   
     out.close()   
     os.system('bash index.sh')
     os.system('rm index.sh')  
@@ -225,18 +224,31 @@ def genome_file_for_list():
         out.write('<OPTION>'+i+'\n')
     out.close()    
 
-def zip_fasta(): 
-    cmd='gzip -r reference_genomes/fasta' 
-    os.system(cmd)     
+def compress(): 
+    out=open('compress.sh','w')
+    for i in os.listdir('reference_genomes/fasta/'): 
+        if i != '.DS_Store': 
+            if i.split('.')[-1]!='gz': 
+                out.write('tar -zcvf reference_genomes/fasta/'+i+'.tar.gz reference_genomes/fasta/'+i+'\n')
+                out.write('rm -r reference_genomes/fasta/'+i+'\n')
+    for j in os.listdir('reference_genomes/index2/'): 
+        if j != '.DS_Store': 
+            if j.split('.')[-1]!='gz': 
+                out.write('tar -zcvf reference_genomes/index2/'+j+'.tar.gz reference_genomes/index2/'+j+'\n')
+                out.write('rm -r reference_genomes/index2/'+j+'\n')           
+
+    out.close()
+    os.system('bash compress.sh')
+    os.system('rm compress.sh')           
 
 
 ref_bacteria='more_genomes/assembly_summary_bacteria_ref_genomes.txt'
 dic_taxid=dic_download(ref_bacteria)
 #eliminate_plasmides(dic_taxid)
 #test(dic_taxid)
-index_bowtie_blast(dic_taxid)
-zip_fasta()
+#index_bowtie_blast(dic_taxid)
 #pre_calculate(dic_taxid)
-distance_matrix(dic_taxid)
-json_tree()
-genome_file_for_list()
+#distance_matrix(dic_taxid)
+#json_tree()
+#genome_file_for_list()
+compress()
