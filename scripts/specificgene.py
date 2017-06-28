@@ -5,10 +5,10 @@ from Bio.Blast import NCBIXML
 from Bio import motifs
 from Bio.Alphabet import IUPAC
 from functionbase import reverse_complement,construct_dict_organism_assemblyref,build_expression,reverse_complement_mismatch,timestamp,cumulative_length,corrected_mismatch
-import argparse, os, sys, pickle, time, re
-import cProfile 
-import uuid
-from allgenomes import readOrganismCode, setupWorkSpace, sort_genomes, sort_genomes_desc
+import argparse, os, sys, time, re, subprocess, uuid, json
+from allgenomes import readOrganismCode, setupWorkSpace, sort_genomes, sort_genomes_desc, find_sgRNA_seq, order_for_research
+from queue import Queue
+from threading import Thread
 
 TASK_KEY = str(uuid.uuid1())
 WORKDIR = None
@@ -18,13 +18,10 @@ REF_GEN_DIR = None
 class Hit():
     def __init__(self,sequence,in_dic):
         self.sequence=sequence
-        self.in_dic=in_dic
-        self.notin_dic={}
+        self.genomes_Dict=in_dic
         self.score=0
 
 ### METHODS FOR THE ARGUMENTS ###
-
-
 
 def args_gestion():
     '''Take and treat arguments that user gives in command line'''
@@ -56,28 +53,12 @@ def setupApplication(parameters,dict_organism_code):
     return parameters.seq,organisms_selected,organisms_excluded,non_PAM_motif_length,parameters.n,parameters.ip,parameters.pam
 
 
-
 def eprint(*args, **kwargs):
     '''For printing only on the terminal'''
     print(*args, file=sys.stderr, **kwargs)
 
 
 ### METHODS FOR THE RESEARCH ###
-
-def find_sgRNA_seq(seq,pam,size_sgRNA,organism):
-    '''Find all sgRNA sequence using regular expression'''
-    dict_seq={}
-    pam=reverse_complement(pam)
-    reg_exp = build_expression(pam) 
-    indices = [m.start() for m in re.finditer('(?=' + reg_exp + ')', seq, re.I)]
-    len_to_search=size_sgRNA+len(pam)
-    for i in indices: 
-        if i + len_to_search<=len(seq): 
-            seq_sgRNA=seq[i:i+len_to_search]
-            if seq_sgRNA not in dict_seq: 
-                dict_seq[seq_sgRNA]=''
-    return dict_seq
-
 
 def blast_to_find_all_genes(query_seq, genomes, identity_percentage_min,dic_genome):
     '''Launch blastn between query sequence and reference genome and all in genomes (separately).
@@ -87,8 +68,7 @@ def blast_to_find_all_genes(query_seq, genomes, identity_percentage_min,dic_geno
     If there is several blast hits, we only take the first (as defined by Blast)
     '''
 
-    list_genes=[]   
-    eprint(genomes)
+    dic_genes={} 
     size_gene=len(query_seq)
     file_query=WORKDIR+'/blast_request'
     with open(file_query,'w') as f:
@@ -124,8 +104,7 @@ def blast_to_find_all_genes(query_seq, genomes, identity_percentage_min,dic_geno
                             gene_start = first_hsp.sbjct_start - first_hsp.query_start
                             gene_end = first_hsp.sbjct_end + (size_gene - first_hsp.query_end) - 1
                                 
-                        sublist=[query_seq,gene_start,gene_end]
-                        list_genes.append(sublist)
+                        dic_genes[genomes[i]]=(gene_start,gene_end)
 
                     else: #other in genomes, now we take the hit subject as seq for sgRNA searching  
                         if first_hsp.sbjct_start > first_hsp.sbjct_end: #reverse strand 
@@ -136,109 +115,10 @@ def blast_to_find_all_genes(query_seq, genomes, identity_percentage_min,dic_geno
                             gene_start=first_hsp.sbjct_start-1
                             gene_end=first_hsp.sbjct_end-1  
                             strand='+'
-                        sublist=[first_hsp.sbjct,gene_start,gene_end]
-                        list_genes.append(sublist)                                                  
-    return list_genes   
+                        dic_genes[genomes[i]]=(gene_start,gene_end)                                                 
+    return dic_genes 
 
                                            
-
-def search_in_origin_genome(dic_sgRNA_seq, genome_ref, bowtie_path, path_reference_genomes, gene_start,
-                            gene_end,pam,sgrna_length, mismatch_og):
-    '''Align each sgRNA found in origin genome with this genome (using Bowtie) to found if it match at several places.
-    Treat the results with treat_bowtie_results_in function'''
-    out=open('tmp/sgRNA_in.fa','w')
-    bowtie_index = path_reference_genomes + "index1/" + genome_ref
-    for seq in dic_sgRNA_seq:
-        out.write('>'+seq+'\n'+seq+'\n')
-    out.close()    
-    bowtie_command = bowtie_path + "bowtie --quiet -a -v "+str(mismatch_og)+" "+ bowtie_index + " -f tmp/sgRNA_in.fa tmp/bowtie_results.txt"  # align the sgRNA against its genome of origin
-    #Bowtie options: -a=show all results, , -v=max number of tolerated mismatches to reference
-    os.system(bowtie_command)
-    dic_results=treat_bowtie_results_in(pam,sgrna_length,gene_start,gene_end)
-    return dic_results
-    
-
-def treat_bowtie_results_in(pam,sgrna_length,gene_start,gene_end):
-    '''Parse the result file from bowtie to create a dictionnary like key=sequence searched and value=coordinates found in the format (sequence_reference;strand;start;end;onGene or OffGene;mismatch)
-    '''
-    f=open('tmp/bowtie_results.txt','r')
-    dic_results={}
-    forbidden_pos=[]
-    for i in range(len(pam)): 
-        forbidden_pos.append(str(i))
-    for l in f: 
-        col=l.rstrip().split('\t')
-        seq=col[0]
-        strand=col[1]
-        gene=col[2]
-        start=int(col[3])
-        end=start+len(pam)+int(sgrna_length)-1
-        try: 
-            mm=col[7]
-        except:
-            mm=False
-        wrongmismatches=False
-        if mm: 
-            corrected_mm=''
-            mm_list=mm.split(',')  
-            for mm_el in mm_list: 
-                if mm_el.split(':')[0] in forbidden_pos: 
-                    corrected_el='Mismatch in PAM'
-                else:   
-                    corrected_el=corrected_mismatch(mm_el,sgrna_length+len(pam),strand)
-                corrected_mm=corrected_el+','
-            mm=corrected_mm.rstrip(',') 
-        else: 
-            mm='0'           
-        if sgRNA_on_gene(gene_start,gene_end,start,end): 
-            on_gene='OnGene'
-        else: 
-            on_gene='OffGene'   
-        if seq not in dic_results:
-            dic_results[seq]=['('+gene+';'+strand+';'+str(start)+';'+str(end)+';'+on_gene+';'+mm+')']
-        else: 
-            dic_results[seq].append('('+gene+';'+strand+';'+str(start)+';'+str(end)+';'+on_gene+';'+mm+')')           
-    return dic_results
-
-def treat_bowtie_results_not_in(pam,sgrna_length):
-    '''Parse the result file from bowtie to create a dictionnary like key=sequence searched and value=coordinates found in the format (sequence_reference;strand;start;end;mismatch)
-    '''
-    f=open('tmp/bowtie_results_not_in.txt','r')
-    dic_results={}
-    forbidden_pos=[]
-    for i in range(len(pam)): 
-        forbidden_pos.append(str(i))
-    for l in f: 
-        col=l.rstrip().split('\t')
-        seq=col[0]
-        strand=col[1]
-        gene=col[2]
-        start=int(col[3])
-        end=start+len(pam)+int(sgrna_length)-1
-        try: 
-            mm=col[7]
-        except:
-            mm=False
-        wrongmismatches=False
-        if mm: 
-            corrected_mm=''
-            mm_list=mm.split(',')  
-            for mm_el in mm_list: 
-                if mm_el.split(':')[0] in forbidden_pos: 
-                    corrected_el='Mismatch in PAM'
-                else:   
-                    corrected_el=corrected_mismatch(mm_el,sgrna_length+len(pam),strand)
-                corrected_mm=corrected_el+','
-            mm=corrected_mm.rstrip(',') 
-        else: 
-            mm='0'              
-        if seq not in dic_results:
-            dic_results[seq]=['('+gene+';'+strand+';'+str(start)+';'+str(end)+';'+mm+')']
-        else: 
-            dic_results[seq].append('('+gene+';'+strand+';'+str(start)+';'+str(end)+';'+mm+')')           
-    return dic_results
-
-
 def sgRNA_on_gene(start_gene, end_gene, start_sgRNA, end_sgRNA):
     '''Check if a sgRNA is in a gene (with both genomics positions)'''
     on_gene = False
@@ -247,184 +127,37 @@ def sgRNA_on_gene(start_gene, end_gene, start_sgRNA, end_sgRNA):
     return on_gene
 
 
-def find_common_sgRNA(genome_list,max_mismatches,dic_sgRNA,bowtie_path,path_reference_genomes,dic_genome,gene_list,pam,sgrna_length):
-    '''Find the common sgRNAs between two or more sequences, with maximum mismatches given by user. '''
-    for i in range(len(genome_list)):
-        genome=genome_list[i]
-        gene_start=gene_list[i][1]
-        gene_end=gene_list[i][2] 
-        new_dic={}
-        bowtie_index = path_reference_genomes + "index1/" + dic_genome[genome]
-        bowtie_command = bowtie_path + "bowtie --quiet -a -v "+str(max_mismatches)+" "+ bowtie_index + " -f tmp/sgRNA_in.fa tmp/bowtie_results.txt"  # align the sgRNA against its genome of origin
-        os.system(bowtie_command)
-        dic_results=treat_bowtie_results_in(pam,sgrna_length,gene_start,gene_end)
-        out=open('tmp/sgRNA_in.fa','w')
-        for seq in dic_results: 
-            out.write('>'+seq+'\n'+seq+'\n')
-            new_dic[seq]=dic_sgRNA[seq]
-            new_dic[seq][genome]=dic_results[seq]
-        out.close()    
-        dic_sgRNA=new_dic
-        if not dic_sgRNA:  # Empty list evaluates to False
-            print("Program terminated& Adding organism "+genome+" gave an absence of common occurences. Maybe try to do the research with less organisms, with a further position in research or with a shorter sgRNA. \n")
-            sys.exit(1)
-
-    return(dic_sgRNA)    
-
-
-def search_sgRNA_not_in(hitlist,not_in_genome_list,bowtie_path,mismatch,path_reference_genomes,dic_genome,pam,sgrna_length):
-    '''For each excluded organism : 
-    - do bowtie research with common sgRNA previously found
-    - treat this results with treat_bowtie_results_not_in function, that give a result dictionnary like key=sequence and value=coordinates found by bowtie
-    - complete the objects Hits with complete_hitlist function'''
-    for genome in not_in_genome_list:
-        bowtie_index=path_reference_genomes+'index1/'+dic_genome[genome]
-        bowtie_command=bowtie_path + "bowtie --quiet -a -v "+str(mismatch)+" "+ bowtie_index + " -f tmp/sgRNA_in.fa tmp/bowtie_results_not_in.txt"  # align the sgRNA against its genome of origin
-        os.system(bowtie_command)
-        dic_results=treat_bowtie_results_not_in(pam,sgrna_length)
-        hitlist=complete_hitlist(hitlist,dic_results,genome)
-    return hitlist
-
-def complete_hitlist(hitlist,dic_results,organism): 
-    '''Complete all Hits objects with informations about not in research. Fill the attributåe notin_dic'''
-    for hit in hitlist: 
-        if hit.sequence in dic_results: 
-            hit.notin_dic[organism]=dic_results[hit.sequence]
-        else: 
-            hit.notin_dic[organism]='Absent'    
-    return hitlist          
-
-
-def output_interface(hitlist,list_genome,list_notin_genome): 
-    ''''Construct json sorted output for research'''
-    json_list=[]
-    for hit in hitlist: 
-        seq=reverse_complement(hit.sequence)
-        ref_org=list_genome[0]
-        ref_coordinates='%'.join(hit.in_dic[ref_org])
-        if len(list_genome)>1: 
-            otherorgs='%'.join(list_genome[1:])
-            other_org_str='[{'
-            for other_org in list_genome[1:]:
-                coordinates='%'.join(hit.in_dic[other_org])
-                other_org_str+='"'+other_org+'":"'+coordinates+'",'
-            other_org_str=other_org_str.rstrip(',')+'}]'    
-        else:
-            otherorgs='No search'   
-            other_org_str='""'
-        
-        if list_notin_genome==[]:
-            not_in_str='"No search"'
-            not_in_genomes_str=''   
-        else: 
-            not_in_str='[{'
-            for org_notin in list_notin_genome: 
-                if hit.notin_dic[org_notin]=='Absent':
-                    coordinates='Absent'
-                else: 
-                    coordinates='%'.join(hit.notin_dic[org_notin])
-                not_in_str+='"'+org_notin+'":"'+coordinates+'",'         
-            not_in_str=not_in_str.rstrip(',')+'}]'  
-            not_in_genomes_str='%'.join(list_notin_genome)      
-
-        jsonhit='{"refsequence":"'+seq+'","reforg":"'+ref_org+'","on_off":"'+ref_coordinates+'","otherorgs":"'+otherorgs+'","other_on_off":'+other_org_str+',"not_in":'+not_in_str+',"not_in_genomes":"'+not_in_genomes_str+'","score":"'+str(hit.score)+'"}'
-    
-        json_list.append(jsonhit)
-    print("["+",".join([jstring for jstring in json_list])+"]") 
-
-
-def write_result_file(hitlist,n,genome_list,identity_percentage_min,max_mismatch,sgrna_length,pam,not_in_genome_list):
-    '''Write results in file'''
-    new_tag=timestamp()
-    print(new_tag)
-    out=open('./scripts/static/results'+new_tag+'.txt','w')
-    out.write('#genomic position format : (id chr/plasmid/complete genome:strand:start:end:OnGene or OffGene (target gene):mismatch with reference organism like given by Bowtie : 0 position is the first base).\n')     
-    out.write("#mismatches : all mismatches are given compared to the reference seq pamNN..NNNNNN (not reverse NNNN...NNpam). Mismatches are given in 0-based (position 0 is the first base of the sequence) \n")
-    out.write("@Parameters: ")
-    if n==0: 
-        out.write("search in all sequence, ")
-    else:
-        out.write("search for position 1 to "+str(n)+', ')
-    out.write("identity percentage for homolog genes:"+str(identity_percentage_min)+", max mismatch:"+str(max_mismatch)+", sgRNA length:"+str(sgrna_length)+", PAM motif:"+pam+"\n")        
-    out.write('@origin genome:'+genome_list[0]+' other targeted genomes:'+";".join(genome_list[1:]))  
-    if not_in_genome_list:
-        out.write(' excluded genomes:'+";".join(not_in_genome_list))
-    out.write('\n')    
-    out.write('sgRNA sequence\treference organism\tgenomic position(s)\t')
-    for i in range(1,len(genome_list)):
-        out.write("other organism\tgenomic position(s)\tmismatch(s)\t")
-    for i in not_in_genome_list:    
-        out.write("excluded organism\tpresence in excluded organism\t")
-    out.write("score\n")
-
-    for hit in hitlist: 
-        reverse_sgrna=reverse_complement(hit.sequence)
-        ref_org=genome_list[0]
-        ref_coordinates='&'.join(hit.in_dic[ref_org])
-        out.write(reverse_sgrna+'\t'+ref_org+'\t'+ref_coordinates)  
-        if len(genome_list)>1:
-            for other_org in genome_list[1:]: 
-                coordinates='&'.join(hit.in_dic[other_org])
-                out.write('\t'+other_org+'\t'+coordinates)  
-        for org_notin in not_in_genome_list: 
-            if hit.notin_dic[org_notin]!='Absent':
-                coordinates='&'.join(hit.notin_dic[org_notin])
-            else: 
-                coordinates='Absent'
-            out.write('\t'+org_notin+'\t'+coordinates)          
-        out.write('\t'+str(hit.score))
-        out.write('\n')    
-    out.close()
-             
-
-
 def score_and_sort(hitlist):
     '''Score and sort the results of an analysis.
     For now, the score for 1 sgRNA is the sum of all mismatchs + 1 if it's present in an excluded organism (no matter if it's exact match or not)  
     Fill the attribute score of Hit objects.
     So best sgRNA is the one that have lowest score. 
     ''' 
+    number_on_gene=0
     for hit in hitlist:
-        score=0
-        for org in hit.in_dic: 
-            for occurence in hit.in_dic[org]:
-                mm=occurence.split(';')[-1].rstrip(')')
-                if mm!='0': 
-                    score+=len(mm.split(','))
-        for org_notin in hit.notin_dic: 
-            if hit.notin_dic[org_notin]!='Absent':
-                score+=1
-        hit.score=score     
-    sorted_hitlist=sorted(hitlist,key=lambda hit:hit.score)    
+        dic_on_gene={}
+        eprint(hit.sequence,hit.genomes_Dict)
+        count_on_gene=0
+        for genome in hit.genomes_Dict: 
+            dic_on_gene[genome]=0
+            count_genomes_on_gene=0
+            list_coords=hit.genomes_Dict[genome]
+            for coord in list_coords: 
+                if coord.split(':')[-1]=='OnGene': 
+                    count_on_gene+=1
+                    dic_on_gene[genome]+=1
+        hit.score=count_on_gene  
+        count=0
+        for genome in dic_on_gene: 
+            if dic_on_gene[genome]>=1: 
+                count+=1
+        if count==len(hit.genomes_Dict): 
+            number_on_gene+=1
+    
+    print(number_on_gene)            
+    sorted_hitlist=sorted(hitlist,key=lambda hit:hit.score,reverse=True)    
     return sorted_hitlist
- 
-            
-def create_sgRNA_dic(organism,dic_results):
-    '''Create a dictionary like key=sgRNA sequence and value=another dictionnary with key=organism and value=coordinates of the sequence in this organism'''
-    dic_sgRNA={}
-    for seq in dic_results: 
-        dic_sgRNA[seq]={organism:dic_results[seq]}
-    return dic_sgRNA     
-
-def create_hitlist(dic_sgRNA): 
-    '''Create hitlist that contains Hit objects. There's one Hit object for each sgRNA.
-    Only the attributes sequences and in_dic are filled with this function'''
-    hitlist=[]
-    for seq in dic_sgRNA: 
-        hit=Hit(seq,dic_sgRNA[seq])    
-        hitlist.append(hit)
-    return(hitlist)    
-
-def unzip_files(list_genomes,dict_org_code):
-    eprint('-- Unzip selected genomes --')
-    cmd1='gzip -r -d '
-    cmd2='gzip -r -d '
-    for genome in list_genomes:
-        ref=dict_org_code[genome][0] 
-        cmd1+=REF_GEN_DIR+'/fasta/'+ref+' ' 
-        cmd2+=REF_GEN_DIR+'/index2/'+ref+' '
-    os.system(cmd1)
-    os.system(cmd2)     
+  
 
 def find_sgRNA_given_sequence(fasta_path, organism, organism_code, PAM, non_PAM_motif_length):
     '''
@@ -460,78 +193,325 @@ def find_sgRNA_given_sequence(fasta_path, organism, organism_code, PAM, non_PAM_
 
     return seq_dict    
 
+def unzip_files(list_genomes,dict_org_code):
+    '''Unzip required files for reserach'''
+    eprint('-- Unzip selected genomes --')
+    start=time.time()
+    out=open(WORKDIR+'/unzip.sh','w')
+    for genome in list_genomes:
+        ref=dict_org_code[genome][0] 
+        out.write('tar xf '+REF_GEN_DIR+'/fasta/'+ref+'.tar.gz\ntar xf '+REF_GEN_DIR+'/index2/'+ref+'.tar.gz\n')
+    out.close()
+    os.system('bash ' + WORKDIR + '/unzip.sh')  
+    end=time.time()
+    eprint('TIME UNZIP',end-start)   
+
+def search_sgRNA_in_query_seq(query_seq,non_PAM_motif_length, PAM): 
+
+    sgRNA=''
+    for i in range(non_PAM_motif_length):
+        sgRNA+='N'
+    sgRNA+=PAM    
+
+    dic_seq={}
+
+    seq_list_forward=find_sgRNA_seq(query_seq,reverse_complement(sgRNA))
+
+    for indice in seq_list_forward:
+
+        end=indice+len(PAM)+non_PAM_motif_length
+        seq=reverse_complement(query_seq[indice:end])
+        dic_seq[seq]={}
+
+    return dic_seq    
+
+def write_to_fasta_parallel(dic_seq, num_file):
+    '''Write sequences in fasta file, and separate its in several files if specified.'''
+    list_seq=list(dic_seq.keys())
+    sep=len(dic_seq)//num_file
+    list_dic_fasta=[]
+    eprint("WD " + WORKDIR)
+    eprint("NF " + str(num_file))
+    for num in range(num_file):
+        out=open(WORKDIR + '/sgRNA'+str(num)+'.fa','w')
+        list_dic_fasta.append({ 'num' : num,
+                      'input_fasta' : WORKDIR + '/sgRNA' + str(num) + '.fa',
+                      'results' : None
+                    })
+        i=0
+        for seq in list_seq:
+            while(i < sep):
+                remove_seq=list_seq.pop()
+                out.write('>' + remove_seq + '\n' + remove_seq + '\n')
+                i += 1
+        if num == num_file-1:
+            if list_seq:
+                for seq in list_seq:
+                    out.write('>' + seq + '\n' + seq + '\n')
+        out.close()
+    return(list_dic_fasta)  
+
+def run_bowtie(organism_code,fasta_file,num):
+    resultFile = WORKDIR + '/results_bowtie' + num + '.sam'
+    bowtie_tab=['bowtie2','-x ' + REF_GEN_DIR + '/index2/' + organism_code + '/' + organism_code + ' -f ' + fasta_file + ' -S ' + resultFile + ' -L 13 -a --quiet ']
+    subprocess.call(bowtie_tab)
+    return resultFile
+
+def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna,gene_coords):
+    '''Launch bowtie alignments for included genomes and treat the results, with parallelization (ie if 4 threads are selected, then 4 bowtie will be launch at the same time, with 4 subfiles of the beginning file.
+    For included genomes, only the sequences matching exactly (no mismatch0 with genome will be conserved. 
+    '''
+    def worker():
+        while True:
+            e = q.get()
+            fasta_file=e['input_fasta']
+            num_str=str(e['num'])
+            resultFile = run_bowtie(organism_code, fasta_file, num_str)
+            res=open(resultFile, 'r')
+            dic_result={}
+            for l in res:
+                if l[0]!='@':
+                    if l.split('\t')[2]!='*':
+                        l_split=l.split('\t')
+                        cigar=l_split[5]
+                        if cigar=='23M':
+                            mm=l_split[-2]
+                            ref=l_split[2]
+                            if mm.split(':')[-1]=='23':
+                                seq=l_split[0]
+                                if seq not in dic_result:
+                                    dic_result[seq]=dic_seq[seq]    
+                                dic_result[seq][genome]=[]
+                                seq_align=l_split[9]
+                                if seq != seq_align:
+                                    strand='+'
+                                else:
+                                    strand='-'
+                                start=l_split[3]
+                                end=int(start)+len_sgrna-1
+                                if sgRNA_on_gene(gene_coords[0],gene_coords[1],int(start),int(end)): 
+                                    info_gene='OnGene'
+                                else:     
+                                    info_gene='OffGene'
+                                coord=ref+':'+strand+'('+start+','+str(end)+'):'+info_gene
+                                dic_result[seq][genome].append(coord)
+            e['results']=dic_result
+            res.close()
+            q.task_done()
+
+    q = Queue()
+    for i in range(num_thread):
+        t = Thread(target=worker)
+        t.daemon = True
+        t.start()
+
+    for e in list_fasta:
+        q.put(e)
+
+    q.join()
+    total_results={}
+    for e in list_fasta:
+        total_results.update(e['results'])
+
+    return total_results      
+
+def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
+    '''Launch bowtie alignments for excluded genomes and treat the results, with parallelization (ie if 4 threads are selected, then 4 bowtie will be launch at the same time, with 4 subfiles of the beginning file.
+    For excluded genomes, only the sequence NOT matching with genome will be conserved. 
+    '''
+    def worker():
+        while True:
+            e = q.get()
+            fasta_file=e['input_fasta']
+            num_str=str(e['num'])
+            resultFile = run_bowtie(organism_code,fasta_file,num_str)
+            #resultFile = WORKDIR + '/results_bowtie' + num_str + '.sam'
+            res=open(resultFile, 'r')
+            dic_result={}
+            count=0
+            for l in res:
+                if l[0]!='@':
+                    if l.split('\t')[2]=='*':
+                        count+=1
+                        seq=l.split('\t')[0]
+                        dic_result[seq]=dic_seq[seq]
+            e['results']=dic_result
+            res.close()
+            q.task_done()
+
+    q = Queue()
+    for i in range(num_thread):
+        t = Thread(target=worker)
+        t.daemon = True
+        t.start()
+
+    for e in list_fasta:
+        q.put(e)
+
+    q.join()
+    total_results={}
+    for e in list_fasta:
+        total_results.update(e['results'])
+
+    return total_results 
+
+def delete_used_files(list_genomes,dict_org_code):
+    '''Delete unzipped files that have been used for research'''
+    eprint('-- Delete selected genomes --')
+    start=time.time()
+    out=open(WORKDIR+'/delete.sh','w')
+    for genome in list_genomes:
+        ref=dict_org_code[genome][0] 
+        out.write('rm -r '+REF_GEN_DIR+'/fasta/'+ref+'\n')
+        out.write('rm -r '+REF_GEN_DIR+'/index2/'+ref+'\n')
+    out.close()
+    os.system('bash '+WORKDIR+'/delete.sh')
+    end=time.time()
+    eprint('TIME DELETE', end-start)  
+
+
+def construct_hitlist(dict_seq):
+    '''
+    Will construct an object Hit for each sequence in dictionnary, and store all Hits in a list.
+    These function only fill the attributes sequence and genomes_Dict of the object
+    '''
+    eprint('-- Construct final list --')
+    hits_list=[]
+    count=0
+    for seq in dict_seq:
+        count+=1
+        new_hit=Hit(seq,dict_seq[seq])
+        hits_list.append(new_hit)
+    return(hits_list)    
+
+def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
+    '''Write results in a file.
+    The file is a tabulated file, with first column=sgRNA sequence, then one column for each included organisms with list of positions of the sequence in each.
+    '''
+    eprint('-- Write results to file --')
+    responseResultFile = WORKDIR + '/results_allgenome.txt'
+    output=open(responseResultFile,'w')
+    not_in=True
+    gi=','.join(genomes_IN)
+    gni=','.join(genomes_NOT_IN)
+    if gni=='':
+        gni='None'
+        not_in=False
+    output.write('#ALL GENOMES\n#Genomes included :'+gi+' ; Genomes excluded :'+gni+'\n'+'#Parameters: PAM:'+PAM+' ; sgRNA size:'+str(non_PAM_motif_length)+'\n')
+    output.write('sgRNA sequence')
+    for genome_i in genomes_IN:
+        output.write('\t'+genome_i)
+    output.write('\n')
+    for hit in hit_list:
+        output.write(hit.sequence)
+        for gi in genomes_IN:
+            output.write('\t'+','.join(hit.genomes_Dict[gi]))
+        output.write('\n')
+    output.close()   
+
+def setupWorkSpace(parameters):
+    '''Create the work folder where all temporary or results files will be stored'''
+    workFolder = parameters.cah + '/' + TASK_KEY
+    os.mkdir(workFolder)
+    return workFolder   
+
+def output_interface(hit_list):
+    '''
+    Reformat the results to create a json file. 
+    It will be parsed in javascript to display it in interface.
+    '''
+    eprint('-- Construct results for graphical interface --')
+    json_result_file=WORKDIR+'/results.json'
+    #print(json_result_file)
+    list_dic=[]
+
+    for hit in hit_list:
+        dic_json={'sequence':hit.sequence,'occurences':[]}
+        list_coords=[]
+        for genome in hit.genomes_Dict: 
+            dic_coords={'org':genome,'coords':hit.genomes_Dict[genome]}
+            list_coords.append(dic_coords)
+        dic_json['occurences']=list_coords    
+        list_dic.append(dic_json)
+
+    
+    with open(json_result_file,'w') as f: 
+        json.dump(list_dic,f)      
+
 def do_search(query_seq, n, genome_list, dict_org_code, not_in_genome_list,
               identity_percentage_min,pam,sgrna_length):
     '''Launch the research with all parameters given by user. Principal function, it will call other functions to do the research'''
 
+    num_threads=2
     fasta_path=REF_GEN_DIR+'/fasta'
-
     len_all_sgrna=sgrna_length+len(pam)
+    distFile = REF_GEN_DIR + "/distance_dic.json"
+    with open(distFile, 'r') as f:
+        dist_dic = json.load(f)
+    f.close()
+
 
     unzip_files(genome_list+not_in_genome_list,dict_org_code)
 
-    list_genes=blast_to_find_all_genes(query_seq, genome_list, identity_percentage_min,dict_org_code)
+    dic_genes=blast_to_find_all_genes(query_seq, genome_list, identity_percentage_min,dict_org_code)
 
-    origin_genome=genome_list[0]
-    origin_gene=list_genes[0]
-    sorted_genomes_in=sort_genomes(genome_list[1:],REF_GEN_DIR+'/fasta',dict_org_code)
+    dic_seq=search_sgRNA_in_query_seq(query_seq,sgrna_length,pam)
+
+    sorted_genomes_in=sort_genomes(genome_list,fasta_path,dict_org_code)
 
     if not_in_genome_list: 
-        sorted_genomes_notin=sort_genomes_desc(not_in_genome_list,REF_GEN_DIR+'/fasta',dict_org_code)
-
+        sorted_genomes_notin=sort_genomes_desc(not_in_genome_list,fasta_path,dict_org_code)
     else: 
-        sorted_genomes_notin=[]
-    
+        sorted_genomes_notin=[]    
 
-    dic_seq=construct_in(fasta_path,origin_genome,dict_org_code[origin_genome][0],PAM,non_PAM_motif_length,origin_gene) 
+    first_genome=sorted_genomes_in[0]
+    list_fasta=write_to_fasta_parallel(dic_seq,num_threads)
+
+    dic_seq=add_in_parallel(num_threads,list_fasta,dict_org_code[first_genome][0],dic_seq,first_genome,len_all_sgrna,dic_genes[first_genome])
+    list_fasta=write_to_fasta_parallel(dic_seq,num_threads)
+
+    eprint(dic_seq)
+    list_order=order_for_research(sorted_genomes_in[1:],sorted_genomes_notin,sorted_genomes_in[0],dict_org_code,dist_dic,[])
+
+    for i in list_order:
+        genome=i[0]
+        if i[1]=='notin':
+            dic_seq=add_notin_parallel(num_threads,list_fasta,dict_org_code[genome][0],dic_seq)
+            if len(dic_seq)==0:
+                print("Program terminated&No hits remain after exclude genome "+genome)
+                end_time=time.time()
+                total_time=end_time-start_time
+                eprint('TIME',total_time)
+                delete_used_files(not_in_genome_list+genome_list,dict_org_code)
+                sys.exit(1)
+            eprint(str(len(dic_seq))+' hits remain after exclude genome '+genome)
+            list_fasta=write_to_fasta_parallel(dic_seq,num_threads)
+
+        elif i[1]=='in':
+            dic_seq=add_in_parallel(num_threads,list_fasta,dict_org_code[genome][0],dic_seq,genome,len_all_sgrna,dic_genes[genome])
+            if len(dic_seq)==0:
+                print("Program terminated&No hits remain after include genome "+genome)
+                end_time=time.time()
+                total_time=end_time-start_time
+                eprint('TIME',total_time)
+                delete_used_files(not_in_genome_list+genome_list,dict_org_code)
+                sys.exit(1)
+            eprint(str(len(dic_seq))+' hits remain after include genome '+genome)
+            list_fasta=write_to_fasta_parallel(dic_seq,num_threads)
+
+    delete_used_files(not_in_genome_list+genome_list,dict_org_code)       
+    print(len(dic_seq))   
 
 
+    hit_list=construct_hitlist(dic_seq)
 
-    ##BLAST RESEARCH, to find all genes we need  
-    '''list_genes=blast_to_find_all_genes(query_seq, genome_list, blast_path, path_reference_genomes, identity_percentage_min,dic_genome)
+    hit_list=score_and_sort(hit_list)
 
-    first_gene=list_genes[0]
-    first_genome=genome_list[0]
-    gene_seq=str(first_gene[0])
-    gene_start=first_gene[1]
-    gene_end=first_gene[2]
+    write_to_file(genome_list,not_in_genome_list,hit_list[:10000],pam,sgrna_length)
 
-    if n==0:
-        dic_seq=find_sgRNA_seq(gene_seq,pam,sgrna_length,first_genome)
-    else: 
-        dic_seq=find_sgRNA_seq(gene_seq[:n], pam, sgrna_length,first_genome)    
-    
-    if dic_seq=={}: 
-        eprint("No sgRNA's found in",genome_list[count],".Program termination.")
-        print("Program terminated&No sgRNA's found in "+genome_list[count]+". Maybe try with a larger search position interval.")
-        exit(1)   
-
-    else: 
-        dic_results=search_in_origin_genome(dic_seq,dic_genome[first_genome],path_bowtie,path_reference_genomes,gene_start,gene_end,pam,sgrna_length,mismatch_og)         
-        dic_sgRNA=create_sgRNA_dic(first_genome,dic_results)
-    eprint(str(len(dic_sgRNA))+' sgRNA in origin genome')    
-
-    if len(genome_list) > 1: 
-        eprint("Looking for common sgRNAs...")
-        dic_sgRNA=find_common_sgRNA(genome_list[1:],max_mismatch,dic_sgRNA,path_bowtie,path_reference_genomes,dic_genome,list_genes[1:],pam,sgrna_length)
+    ##Output formatting for printing to interface
+    output_interface(hit_list[:100]) 
    
-    eprint(str(len(dic_sgRNA))+' common sgRNA found in all genomes') 
-    
-    hitlist=create_hitlist(dic_sgRNA) 
-
-
-    if not_in_genome_list:
-        eprint("Working NOT IN...")
-        hitlist=search_sgRNA_not_in(hitlist,not_in_genome_list,path_bowtie,mismatch_notin,path_reference_genomes,dic_genome,pam,sgrna_length)   
-
-    sorted_hitlist=score_and_sort(hitlist)
-
-    
-    write_result_file(sorted_hitlist[:1000],n,genome_list,identity_percentage_min,max_mismatch,sgrna_length,pam,not_in_genome_list)
-
-    output_interface(sorted_hitlist[:100],genome_list,not_in_genome_list)
-
-    os.system('rm -r tmp')'''
 
 def main():
     start_time=time.time()
@@ -547,7 +527,8 @@ def main():
     WORKDIR = setupWorkSpace(parameters)
 
     query_seq,organisms_selected,organisms_excluded,non_PAM_motif_length,n,identity_percentage_min,pam=setupApplication(parameters,dict_organism_code)
-
+    print(','.join(organisms_excluded))
+    print(TASK_KEY)
     do_search(query_seq, n, organisms_selected, dict_organism_code, organisms_excluded, identity_percentage_min, pam, non_PAM_motif_length)
     
     end_time=time.time()

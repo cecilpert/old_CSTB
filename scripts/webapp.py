@@ -9,7 +9,7 @@ app=Flask(__name__)
 
 PYTHON_INTERPRETER="python3"
 ROOT_FOLDER="/Users/cecilehilpert/CSTB"
-DATA_FOLDER="/Users/cecilehilpert/CSTB"
+DATA_FOLDER="/Users/cecilehilpert/CSTB/reference_genomes"
 CACHE_FOLDER="/Users/cecilehilpert/CSTB/tmp"
 
 #PYTHON_INTERPRETER="python3"
@@ -46,7 +46,7 @@ def ret():
 	sgrna_length=str(sgrna_length)
 	sgrna_length=sgrna_length.replace('"','')
 
-	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/allgenomes.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + "/reference_genomes -gi " + gi + " -gni " + gni + " -pam " + pam + " -sl " + sgrna_length
+	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/allgenomes.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + " -gi " + gi + " -gni " + gni + " -pam " + pam + " -sl " + sgrna_length
 	print(command)
 	output=os.popen(command,'r')
 	lines=output.readlines()
@@ -103,10 +103,6 @@ def ret_specific_gene():
 	percent_id=str(percent_id)
 	percent_id=percent_id.replace('"','')
 
-	max_mismatch=request.args.get('max_mismatch',0)
-	max_mismatch=str(max_mismatch)
-	max_mismatch=max_mismatch.replace('"','')
-
 	pam=request.args.get('pam',0)
 	pam=str(pam)
 	pam=pam.replace('"','')
@@ -115,26 +111,23 @@ def ret_specific_gene():
 	sgrna_length=str(sgrna_length)
 	sgrna_length=sgrna_length.replace('"','')
 
-	mm_og=request.args.get('max_mm_og',0)
-	mm_og=str(mm_og)
-	mm_og=mm_og.replace('"','')
 
-	mm_nin=request.args.get('max_mm_notin',0)
-	mm_nin=str(mm_nin)
-	mm_nin=mm_nin.replace('"','')
-
-	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/specificgene.py -seq " + seq + " -gi " + gin + " -gni " + gnotin + " -n " + n + " -ip " + percent_id + " -mm " + max_mismatch + " -pam " + pam + " -sl " + sgrna_length + " -mmog " + mm_og + " -mmnin " + mm_nin
+	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/specificgene.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + " -seq " + seq + " -gi " + gin + " -gni " + gnotin + " -n " + n + " -ip " + percent_id + " -pam " + pam + " -sl " + sgrna_length 
 	print(command)
 	output=os.popen(command,'r')
-	all_lines=output.readlines()	##List containing all print statements in specific gene script.
+	lines=output.readlines()	##List containing all print statements in specific gene script.
 	#print(all_lines)
-	for line in all_lines:
+	for line in lines:
 		if "Program terminated" in line:
 			error_split=line.split('&')
 			info=error_split[1].rstrip("\n]")
 			return jsonify("Search yielded no results.",info)
 	else:
-		tag=all_lines[-2].rstrip()
-		json_string=all_lines[-1].rstrip('\n')
-		print(json_string)
-		return jsonify(json_string,tag,'')
+		tag=lines[1].strip()
+		with open(CACHE_FOLDER+'/'+tag+'/results.json','r') as f: 
+			res=f.read()
+		print(res)
+		not_in=lines[0].strip()
+		number_hits=lines[2].strip()
+		number_on_gene=lines[3].strip()
+		return jsonify(res,not_in,tag,number_hits,number_on_gene)

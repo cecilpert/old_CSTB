@@ -45,7 +45,7 @@ def dic_download(ref_bacteria):
     taxfile.close()
     f.close()
     json.dump(dic_ref,open('reference_genomes/genome_ref_taxid.json','w'),indent=4)
-    os.system('bash to_download.sh')
+    #os.system('bash to_download.sh')
     os.system('rm to_download.sh')
     return dic_taxid 
         
@@ -242,13 +242,13 @@ def compress():
     os.system('rm compress.sh')           
 
 
-ref_bacteria='more_genomes/assembly_summary_bacteria_ref_genomes.txt'
+ref_bacteria='more_genomes/assembly_summary_bacteria_ref_50.txt'
 dic_taxid=dic_download(ref_bacteria)
 #eliminate_plasmides(dic_taxid)
 #test(dic_taxid)
 #index_bowtie_blast(dic_taxid)
 #pre_calculate(dic_taxid)
-#distance_matrix(dic_taxid)
-#json_tree()
-#genome_file_for_list()
-compress()
+distance_matrix(dic_taxid)
+json_tree()
+genome_file_for_list()
+#compress()

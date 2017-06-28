@@ -102,6 +102,59 @@ function openCity(evt, cityName) {
   $('#tree_exclude').jstree().show_dots();
 }
 
+function print_results(data){
+	if (data.length==4){
+		res=data[0];
+		not_in=data[1];
+		tag=data[2];
+		number_hits=data[3]
+	}
+	else {
+		resultFound=0;
+	}
+	if(resultFound==1){
+		var obj=JSON.parse(res);
+		var out='<tr><th colspan=2>' + number_hits + ' hits have been found for this research' ;
+		if (parseInt(number_hits)>100){
+			out+='. Only the best 100 are written below. Download the result file to get more hits'
+		} 
+
+		if (parseInt(number_hits)>10000){
+			out+=' (only the best 10 000 are written to this file)'
+		}
+		
+		out+='.</th></tr><tr><td colspan=2></td></th>' ; 
+
+		if (not_in!=''){
+			out+='<tr><th colspan=2>All hits are absent (based on Bowtie2 alignment) from excluded genome(s) : '+not_in+'</th></tr><tr><td colspan=2></td></th>';
+		}
+
+		else{
+			out+='<tr><th colspan=2>No excluded genomes selected. </th></tr><tr><td colspan=2></td></th>'
+		}
+				
+		$("#Waiting").fadeOut();
+		$("#Result").show();
+
+		for (i=0;i<obj.length;i++){
+			out+='<tr><th colspan=2>Sequence: '+obj[i].sequence+'</th></tr>';
+			out+='<tr><th>Genomes: </th><th>Coordinates: </th></tr>';
+			for (j=0;j<obj[i].occurences.length;j++){
+				out+='<tr><td>'+obj[i].occurences[j].org+'</td> <td>'+obj[i].occurences[j].coords+'</td></tr>';
+			}
+		}
+
+		$("#ResTable").html(out);
+		display_download(tag)	//Link to where the output file is held; used for downloading the results.
+			//Same file used for AllG and SpecG options.
+	}
+	else{		//Display no matching results output.
+		$("#Waiting").hide();
+		$("#Result").show();
+		$("#output").text(data[0]+'\n'+data[1]);
+	}
+}
+
 
 // Modif end
 
@@ -672,11 +725,8 @@ $(document).ready(function(){
 		$('a[name=error-pid]').hide()
 		var n_gene=$("#search-region").val()
 		var percent_id=$("#percent-identity").val()
-		var max_mismatch=$("select[name='max-mismatch'] > option:selected").val();
 		var pam=$("select[name='pam'] > option:selected").val();
 		var sgrna_length=$("select[name='sgrna-length'] > option:selected").val();
-		var mismatch_og=$("select[name='max-mismatch-og'] > option:selected").val();
-		var mismatch_nin=$("select[name='max-mismatch-notin'] > option:selected").val();
 		//ERRORS
 		var errors=false
 
@@ -715,92 +765,52 @@ $(document).ready(function(){
 		var GIN=JSON.stringify(genomes_IN);
 		var GNOTIN=JSON.stringify(genomes_NOTIN);
 		var GREF=JSON.stringify(gref);
-		var MISMATCH=JSON.stringify(max_mismatch);
 		var PAM=JSON.stringify(pam);
 		var LENGTH=JSON.stringify(sgrna_length);
 
-		$.getJSON($SCRIPT_ROOT+'/specific_gene',{seq:SEQ,gin:GIN,gnotin:GNOTIN,gref:GREF,n:N,pid:PID,max_mismatch:MISMATCH,pam:PAM,sgrna_length:LENGTH,max_mm_og:mismatch_og,max_mm_notin:mismatch_nin},function(data){
-			
-			if (data.length==3){	//If the Spec Gene search program terminated, the return data type is not 'string' but 'object'.
-				res_specGene=data[0]
-				tag=data[1]
-				var obj_specGene=JSON.parse(res_specGene);
+		$.getJSON($SCRIPT_ROOT+'/specific_gene',{seq:SEQ,gin:GIN,gnotin:GNOTIN,gref:GREF,n:N,pid:PID,pam:PAM,sgrna_length:LENGTH},
+			function(data) {
+			if (data.length==5){
+				res=data[0];
+				not_in=data[1];
+				tag=data[2];
+				number_hits=data[3]
+				number_on_gene=data[4]
+			}
+			else {
+			resultFound=0;
+			}
+			if(resultFound==1){
+				var obj=JSON.parse(res);
+				var out='<tr><th colspan=2>' + number_hits + ' hits have been found for this research' ;
+				if (parseInt(number_hits)>100){
+					out+='. Only the best 100 are written below. Download the result file to get more hits'
+
+				} 
+				if (parseInt(number_hits)>10000){
+					out+=' (only the best 10 000 are written to this file)'
+
+				}
+				out+='. '+number_on_gene+' of this hits hybridises at least one time with the subject gene (or an homologous)'
+				out+='.</th></tr><tr><td colspan=2></td></th>' ; 
+				if (not_in!=''){
+					out+='<tr><th colspan=2>All hits are absent (based on Bowtie2 alignment) from excluded genome(s) : '+not_in+'</th></tr><tr><td colspan=2></td></th>';
+				}
+				else{
+					out+='<tr><th colspan=2>No excluded genomes selected. </th></tr><tr><td colspan=2></td></th>'
+				}
 				$("#Waiting").fadeOut();
 				$("#Result").show();
-
-				if (obj_specGene[0].otherorgs!="No search"){
-					Multiple_search=1
-				}
-
-				if (obj_specGene[0].not_in!="No search"){	//=if a Not in search has been requested
-					Not_In_search=1
-				}
-
-				if (Multiple_search==1){ //there is more than 1 genome
-
-					for (i=0;i<obj_specGene.length;i++){
-						var other_orgs=obj_specGene[i].otherorgs.split("%")
-						out_specGene+='<tr><th>Construct: '+obj_specGene[i].refsequence+'</th></tr>';
-						out_specGene+='<tr><th>Genomes: '+'</th><th>Coordinates: '+'</th></tr>';
-						out_specGene+='<tr><td>'+obj_specGene[i].reforg+'</td><td>'+obj_specGene[i].on_off+'</td><tr>';
-
-
-
-						for (j=0;j<other_orgs.length;j++){
-							focus_org=other_orgs[j]
-							var occs=obj_specGene[i].other_on_off[0][focus_org]	//Brackets [] allows access to name stored in variable focus_org.
-							//SPLIT HERE TO ACCOMODATE '%' (multiple occurences)
-							out_specGene+='<tr><td>'+focus_org+'</td><td>'+occs+'</td><tr>';
-						}
-
-						if (Not_In_search==1){	//Not In Results Display
-							out_specGene+='<tr><th>Not In</th></tr>';
-							var Not_Ins=obj_specGene[i].not_in_genomes.split("%")
-							var Not_in_write=''
-							for(k=0;k<Not_Ins.length;k++){
-								if (obj_specGene[i].not_in[0][Not_Ins[k]]=="Absent"){
-									Not_in_write='<b>Absent</b>'
-								}
-								else{
-									Not_in_write='<b>Present</b>, '+obj_specGene[i].not_in[0][Not_Ins[k]]
-								}
-								out_specGene+='<tr><td>'+Not_Ins[k]+'</td><td>'+Not_in_write+'</td><tr>'
-							}
-						}
+				for (i=0;i<obj.length;i++){
+					out+='<tr><th colspan=2>Sequence: '+obj[i].sequence+'</th></tr>';
+					out+='<tr><th>Genomes: </th><th>Coordinates: </th></tr>';
+					for (j=0;j<obj[i].occurences.length;j++){
+						out+='<tr><td>'+obj[i].occurences[j].org+'</td> <td>'+obj[i].occurences[j].coords+'</td></tr>';
 					}
 				}
-
-				else{ //there is only one genome
-
-					for (i=0;i<obj_specGene.length;i++){
-						out_specGene+='<tr><th>Construct: '+obj_specGene[i].refsequence+'</th></tr>';
-						out_specGene+='<tr><td>Reference: '+obj_specGene[i].reforg+'\t Coordinates: '+obj_specGene[i].on_off+'</td></tr>';
-
-						if (Not_In_search==1){	//Not In Results Display
-							out_specGene+='<tr><th>Not In</th></tr>';
-							var Not_Ins=obj_specGene[i].not_in_genomes.split("%")
-							var Not_in_write=''
-							for(k=0;k<Not_Ins.length;k++){
-
-								if (obj_specGene[i].not_in[0][Not_Ins[k]]==""){
-									Not_in_write='<b>Present, exact match</b>'
-								}
-								else if (obj_specGene[i].not_in[0][Not_Ins[k]]=="No matches"){
-									Not_in_write='<b>Absent</b>'
-								}
-								else{
-									Not_in_write='<b>Present</b>, with substitutions '+obj_specGene[i].not_in[0][Not_Ins[k]]
-								}
-								out_specGene+='<tr><td>'+Not_Ins[k]+"\t"+Not_in_write+'</td></tr>'
-							}
-						}
-					}
-
-				}
-				$("#ResTable").html(out_specGene);
-				display_download(tag)	//Link to where the output file is held; used for downloading the results.
-				//Same file used for AllG and SpecG options.
-
+			$("#ResTable").html(out);
+			display_download(tag)	//Link to where the output file is held; used for downloading the results.
+			//Same file used for AllG and SpecG options.
 			}
 			else{		//Display no matching results output.
 				$("#Waiting").hide();

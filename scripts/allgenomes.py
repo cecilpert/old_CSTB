@@ -3,11 +3,9 @@ from Bio.Seq import Seq
 from Bio import SeqIO
 from functionbase import *
 from threading import Thread
-from multiprocessing import Process
 from queue import Queue
 import time,argparse,os,sys,re,random
 import subprocess
-import pickle
 import json
 
 import uuid
