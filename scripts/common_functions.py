@@ -116,8 +116,6 @@ def run_bowtie(organism_code,fasta_file,num):
     subprocess.call(bowtie_tab)
     return resultFile
 
-   
-
 def treat_bowtie_notin(resultFile,e,dic_seq):    
     res=open(resultFile, 'r')
     dic_result={}

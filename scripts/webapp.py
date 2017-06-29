@@ -17,15 +17,7 @@ CACHE_FOLDER="/Users/cecilehilpert/CSTB/tmp"
 
 # Configure we application port and adresss
 
-
-
-@app.route('/')
-def rendu():	##HTML rendering upon url access
-	return render_template('interface_layout.html')
-
-@app.route('/allgenomes')
-def ret():
-
+def treat_arguments_allgenomes(): 
 	#Genomes_IN and NOT_IN lists parsing.
 	gi=request.args.get('gi',0).strip('[]').split(',')
 	print('gi1',gi)
@@ -48,6 +40,10 @@ def ret():
 
 	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/allgenomes.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + " -gi " + gi + " -gni " + gni + " -pam " + pam + " -sl " + sgrna_length
 	print(command)
+
+	return command
+
+def treat_results_all_genomes(command): 
 	output=os.popen(command,'r')
 	lines=output.readlines()
 	for line in lines:
@@ -62,21 +58,9 @@ def ret():
 		print(res)
 		not_in=lines[0].strip()
 		number_hits=lines[2].strip()
-		return jsonify(res,not_in,tag,number_hits)
+		return jsonify(res,not_in,tag,number_hits)		
 
-
-@app.route('/download', defaults={'path': ''})
-@app.route('/download/<path:path>')
-def downloadResultFile(path):
-	print ('Trying to server download request w/ key : %s' % path)
-	filePath=CACHE_FOLDER+'/'+path+'/results_allgenome.txt'
-	return send_file(filePath, mimetype='plaintext')
-
-
-@app.route('/specific_gene')
-def ret_specific_gene():
-
-	#Seq treatment
+def treat_arguments_specific_gene():
 	seq=request.args.get('seq',0).strip('"')
 	seq=str(seq)	## NB THIS REQUIRES PROPER FASTA FORMATTING IN JAVASCRIPT.
 
@@ -114,6 +98,9 @@ def ret_specific_gene():
 
 	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/specificgene.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + " -seq " + seq + " -gi " + gin + " -gni " + gnotin + " -n " + n + " -ip " + percent_id + " -pam " + pam + " -sl " + sgrna_length 
 	print(command)
+	return command
+
+def treat_results_specific_gene(command): 
 	output=os.popen(command,'r')
 	lines=output.readlines()	##List containing all print statements in specific gene script.
 	#print(all_lines)
@@ -131,3 +118,27 @@ def ret_specific_gene():
 		number_hits=lines[2].strip()
 		number_on_gene=lines[3].strip()
 		return jsonify(res,not_in,tag,number_hits,number_on_gene)
+
+@app.route('/')
+def rendu():	##HTML rendering upon url access
+	return render_template('interface_layout.html')
+
+@app.route('/allgenomes')
+def ret():
+	command=treat_arguments_allgenomes()
+	result=treat_results_all_genomes(command)
+	return result
+	
+@app.route('/specific_gene')
+def ret_specific_gene():
+	command=treat_arguments_specific_gene()
+	result=treat_results_specific_gene(command)
+	return result
+
+@app.route('/download', defaults={'path': ''})
+@app.route('/download/<path:path>')
+def downloadResultFile(path):
+	print ('Trying to server download request w/ key : %s' % path)
+	filePath=CACHE_FOLDER+'/'+path+'/results_allgenome.txt'
+	return send_file(filePath, mimetype='plaintext')	
+	

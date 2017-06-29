@@ -1,5 +1,5 @@
 import common_functions as cf 
-import time,argparse,uuid,os,subprocess
+import time,argparse,uuid,os,subprocess,sys
 from Bio.Blast import NCBIXML  
 from queue import Queue 
 from threading import Thread
@@ -228,7 +228,7 @@ def do_search(query_seq, n, genome_list, dict_org_code, not_in_genome_list,
               identity_percentage_min,pam,sgrna_length):
     '''Launch the research with all parameters given by user. Principal function, it will call other functions to do the research'''
 
-
+    start_time=time.time()
     num_threads=2
     fasta_path=REF_GEN_DIR+'/fasta'
     len_all_sgrna=sgrna_length+len(pam)
@@ -238,6 +238,8 @@ def do_search(query_seq, n, genome_list, dict_org_code, not_in_genome_list,
 
     #find homologous genes coordinates in each selected genome 
     dic_genes=blast_to_find_all_genes(query_seq, genome_list, identity_percentage_min,dict_org_code)
+
+    cf.eprint(dic_genes)
 
     #search sgRNA sequences in given gene
     dic_seq=search_sgRNA_in_query_seq(query_seq,sgrna_length,pam)
