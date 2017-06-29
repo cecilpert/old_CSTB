@@ -215,6 +215,21 @@ def setupWorkSpace(parameters):
     os.mkdir(workFolder)
     return workFolder   
 
+def list_ref(dic_ref):    
+    list_ref=[]
+    for ref in dic_ref: 
+        dic={"ref":ref,"coords":dic_ref[ref]}
+        list_ref.append(dic)
+    return list_ref        
+    
+def list_occurences(dic_occurences): 
+    list_occurences=[]
+    for genome in dic_occurences: 
+        dic_genome={'org':genome,'all_ref':list_ref(dic_occurences[genome])}
+        list_occurences.append(dic_genome)
+    return list_occurences        
+
+
 def output_interface(hit_list):
     '''
     Reformat the results to create a json file. 
@@ -226,17 +241,12 @@ def output_interface(hit_list):
     list_dic=[]
 
     for hit in hit_list:
-        dic_json={'sequence':hit.sequence,'occurences':[]}
-        list_coords=[]
-        for genome in hit.genomes_Dict: 
-            dic_coords={'org':genome,'coords':hit.genomes_Dict[genome]}
-            list_coords.append(dic_coords)
-        dic_json['occurences']=list_coords    
-        list_dic.append(dic_json)
+        dic={'sequence':hit.sequence,'occurences':list_occurences(hit.genomes_Dict)}
+        list_dic.append(dic)
 
-    
+    list_dic.reverse()
     with open(json_result_file,'w') as f: 
-        json.dump(list_dic,f)
+        json.dump(list_dic,f,indent=4)
                            
 def readJsonDic(path):
     '''Load the dictionnary that contains genomes name associated with their references'''

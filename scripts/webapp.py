@@ -55,7 +55,6 @@ def treat_results_all_genomes(command):
 		tag=lines[1].strip()
 		with open(CACHE_FOLDER+'/'+tag+'/results.json','r') as f: 
 			res=f.read()
-		print(res)
 		not_in=lines[0].strip()
 		number_hits=lines[2].strip()
 		return jsonify(res,not_in,tag,number_hits)		

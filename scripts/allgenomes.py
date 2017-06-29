@@ -58,17 +58,20 @@ def construct_in(fasta_path, organism, organism_code, PAM, non_PAM_motif_length)
             seq=genome_seq[indice:end].reverse_complement()
             seq=str(seq)
             if seq not in seq_dict:
-                seq_dict[seq]={organism:[]}
-            seq_dict[seq][organism].append(ref+':+('+str(indice+1)+','+str(end)+')')
-
+                seq_dict[seq]={organism:{}}
+            if ref not in seq_dict[seq][organism]: 
+                seq_dict[seq][organism][ref]=[]
+            seq_dict[seq][organism][ref].append('+('+str(indice+1)+','+str(end)+')')    
+   
         for indice in seq_list_reverse:
             end=indice+len(PAM)+non_PAM_motif_length
             seq=genome_seq[indice:end]
             seq=str(seq)
             if seq not in seq_dict:
-                seq_dict[seq]={organism:[]}
-            seq_dict[seq][organism].append(ref+':-('+str(indice+1)+','+str(end)+')')
-
+                seq_dict[seq]={organism:{}}  
+            if ref not in seq_dict[seq][organism]: 
+                seq_dict[seq][organism][ref]=[]
+            seq_dict[seq][organism][ref].append('-('+str(indice+1)+','+str(end)+')')         
     return seq_dict
 
 
@@ -98,7 +101,7 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
                                 if seq not in dic_result:
                                     dic_result[seq]=dic_seq[seq]
                                 if genome not in dic_result[seq]:
-                                    dic_result[seq][genome]=[]
+                                    dic_result[seq][genome]={}
                                 seq_align=l_split[9]
                                 if seq != seq_align:
                                     strand='+'
@@ -106,8 +109,10 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
                                     strand='-'
                                 start=l_split[3]
                                 end=int(start)+len_sgrna-1
-                                coord=ref+':'+strand+'('+start+','+str(end)+')'
-                                dic_result[seq][genome].append(coord)
+                                if ref not in dic_result[seq][genome]: 
+                                    dic_result[seq][genome][ref]=[]
+                                coord=strand+'('+start+','+str(end)+')'
+                                dic_result[seq][genome][ref].append(coord)
             e['results']=dic_result
             res.close()
             q.task_done()
@@ -135,8 +140,11 @@ def sort_hits(hitlist):
     '''
     cf.eprint('-- Sort hits --')
     for hit in hitlist:
+        score=0
         for genome in hit.genomes_Dict:
-            hit.score+=len(hit.genomes_Dict[genome])
+            for ref in hit.genomes_Dict[genome]:
+                score+=len(hit.genomes_Dict[genome][ref])
+        hit.score=score
     sorted_hitlist=sorted(hitlist,key=lambda hit:hit.score,reverse=True)
     return(sorted_hitlist)
 
@@ -163,7 +171,7 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
     cf.eprint('-- RESEARCH --')    
 
     #Research in first genome
-    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]][0],PAM,non_PAM_motif_length)
+    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]][0],PAM,non_PAM_motif_length) 
     cf.eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     list_fasta=cf.write_to_fasta_parallel(dic_seq,num_file)
 

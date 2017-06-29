@@ -115,11 +115,12 @@ def score_and_sort(hitlist):
         for genome in hit.genomes_Dict: 
             dic_on_gene[genome]=0
             count_genomes_on_gene=0
-            list_coords=hit.genomes_Dict[genome]
-            for coord in list_coords: 
-                if coord.split(':')[-1]=='OnGene': 
-                    count_on_gene+=1
-                    dic_on_gene[genome]+=1
+            for ref in hit.genomes_Dict[genome]:
+                list_coords=hit.genomes_Dict[genome][ref]
+                for coord in list_coords: 
+                    if coord.split(':')[-1]=='OnGene': 
+                        count_on_gene+=1
+                        dic_on_gene[genome]+=1
         hit.score=count_on_gene  
         count=0
         for genome in dic_on_gene: 
@@ -161,12 +162,14 @@ def treat_bowtie_in(resultFile,e,dic_seq,genome,len_sgrna,gene_coords):
                 cigar=l_split[5]
                 if cigar=='23M':
                     mm=l_split[-2]
-                    ref=l_split[2]
                     if mm.split(':')[-1]=='23':
+                        ref=l_split[2]
                         seq=l_split[0]
                         if seq not in dic_result:
-                            dic_result[seq]=dic_seq[seq]    
-                        dic_result[seq][genome]=[]
+                            dic_result[seq]=dic_seq[seq]  
+                        dic_result[seq][genome]={}    
+                        if ref not in dic_result[seq][genome]: 
+                            dic_result[seq][genome][ref]=[]      
                         seq_align=l_split[9]
                         if seq != seq_align:
                             strand='+'
@@ -178,8 +181,8 @@ def treat_bowtie_in(resultFile,e,dic_seq,genome,len_sgrna,gene_coords):
                             info_gene='OnGene'
                         else:     
                             info_gene='OffGene'
-                        coord=ref+':'+strand+'('+start+','+str(end)+'):'+info_gene
-                        dic_result[seq][genome].append(coord)
+                        coord=strand+'('+start+','+str(end)+'):'+info_gene
+                        dic_result[seq][genome][ref].append(coord)
     e['results']=dic_result
     res.close()
 

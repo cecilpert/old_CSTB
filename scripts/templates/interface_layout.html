@@ -1,4 +1,4 @@
-f{% block content %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -73,6 +73,13 @@ f{% block content %}
 			border-radius: 4px;
 			background-color: #f1f1f1;
 		}
+
+		th, td {
+    		padding: 10px;
+    		border: 1px solid #ddd;
+    		text-align: center;
+		}
+
 
 	</style>
 
@@ -281,11 +288,20 @@ f{% block content %}
 		
 		<div id="Result" style="display:none">
 			<a id='result-file' class="w3-btn w3-green"></a><button class="w3-btn w3-red" onclick="reloadpage()"><b>New Search</b></button>WARNING: Clicking on 'New Search' will lose the displayed information. Please download the results first.
-			<p id="output">
 				<!-- Table of results -->
-				<table id="ResTable" class="w3-table-all w3-hoverable w3-centered" style="width:100%"></table>
-			</p>
+			<div class="w3-panel w3-pale-green w3-bottombar w3-border w3-border-green w3-center" id="infos">
+			</div>
+			<table id="ResTable" style="width:100%">
+			</table>
 		</div>
+
+		<div id="NoResult" style="display:none">
+			<button class="w3-btn w3-red" onclick="reloadpage()"><b>New Search</b></button>
+				<!-- Table of results -->
+			<div class="w3-panel w3-pale-red w3-border w3-border-red w3-center" id='no_result'>
+			</div>
+		</div>
+
 		<div style="height: auto;"></div>
 		
 		<div class="w3-container w3-grey">

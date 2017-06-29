@@ -102,7 +102,43 @@ function openCity(evt, cityName) {
   $('#tree_exclude').jstree().show_dots();
 }
 
+function writeResults(obj){
+	var out=''
+	for (i=0;i<obj.length;i++){
+		line_seq=0
+		seq=obj[i].sequence
+		number_genomes=obj[i].occurences.length
+		for(j=0;j<number_genomes;j++){
+			line_genome=0
+			org=obj[i].occurences[j].org
+			org_split=org.split(' ')
+			ref_org=org_split.pop()
+			number_ref=obj[i].occurences[j].all_ref.length
+			for(k=0;k<number_ref;k++){
+				ref=obj[i].occurences[j].all_ref[k].ref
+				number_coords=obj[i].occurences[j].all_ref[k].coords.length
+				line_genome+=number_coords
+				line_seq+=number_coords
+				for(l=0;l<number_coords;l++){
+					coord=obj[i].occurences[j].all_ref[k].coords[l]
+					print_coord='<td>'+coord+'</td></tr>'
+					out=print_coord+out
+				}
+				print_ref='<td rowspan="'+number_coords+'">' + ref + '</td>'
+				out=print_ref+out
+			}
+			print_org='<td rowspan="'+line_genome+'">' + org_split.join(' ') + '</td>'
+			out=print_org+out
+		}
+		print_seq='<td rowspan="'+line_seq+'">' + seq + '</td>'
+		out=print_seq+out
 
+	}
+	var header='<tr class = "w3-light-grey"> <th> sgRNA sequence </th> <th> Organism(s) </th> <th colspan=2> Coordinates </th> </tr>'
+	out=header+out
+	return out
+
+}
 
 // Modif end
 
@@ -442,39 +478,35 @@ $(document).ready(function(){
 			}
 			if(resultFound==1){
 				var obj=JSON.parse(res);
-				var out='<tr><th colspan=2>' + number_hits + ' hits have been found for this research' ;
+				var infos='<p>' +number_hits + ' hits have been found for this research.' ;
 				if (parseInt(number_hits)>100){
-					out+='. Only the best 100 are written below. Download the result file to get more hits'
+					infos+='. Only the best 100 are written below. Download the result file to get more hits.'
 
 				} 
 				if (parseInt(number_hits)>10000){
-					out+=' (only the best 10 000 are written to this file)'
+					infos+=' (only the best 10 000 are written to this file).</p>'
 
 				}
-				out+='.</th></tr><tr><td colspan=2></td></th>' ; 
 				if (not_in!=''){
-					out+='<tr><th colspan=2>All hits are absent (based on Bowtie2 alignment) from excluded genome(s) : '+not_in+'</th></tr><tr><td colspan=2></td></th>';
+					infos+='<p> All hits are absent (based on Bowtie2 alignment) from excluded genome(s) : '+not_in;
 				}
 				else{
-					out+='<tr><th colspan=2>No excluded genomes selected. </th></tr><tr><td colspan=2></td></th>'
+					infos+='<p> No excluded genomes selected.</p>'
 				}
+				out=writeResults(obj)
 				$("#Waiting").fadeOut();
 				$("#Result").show();
-				for (i=0;i<obj.length;i++){
-					out+='<tr><th colspan=2>Sequence: '+obj[i].sequence+'</th></tr>';
-					out+='<tr><th>Genomes: </th><th>Coordinates: </th></tr>';
-					for (j=0;j<obj[i].occurences.length;j++){
-						out+='<tr><td>'+obj[i].occurences[j].org+'</td> <td>'+obj[i].occurences[j].coords+'</td></tr>';
-					}
-				}
+			$('#infos').html(infos)	
 			$("#ResTable").html(out);
 			display_download(tag)	//Link to where the output file is held; used for downloading the results.
 			//Same file used for AllG and SpecG options.
 			}
 			else{		//Display no matching results output.
 				$("#Waiting").hide();
-				$("#Result").show();
-				$("#output").text(data[0]+'\n'+data[1]);
+				$("#NoResult").show();
+				infos='<p>'+data[0]+'</p> <p> '+data[1]+'</p>'
+
+				$("#no_result").html(infos);
 			}
 		});
 		genomes_IN=[];	//These ready the lists
@@ -731,40 +763,36 @@ $(document).ready(function(){
 			}
 			if(resultFound==1){
 				var obj=JSON.parse(res);
-				var out='<tr><th colspan=2>' + number_hits + ' hits have been found for this research' ;
+				var infos='<p>' + number_hits + ' hits have been found for this research. ' ;
 				if (parseInt(number_hits)>100){
-					out+='. Only the best 100 are written below. Download the result file to get more hits'
+					infos+='Only the best 100 are written below. Download the result file to get more hits. '
 
 				} 
 				if (parseInt(number_hits)>10000){
-					out+=' (only the best 10 000 are written to this file)'
+					infos+='(only the best 10 000 are written to this file). '
 
 				}
-				out+='. '+number_on_gene+' of this hits hybridises at least one time with the subject gene (or an homologous)'
-				out+='.</th></tr><tr><td colspan=2></td></th>' ; 
+				infos+=number_on_gene+' of this hits hybridises at least one time with the subject gene (or an homologous). </p>'
 				if (not_in!=''){
-					out+='<tr><th colspan=2>All hits are absent (based on Bowtie2 alignment) from excluded genome(s) : '+not_in+'</th></tr><tr><td colspan=2></td></th>';
+					infos+='<p>All hits are absent (based on Bowtie2 alignment) from excluded genome(s) : '+not_in+'.</p>';
 				}
 				else{
-					out+='<tr><th colspan=2>No excluded genomes selected. </th></tr><tr><td colspan=2></td></th>'
+					infos+='<p>No excluded genomes selected. </p>'
 				}
+				out=writeResults(obj)
 				$("#Waiting").fadeOut();
 				$("#Result").show();
-				for (i=0;i<obj.length;i++){
-					out+='<tr><th colspan=2>Sequence: '+obj[i].sequence+'</th></tr>';
-					out+='<tr><th>Genomes: </th><th>Coordinates: </th></tr>';
-					for (j=0;j<obj[i].occurences.length;j++){
-						out+='<tr><td>'+obj[i].occurences[j].org+'</td> <td>'+obj[i].occurences[j].coords+'</td></tr>';
-					}
-				}
+	
+			$('#infos').html(infos)
 			$("#ResTable").html(out);
 			display_download(tag)	//Link to where the output file is held; used for downloading the results.
 			//Same file used for AllG and SpecG options.
 			}
 			else{		//Display no matching results output.
 				$("#Waiting").hide();
-				$("#Result").show();
-				$("#output").text(data[0]+'\n'+data[1]);
+				$("#NoResult").show();
+				infos='<p>'+data[0]+'</p> <p> '+data[1]+'</p>'
+				$("#no_result").html(infos);
 			}
 		});
 	genomes_IN=[];	//These ready the lists
