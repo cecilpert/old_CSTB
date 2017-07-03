@@ -149,7 +149,6 @@ def sort_hits(hitlist):
     return(sorted_hitlist)
 
 def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,dict_org_code):
-
     start_time=time.time()
     start = time.time()
     num_thread=4
@@ -246,7 +245,6 @@ def main():
     dict_organism_code = cf.readJsonDic(REF_GEN_DIR + '/genome_ref_taxid.json')  ##Keys: organism, values: genomic reference (ncbi)
    # organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
     organisms_selected, organisms_excluded, PAM, non_PAM_motif_length = setupApplication(parameters, dict_organism_code)
-    
     print(','.join(organisms_excluded))
     print(TASK_KEY)
     

@@ -1,50 +1,50 @@
-<OPTION>Aquifex aeolicus VF5 GCF_000008625.1
-<OPTION>Bacillus anthracis str. Ames GCF_000007845.1
-<OPTION>Bacillus anthracis str. Sterne GCF_000008165.1
-<OPTION>Bacillus cereus ATCC 14579 GCF_000007825.1
-<OPTION>Bacillus subtilis subsp. subtilis str. 168 GCF_000009045.1
-<OPTION>Bacteroides fragilis YCH46 GCF_000009925.1
-<OPTION>Bifidobacterium longum NCC2705 GCF_000007525.1
-<OPTION>Borrelia burgdorferi B31 GCF_000008685.2
-<OPTION>Buchnera aphidicola str. APS (Acyrthosiphon pisum) GCF_000009605.1
-<OPTION>Campylobacter jejuni subsp. jejuni NCTC 11168 = ATCC 700819 GCF_000009085.1
-<OPTION>Caulobacter crescentus CB15 GCF_000006905.1
-<OPTION>Chlamydia trachomatis D/UW-3/CX GCF_000008725.1
-<OPTION>Chlamydophila pneumoniae CWL029 GCF_000008745.1
-<OPTION>Chlorobium tepidum TLS GCF_000006985.1
-<OPTION>Clostridioides difficile 630 GCF_000009205.1
-<OPTION>Clostridium acetobutylicum ATCC 824 GCF_000008765.1
-<OPTION>Coxiella burnetii RSA 493 GCF_000007765.2
-<OPTION>Deinococcus radiodurans R1 GCF_000008565.1
-<OPTION>Enterococcus faecalis V583 GCF_000007785.1
-<OPTION>Escherichia coli O157:H7 str. Sakai GCF_000008865.1
-<OPTION>Escherichia coli str. K-12 substr. MG1655 GCF_000005845.2
-<OPTION>Francisella tularensis subsp. tularensis SCHU S4 GCF_000008985.1
-<OPTION>Fusobacterium nucleatum subsp. nucleatum ATCC 25586 GCF_000007325.1
-<OPTION>Geobacter sulfurreducens PCA GCF_000007985.2
-<OPTION>Helicobacter pylori 26695 GCF_000008525.1
-<OPTION>Lactobacillus salivarius UCC118 GCF_000008925.1
-<OPTION>Lactococcus lactis subsp. lactis Il1403 GCF_000006865.1
-<OPTION>Legionella pneumophila subsp. pneumophila str. Philadelphia 1 GCF_000008485.1
-<OPTION>Mesoplasma florum L1 GCF_000008305.1
-<OPTION>Neisseria gonorrhoeae FA 1090 GCF_000006845.1
-<OPTION>Neisseria meningitidis MC58 GCF_000008805.1
-<OPTION>Prochlorococcus marinus subsp. marinus str. CCMP1375 GCF_000007925.1
-<OPTION>Pseudomonas aeruginosa PAO1 GCF_000006765.1
-<OPTION>Pseudomonas putida KT2440 GCF_000007565.2
-<OPTION>Salmonella enterica subsp. enterica serovar Typhimurium str. LT2 GCF_000006945.2
-<OPTION>Shigella flexneri 2a str. 301 GCF_000006925.2
-<OPTION>Sinorhizobium meliloti 1021 GCF_000006965.1
-<OPTION>Staphylococcus epidermidis ATCC 12228 GCF_000007645.1
-<OPTION>Streptococcus agalactiae 2603V/R GCF_000007265.1
-<OPTION>Streptococcus mutans UA159 GCF_000007465.2
-<OPTION>Streptococcus pneumoniae R6 GCF_000007045.1
-<OPTION>Streptococcus pyogenes M1 GAS GCF_000006785.2
-<OPTION>Thermotoga maritima MSB8 GCF_000008545.1
-<OPTION>Treponema denticola ATCC 35405 GCF_000008185.1
-<OPTION>Vibrio cholerae O1 biovar El Tor str. N16961 GCF_000006745.1
-<OPTION>Xanthomonas campestris pv. campestris str. ATCC 33913 GCF_000007145.1
-<OPTION>Yersinia enterocolitica subsp. enterocolitica 8081 GCF_000009345.1
-<OPTION>Yersinia pestis CO92 GCF_000009065.1
-<OPTION>[Bacillus thuringiensis] serovar konkukian str. 97-27 GCF_000008505.1
-<OPTION>[Pseudomonas syringae] pv. tomato str. DC3000 GCF_000007805.1
+<OPTION>Aquifex aeolicus VF5
+<OPTION>Bacillus anthracis str. Ames
+<OPTION>Bacillus anthracis str. Sterne
+<OPTION>Bacillus cereus ATCC 14579
+<OPTION>Bacillus subtilis subsp. subtilis str. 168
+<OPTION>Bacteroides fragilis YCH46
+<OPTION>Bifidobacterium longum NCC2705
+<OPTION>Borrelia burgdorferi B31
+<OPTION>Buchnera aphidicola str. APS (Acyrthosiphon pisum)
+<OPTION>Campylobacter jejuni subsp. jejuni NCTC 11168 = ATCC 700819
+<OPTION>Caulobacter crescentus CB15
+<OPTION>Chlamydia trachomatis D/UW-3/CX
+<OPTION>Chlamydophila pneumoniae CWL029
+<OPTION>Chlorobium tepidum TLS
+<OPTION>Clostridioides difficile 630
+<OPTION>Clostridium acetobutylicum ATCC 824
+<OPTION>Coxiella burnetii RSA 493
+<OPTION>Deinococcus radiodurans R1
+<OPTION>Enterococcus faecalis V583
+<OPTION>Escherichia coli O157:H7 str. Sakai
+<OPTION>Escherichia coli str. K-12 substr. MG1655
+<OPTION>Francisella tularensis subsp. tularensis SCHU S4
+<OPTION>Fusobacterium nucleatum subsp. nucleatum ATCC 25586
+<OPTION>Geobacter sulfurreducens PCA
+<OPTION>Helicobacter pylori 26695
+<OPTION>Lactobacillus salivarius UCC118
+<OPTION>Lactococcus lactis subsp. lactis Il1403
+<OPTION>Legionella pneumophila subsp. pneumophila str. Philadelphia 1
+<OPTION>Mesoplasma florum L1
+<OPTION>Neisseria gonorrhoeae FA 1090
+<OPTION>Neisseria meningitidis MC58
+<OPTION>Prochlorococcus marinus subsp. marinus str. CCMP1375
+<OPTION>Pseudomonas aeruginosa PAO1
+<OPTION>Pseudomonas putida KT2440
+<OPTION>Salmonella enterica subsp. enterica serovar Typhimurium str. LT2
+<OPTION>Shigella flexneri 2a str. 301
+<OPTION>Sinorhizobium meliloti 1021
+<OPTION>Staphylococcus epidermidis ATCC 12228
+<OPTION>Streptococcus agalactiae 2603V/R
+<OPTION>Streptococcus mutans UA159
+<OPTION>Streptococcus pneumoniae R6
+<OPTION>Streptococcus pyogenes M1 GAS
+<OPTION>Thermotoga maritima MSB8
+<OPTION>Treponema denticola ATCC 35405
+<OPTION>Vibrio cholerae O1 biovar El Tor str. N16961
+<OPTION>Xanthomonas campestris pv. campestris str. ATCC 33913
+<OPTION>Yersinia enterocolitica subsp. enterocolitica 8081
+<OPTION>Yersinia pestis CO92
+<OPTION>[Bacillus thuringiensis] serovar konkukian str. 97-27
+<OPTION>[Pseudomonas syringae] pv. tomato str. DC3000

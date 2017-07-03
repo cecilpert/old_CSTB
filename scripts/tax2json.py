@@ -61,7 +61,9 @@ if __name__ == '__main__':
 	# get nodes and leaves name
 	for i in newTree.iter_descendants():
 		if int(i.name) in invert_dic: 
-			i.name=invert_dic[int(i.name)]
+			name=invert_dic[int(i.name)]
+			i.name=name
+			#i.name=i.name.split(' ')[-2:]
 		else: 	
 			i.name = ncbi.get_taxid_translator([int(i.name)])[int(i.name)]
 	# get root's name

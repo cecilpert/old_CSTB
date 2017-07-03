@@ -2,7 +2,7 @@ import os
 from Bio import SeqIO
 from ete3 import NCBITaxa
 import pickle 
-from functionbase import reverse_complement
+from common_functions import reverse_complement
 import re, json
 
 class Lineage: 
@@ -221,7 +221,8 @@ def genome_file_for_list():
     list_genomes=sorted(list_genomes)
     out=open('scripts/static/sortedgenomes.txt','w')
     for i in list_genomes: 
-        out.write('<OPTION>'+i+'\n')
+        name=' '.join(i.split(' ')[:-1])
+        out.write('<OPTION>'+name+'\n')
     out.close()    
 
 def compress(): 
@@ -248,7 +249,7 @@ dic_taxid=dic_download(ref_bacteria)
 #test(dic_taxid)
 #index_bowtie_blast(dic_taxid)
 #pre_calculate(dic_taxid)
-distance_matrix(dic_taxid)
+#distance_matrix(dic_taxid)
 json_tree()
-genome_file_for_list()
+#genome_file_for_list()
 #compress()
