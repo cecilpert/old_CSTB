@@ -140,6 +140,15 @@ function writeResults(obj){
 
 }
 
+function setupAllGenome(){
+	$('#list_selection').hide()
+	includeIdList=[]
+	disabledExc=[]
+	excludeIdList=[]
+	disabledInc=[]
+	excludeNameList=[]
+	includeNameList=[]
+}
 
 function displayTreeIn(suffix){
 	var to = false;
@@ -257,52 +266,63 @@ function resetTree(){
 }
 
 function submitTree(){
-	$("#IN").hide();
-	$("#NOTIN").hide();
-	$("#RemoveIN").hide();
-	$("#ValIN").hide();
-	$("#RemoveNOTIN").hide();
-	$("#ValNOTIN").hide();
 	$("#submit_trees").hide();
 	$("#reset_trees").hide();
-	$('#ShowIN').show();
-	$('#ShowNOTIN').show();
+	$('#list_selection').show();
+	$('#ShowIN').show()
+	$('#ShowNOTIN').show()
 	displaySelection()
-	$("#other_parameters_AllG").show();
-	$("#submitbtn").show();
-	
+}
+
+function submitTreeSG(){
+	//$('#ShowSeq').hide()
+	//$('#tree').hide()
+	$('#submit_trees_sg').hide()
+	$('#reset_trees_sg').hide()
+	$('#ShowIN_sg').show()
 }
 
 function displaySelection(){
 	for (i=0;i<includeNameList.length;i++){
-		var n=new Option(includeNameList[i]);
-		$(n).html(includeNameList[i]);
-		$("#InView").append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
+		node=includeIdList[i]
+		if ($('#tree_include').jstree().is_leaf(node)){
+			n=new Option(includeNameList[i]);
+			$(n).html(includeNameList[i]);
+			$("#InView").append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
+		}
+		
 	};
 	for (i=0;i<excludeNameList.length;i++){
-		var n=new Option(excludeNameList[i]);
-		$(n).html(excludeNameList[i]);
-		$("#NotInView").append(n);
+		node=excludeIdList[i]
+		if ($('#tree_exclude').jstree().is_leaf(node)){
+			n=new Option(excludeNameList[i]);
+			$(n).html(excludeNameList[i]);
+			$("#NotInView").append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
+		}
 	};	
 }
 
+function confirmSelection(){
+	$('#confirm').hide()
+	$('#other_parameters_AllG').show()
+	$('#submitbtn').show()
+}
+
 function resetAll(){
-	$("#INList").empty();
-	$("#InView").empty();
-	$("#NOTINList").empty();
-	$("#NotInView").empty();
 	$("#other_parameters_AllG").hide();
+	$('#list_selection').hide()
 	$("#ShowIN").hide();
-	$("#NOTIN").hide();
 	$("#ShowNOTIN").hide();
 	$("#submitbtn").hide();
 	$("#submit_trees").show();
 	$("#reset_trees").show();
-	$("#IN").show();
 }
 // Modif end
 
 function submitSetupAllGenome(){
+	$('#Tabselection').hide()
+	$('#AllG').hide()
+	$('#Waiting').show()
 	GIN=JSON.stringify(includeNameList);
 	GNOTIN=JSON.stringify(excludeNameList);
 	MISMATCH=$("select[name='max-mismatch_AllG'] > option:selected").val();
@@ -352,20 +372,68 @@ function treatResults(data){
 
 }
 
-$(document).ready(function(){
-
-	readTextFile("./static/sortedgenomes.txt")	//Requires putting the sortedgenomes.txt in the 'static' folder.
-
-	displayTreeIn('')
-
-	displayTreeNotIn('')
-
+function setupSpecificGene(){
+	$('#changeSeq').hide()
+	$('#IN_sg').hide()
+	$('#NOTIN_sg').hide()
+	$("#other_parameters").hide()
+	$('#submit_sg').hide()
+	$('#tree').hide()	
 	includeIdList=[]
 	disabledExc=[]
 	excludeIdList=[]
 	disabledInc=[]
 	excludeNameList=[]
 	includeNameList=[]
+}
+
+function treatFastaFile(){
+	$('a[name=error-load]').hide()
+	fastaname=$("#fasta-file").val()
+
+	if(fastaname==''){
+		$('a[name=error-load]').show()
+		$('a[name=error-load]').html('No file selected')
+		return
+	}
+	else{
+		loadFile('#fasta-file')
+	}	
+}
+
+function displaySequence(){
+	sequence=$('#seq').val()
+	error_fasta=verifyFasta(sequence)
+	if(error_fasta[0]!="no error"){
+		$('a[name=error-fasta]').html(error_fasta[0])
+		return
+	}
+	final_sequence=error_fasta[1]
+	if(final_sequence==''){
+		$('a[name=error-fasta]').html('Empty sequence')
+		return
+	}
+	$('#ShowSeq').html("<h5 class='w3-container w3-light-green'>Your query:</h5><div class='w3-margin'>"+sequence+"</div>")
+	$('#spec_tips').hide()
+	$('a[name=error-fasta]').hide()
+	$("#Sequenceupload").hide()
+	$('#next').hide()
+	$('#list').hide()
+	$('#changeSeq').show()
+	$('#tree_sg').show()
+
+}
+
+$(document).ready(function(){
+
+	//readTextFile("./static/sortedgenomes.txt")	//Requires putting the sortedgenomes.txt in the 'static' folder.
+
+	setupAllGenome()
+
+	displayTreeIn('')
+
+	displayTreeNotIn('')
+
 
 	$('#tree_include').on("changed.jstree",function(e,data){
 		selectOnTreeIn(data)
@@ -384,14 +452,16 @@ $(document).ready(function(){
 
 	$("#reset_trees").click(resetTree)
 
-	$('#search_in').val('');
-	$('#search_notin').val('');
+	//$('#search_in').val('');
+	//$('#search_notin').val('');
 
 	$("#submit_trees").click(submitTree)
 
+	$('#confirm_y').click(confirmSelection)
+
+	$('#confirm_n').click(resetAll)
+
 	$("#submitbtn").click(function(){
-		$("#AllG").hide();
-		$("#Waiting").show();
 		submitSetupAllGenome()
 		$.getJSON($SCRIPT_ROOT+'/allgenomes',{gi:GIN,gni:GNOTIN,max_mismatch:MISMATCH,pam:PAM,sgrna_length:SGRNA},
 		function(data) {
@@ -402,170 +472,23 @@ $(document).ready(function(){
 		
 
 
+
 	//**SPECGENE CODE**//
 
+	setupSpecificGene()
 
-
-	var includeIdList_sg = []
-	var excludeIdList_sg = []
-	var includeNameList_sg = []	// this is the list contain the names of IN organisms
-	var excludeNameList_sg = []	// this is the list contain the names of NOT IN organisms
-	var disabledExc_sg = []
-	var disabledInc_sg = []
-
-	var gref='';
-	var res_specGene='';
-	var Not_In_search=0;		//Holds binary information as to whether Not In search performed (1) or not (0)
-	var Multiple_search=0;
-
-	$('#changeSeq').hide()
-	$('#GREF').hide()
-	$('#IN_sg').hide()
-	$('#NOTIN_sg').hide()
-	$("#other_parameters").hide()
-	$('#submit_sg').hide()
-	$('#tree_sg').hide()
-
-	$('#load-file').click(function(){
-		$('a[name=error-load]').hide()
-		fastaname=$("#fasta-file").val()
-
-		if(fastaname==''){
-			$('a[name=error-load]').show()
-			$('a[name=error-load]').html('No file selected')
-			return
-		}
-		else{
-			loadFile('#fasta-file')
-		}
-	});
+	$('#load-file').click(treatFastaFile)
 
 	$('#next').click(function(){
-		sequence=$('#seq').val()
-		error_fasta=verifyFasta(sequence)
-			if(error_fasta[0]!="no error"){
-				$('a[name=error-fasta]').html(error_fasta[0])
-				return
-			}
-			final_sequence=error_fasta[1]
-			if(final_sequence==''){
-				$('a[name=error-fasta]').html('Empty sequence')
-				return
-			}
-		// YOLO
-		$('#ShowSeq').html("<h5 class='w3-container w3-light-green'>Your query:</h5><div class='w3-margin'>"+sequence+"</div>")
-		//A embellir+mettre dans le HTML?
+		displaySequence()
+		$('#tree').show()
+		displayTreeIn('_sg')
+		displayTreeNotIn('_sg')
+	}) 
 
-		$('#spec_tips').hide()
-		$('a[name=error-fasta]').hide()
-		$("#Sequenceupload").hide()
-		$('#next').hide()
-		$('#list').hide()
-		$('#changeSeq').show()
-		$('#tree_sg').show()
-	});
+	$('#submit_trees_sg').click(submitTreeSG)
 
-
-	$(function () {
-		// search on IN tree
-		var to = false;
-		$('#search_in_sg').keyup(function () {
-			if(to) { clearTimeout(to); }
-			to = setTimeout(function () {
-				var v = $('#search_in_sg').val();
-				$('#tree_include_sg').jstree().search(v);
-			}, 250);
-		});
-		$.jstree.defaults.search.show_only_matches=true;
-		// tree building
-		$('#tree_include_sg').jstree({
-			"core" : {
-				'data' : { "url" : "./static/jsontree.json", "dataType" : "json"},
-				'themes' : [
-					{"dots" : true}
-				],
-				'animation' : false
-			},
-			"checkbox" : {
-				"keep_selected_style" : false
-			},
-			"plugins" : [ "wholerow" , "checkbox" , "search" , "dnd" , "types"]
-		});
-		$('#tree_include_sg').jstree().show_dots();
-	});
-
-
-	// The second tree : NOT IN
-	$(function () {
-		// search on NOT IN tree
-		var to = false;
-		$('#search_notin_sg').keyup(function () {
-			if(to) { clearTimeout(to); }
-			to = setTimeout(function () {
-				var v = $('#search_notin').val();
-				$('#tree_exclude').jstree().search(v);
-			}, 250);
-		});
-		$.jstree.defaults.search.show_only_matches=true;
-		// tree building
-		$('#tree_exclude_sg').jstree({
-			"core" : {
-				'data' : { "url" : "./static/jsontree.json", "dataType" : "json"},
-				'themes' : [
-					{"dots" : true}
-				],
-				'animation' : false
-			},
-			"checkbox" : {
-				"keep_selected_style" : false
-			},
-			"plugins" : [ "wholerow" , "checkbox" , "search" , "dnd" , "types"]
-		});
-		$('#tree_exclude_sg').jstree().show_dots();
-	});
-
-	$('#tree_include_sg').on("changed.jstree", function (e, data) {	// replace changed for onclicked like below
-		for(m = 0, n = includeIdList_sg.length; m < n; m++) {
-			disabledExc_sg.push(includeIdList_sg[m].replace("j1","j2"));
-		}
-		$("#tree_exclude_sg").jstree().enable_node(disabledExc_sg);
-		includeIdList_sg = data.selected
-		disabledExc_sg = []
-		for(m = 0, n = includeIdList_sg.length; m < n; m++) {
-			disabledExc_sg.push(includeIdList_sg[m].replace("j1","j2"));
-		}
-		$("#tree_exclude_sg").jstree().disable_node(disabledExc_sg);
-		includeNameList_sg = [];
-		for(i = 0, j = includeIdList_sg.length; i < j; i++) {
-			includeNameList_sg.push(data.instance.get_node(includeIdList_sg[i]).text);
-		};
-		console.log(includeNameList_sg);
-	});
-
-	$('#tree_exclude_sg').on("changed.jstree", function (e, data) {	// replace changed for onclicked like below
-		for(m = 0, n = excludeIdList_sg.length; m < n; m++) {
-			disabledInc_sg.push(excludeIdList_sg[m].replace("j2","j1"));
-		}
-		$("#tree_include_sg").jstree().enable_node(disabledInc_sg);
-		excludeIdList_sg = data.selected
-		disabledInc_sg = []
-		for(m = 0, n = excludeIdList_sg.length; m < n; m++) {
-			disabledInc_sg.push(excludeIdList_sg[m].replace("j2","j1"));
-		}
-		$("#tree_include_sg").jstree().disable_node(disabledInc_sg);
-		excludeNameList_sg = [];
-		for(i = 0, j = excludeIdList_sg.length; i < j; i++) {
-			excludeNameList_sg.push(data.instance.get_node(excludeIdList_sg[i]).text);
-		};
-		console.log(excludeNameList_sg);
-	});
-
-	var genomes_IN_sg=[];
-	var genomes_NOTIN_sg=[]
-
-	var out_specGene=''	//Holds the HTML Table content for output display.
-
-	$('#submit_trees_sg').click(function(){
+	/*$('#submit_trees_sg').click(function(){
 		genomes_IN=includeNameList_sg;
 		genomes_NOTIN=excludeNameList_sg;
 		$('#tree_sg').hide()
@@ -581,7 +504,7 @@ $(document).ready(function(){
 		};
 		$("#other_parameters").show();
 		$("#submit_sg").show();
-	});
+	});*/
 
 	$('#submit_sg').click(function(){
 
