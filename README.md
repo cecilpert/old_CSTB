@@ -42,7 +42,7 @@ If you choose to download requirements "manually", you have to add them to your 
 
 The github archive does not provide genome database for local version. You can construct one with the scripts pre_treatment.py. 
 
-** To complete... ** 
+*Coming soon...* 
 
 ### Local version 
 Go to CSTB folder and execute the shell script "run.command". This script executes Flask and you can go to the local adress http://127.0.0.1:5000/ to access graphical interface. 
@@ -58,6 +58,18 @@ And go the the local url to access graphical interface.
 CSTB has been created to find target sequence for CRISPr system. 
 The programm has two part called All Genomes and Specific Gene. The functionment is the same, the only difference is that All Genomes search sequences in complete genomes and Specific Gene search sequences only in a given gene.  
 The principle is to detect sequences that hybridises on targeted genomes and DON'T hybridise on excluded genomes (it's the novelty compared to the other programs that exist).  
+
+### All Genomes principle 
+
+*Coming soon...* 
+
+### Specific Gene principle 
+
+*Coming soon...* 
+
+### Performances test 
+
+*Coming soon...* 
 
 
 
