@@ -1,4 +1,4 @@
-#from __future__ import print_function
+from __future__ import print_function
 import common_functions as cf 
 import uuid,time,argparse,sys
 from Bio import SeqIO

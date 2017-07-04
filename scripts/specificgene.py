@@ -1,3 +1,4 @@
+from __future__ import print_function
 import common_functions as cf 
 import time,argparse,uuid,os,subprocess,sys
 from Bio.Blast import NCBIXML  

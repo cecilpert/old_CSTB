@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os,sys,json,re,subprocess
 from Bio import SeqIO
 from queue import Queue
