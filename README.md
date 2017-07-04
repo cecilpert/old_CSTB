@@ -48,7 +48,7 @@ For build database, you will need an ncbi assembly_summary file. This kind of fi
 
 **Example of files :** [All refseq genomes](https://ftp.ncbi.nlm.nih.gov/genomes/refseq/assembly_summary_refseq.txt), [All bacteria](https://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/assembly_summary.txt) 
 
-Once you download this type of file, launch `python3 scripts/pre_treatment.py` from CSTB folder to construct database. At the end, you must have a new folder called reference_genomes with different needed files. 
+Once you download this type of file, launch `python3 scripts/pre_treatment.py path_to_assembly_summary_file` from CSTB folder to construct database. At the end, you must have a new folder called reference_genomes with different needed files. 
 
 
 
