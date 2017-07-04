@@ -40,9 +40,9 @@ If you choose to download requirements "manually", you have to add them to your 
 
 ### Construct a database 
 
-The github archive does not provide genome database. You can construct one with the scripts pre_treatment.py. 
+The github archive does not provide genome database for local version. You can construct one with the scripts pre_treatment.py. 
 
-*** To complete... *** 
+** To complete... ** 
 
 ### Local version 
 Go to CSTB folder and execute the shell script "run.command". This script executes Flask and you can go to the local adress http://127.0.0.1:5000/ to access graphical interface. 
