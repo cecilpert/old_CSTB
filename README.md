@@ -21,16 +21,19 @@ It's also possible to use Python2. In this case, you have to change the global v
 You can use pip3 with `pip3 install flask` and `pip3 install biopython`
 
 #### Online documentations
-<li> [BioPython](http://biopython.org/wiki/Documentation) </li>
-<li> [Flask](http://flask.pocoo.org/docs/0.12/) </li>
+[BioPython](http://biopython.org/wiki/Documentation) 
+
+[Flask](http://flask.pocoo.org/docs/0.12/)
 
 ### Blast and Bowtie2 
 
 On Linux (Ubuntu), you can use `sudo apt-get install blast` and `sudo apt-get install bowtie2`. 
 For more recent versions, check the documentations. 
 #### Online documentations 
-<li> [Blast](https://www.ncbi.nlm.nih.gov/books/NBK279690/) </li> 
-<li> [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) </li> 
+
+[Blast](https://www.ncbi.nlm.nih.gov/books/NBK279690/)
+
+[Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml)
 
 ### Warning 
 If you choose to download requirements "manually", you have to add them to your PATH variable, so that they can be executable directly in your terminal.  
