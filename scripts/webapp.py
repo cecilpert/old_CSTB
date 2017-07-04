@@ -64,18 +64,14 @@ def treat_arguments_specific_gene():
 	seq=str(seq)	## NB THIS REQUIRES PROPER FASTA FORMATTING IN JAVASCRIPT.
 
 	#Gin and Gnotin treatment
-	gref=request.args.get('gref',0).strip('[]').replace('"','')
 	gin=request.args.get('gin',0).strip('[]').split(',')	##Relies on having no ',' in the organism names.
 	gin=[genome.strip('"\\n\\t') for genome in gin]
-	gin.insert(0,gref)##Places genome of origin at first position of genomes in list.
 	gin='"'+'+'.join(gin)+'"'
 	gin=gin.rstrip('+"')+'"' #delete + at the end of the string if there is only one genome
-
 
 	gnotin=request.args.get('gnotin',0).strip('[]').split(',')
 	gnotin=[genome.strip('"\\n\\t') for genome in gnotin]
 	gnotin='"'+'+'.join(gnotin)+'"'
-
 
 	#Other parameters
 	n=request.args.get('n',0)

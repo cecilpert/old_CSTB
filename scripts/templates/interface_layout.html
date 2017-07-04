@@ -145,7 +145,7 @@
 
 		</div>
 			
-			<div id="other_parameters_AllG" style="display:none">
+			<div id="other_parameters" style="display:none">
 				<h4>Other parameters</h4>
 				<div class="w3-row">
 					<div class="w3-third w3-padding w3-card-4 w3-hover-light-blue">
@@ -219,16 +219,23 @@
 			<button id="reset_trees_sg" class="w3-btn w3-ripple w3-red w3-left">Reset trees</button>
 			</div>
 
+			<div id='list_selection_sg'>
 			<div class="w3-row">
-				<div id="ShowIN_sg" class="w3-half w3-padding" style="display:none">
-					List of bacteria will be targeted: 
+				<div id="ShowIN_sg" class="w3-half w3-padding w3-text-red w3-center" style="display:none">
+					<b>List of bacteria will be targeted: </b>
 					<select id="InView_sg" multiple=True size=3> </select>
-					<button id="RemoveIN_sg" class="w3-btn w3-left w3-ripple w3-red">&LT; Remove</button>
-					<button id="ValIN_sg" class="w3-btn w3-right w3-ripple w3-green">Validate choices </button>
+				</div>
+				<div id="ShowNOTIN_sg" class="w3-half w3-padding w3-text-green w3-center" style="display:none">
+					<b>List of bacteria without target:</b>
+					<select id="NotInView_sg" multiple=True size=3></select>
 				</div>
 			</div>
+			<br>
+			<div id="confirm_sg" class='w3-border w3-padding w3-center'> <b>Confirm your selection ? </b><button id='confirm_y_sg' class='w3-button w3-green'> Yes </button> <button id='confirm_n_sg' class='w3-button w3-red'> No </button> </div>
 
-			<div id="other_parameters" class="w3-container">
+		</div>
+
+			<div id="other_parameters_sg" class="w3-container">
 				<h4>Other parameters</h4>
 				<div id=cadre class="w3-row">
 					
@@ -265,7 +272,7 @@
 					</div>
 				</div>
 
-			<button class="w3-btn w3-ripple w3-blue-grey w3-right" id="submit_sg"><b>Submit query</b></button> 
+			<button class="w3-btn w3-ripple w3-blue-grey w3-right" id="submitbtn_sg"><b>Submit query</b></button> 
 
 			</div>
 		</div>

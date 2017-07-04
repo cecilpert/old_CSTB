@@ -130,7 +130,7 @@ function writeResults(obj){
 			print_org='<td rowspan="'+line_genome+'">' + org_split.join(' ') + '</td>'
 			out=print_org+out
 		}
-		print_seq='<td rowspan="'+line_seq+'">' + seq + '</td>'
+		print_seq='<td rowspan="'+line_seq+'" valign="top">' + seq + '</td>'
 		out=print_seq+out
 
 	}
@@ -205,18 +205,27 @@ function displayTreeNotIn(suffix){
 }
 
 
-function selectOnTreeIn(data){
-	for(m = 0, n = includeIdList.length; m < n; m++) {
-		disabledExc.push(includeIdList[m].replace("j1","j2"));
+function selectOnTreeIn(data,suffix){
+	if(suffix=='_sg'){
+		a='j3'
+		b='j4'
 	}
-	$("#tree_exclude").jstree().enable_node(disabledExc);
+	else{
+		a='j1'
+		b='j2'
+	}
+	
+	for(m = 0, n = includeIdList.length; m < n; m++) {
+		disabledExc.push(includeIdList[m].replace(a,b));
+	}
+	$("#tree_exclude"+suffix).jstree().enable_node(disabledExc);
 
 	includeIdList = data.selected
 	disabledExc = []
 	for(m = 0, n = includeIdList.length; m < n; m++) {
-		disabledExc.push(includeIdList[m].replace("j1","j2"));
+		disabledExc.push(includeIdList[m].replace(a,b));
 		}
-	$("#tree_exclude").jstree().disable_node(disabledExc);
+	$("#tree_exclude"+suffix).jstree().disable_node(disabledExc);
 
 	includeNameList = [];
 	for(i = 0, j = includeIdList.length; i < j; i++) {
@@ -225,22 +234,32 @@ function selectOnTreeIn(data){
 
 	notSelectedIdIn=[]
 	for(i=0;i<excludeIdList.length;i++){
-		notSelectedIdIn.push(excludeIdList[i].replace('j2','j1'))
+		notSelectedIdIn.push(excludeIdList[i].replace(b,a))
 	}
-	$('#tree_include').jstree(true).uncheck_node(notSelectedIdIn);
+	$('#tree_include'+suffix).jstree(true).uncheck_node(notSelectedIdIn);
 }
 
-function selectOnTreeNotIn(data){
-	for(m = 0, n = excludeIdList.length; m < n; m++) {
-		disabledInc.push(excludeIdList[m].replace("j2","j1"));
+
+function selectOnTreeNotIn(data,suffix){
+	if(suffix=='_sg'){
+		a='j3'
+		b='j4'
 	}
-	$("#tree_include").jstree().enable_node(disabledInc);
+	else{
+		a='j1'
+		b='j2'
+	}
+
+	for(m = 0, n = excludeIdList.length; m < n; m++) {
+		disabledInc.push(excludeIdList[m].replace(b,a));
+	}
+	$("#tree_include"+suffix).jstree().enable_node(disabledInc);
 	excludeIdList = data.selected
 	disabledInc = []
 	for(m = 0, n = excludeIdList.length; m < n; m++) {
-		disabledInc.push(excludeIdList[m].replace("j2","j1"));
+		disabledInc.push(excludeIdList[m].replace(b,a));
 	}
-	$("#tree_include").jstree().disable_node(disabledInc);
+	$("#tree_include"+suffix).jstree().disable_node(disabledInc);
 	excludeNameList = [];
 	for(i = 0, j = excludeIdList.length; i < j; i++) {
 		excludeNameList.push(data.instance.get_node(excludeIdList[i]).text);
@@ -248,9 +267,9 @@ function selectOnTreeNotIn(data){
 
 	notSelectedIdNotIn=[]
 	for(i=0;i<includeIdList.length;i++){
-		notSelectedIdNotIn.push(includeIdList[i].replace('j1','j2'))
+		notSelectedIdNotIn.push(includeIdList[i].replace(a,b))
 	}
-	$('#tree_exclude').jstree(true).uncheck_node(notSelectedIdNotIn);
+	$('#tree_exclude'+suffix).jstree(true).uncheck_node(notSelectedIdNotIn);
 	
 }
 
@@ -271,7 +290,7 @@ function submitTree(){
 	$('#list_selection').show();
 	$('#ShowIN').show()
 	$('#ShowNOTIN').show()
-	displaySelection()
+	displaySelection('')
 }
 
 function submitTreeSG(){
@@ -280,42 +299,45 @@ function submitTreeSG(){
 	$('#submit_trees_sg').hide()
 	$('#reset_trees_sg').hide()
 	$('#ShowIN_sg').show()
+	$('#ShowNOTIN_sg').show()
+	$('#list_selection_sg').show()
+	displaySelection('_sg')
 }
 
-function displaySelection(){
+function displaySelection(suffix){
 	for (i=0;i<includeNameList.length;i++){
 		node=includeIdList[i]
-		if ($('#tree_include').jstree().is_leaf(node)){
+		if ($('#tree_include'+suffix).jstree().is_leaf(node)){
 			n=new Option(includeNameList[i]);
 			$(n).html(includeNameList[i]);
-			$("#InView").append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
+			$("#InView"+suffix).append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
 		}
 		
 	};
 	for (i=0;i<excludeNameList.length;i++){
 		node=excludeIdList[i]
-		if ($('#tree_exclude').jstree().is_leaf(node)){
+		if ($('#tree_exclude'+suffix).jstree().is_leaf(node)){
 			n=new Option(excludeNameList[i]);
 			$(n).html(excludeNameList[i]);
-			$("#NotInView").append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
+			$("#NotInView"+suffix).append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
 		}
 	};	
 }
 
-function confirmSelection(){
-	$('#confirm').hide()
-	$('#other_parameters_AllG').show()
-	$('#submitbtn').show()
+function confirmSelection(suffix){
+	$('#confirm'+suffix).hide()
+	$('#other_parameters'+suffix).show()
+	$('#submitbtn'+suffix).show()
 }
 
-function resetAll(){
-	$("#other_parameters_AllG").hide();
-	$('#list_selection').hide()
-	$("#ShowIN").hide();
-	$("#ShowNOTIN").hide();
-	$("#submitbtn").hide();
-	$("#submit_trees").show();
-	$("#reset_trees").show();
+function resetAll(suffix){
+	$("#other_parameters"+suffix).hide();
+	$('#list_selection'+suffix).hide()
+	$("#ShowIN"+suffix).hide();
+	$("#ShowNOTIN"+suffix).hide();
+	$("#submitbtn"+suffix).hide();
+	$("#submit_trees"+suffix).show();
+	$("#reset_trees"+suffix).show();
 }
 // Modif end
 
@@ -376,9 +398,10 @@ function setupSpecificGene(){
 	$('#changeSeq').hide()
 	$('#IN_sg').hide()
 	$('#NOTIN_sg').hide()
-	$("#other_parameters").hide()
+	$("#other_parameters_sg").hide()
 	$('#submit_sg').hide()
 	$('#tree').hide()	
+	$('#list_selection_sg').hide()
 	includeIdList=[]
 	disabledExc=[]
 	excludeIdList=[]
@@ -424,6 +447,102 @@ function displaySequence(){
 
 }
 
+function submitSpecificGene(){
+	$("#Tabselection").hide();
+	$('a[name=error-n]').hide()
+	$('a[name=error-pid]').hide()
+	n_gene=$("#search-region").val()
+	percent_id=$("#percent-identity").val()
+	pam=$("select[name='pam'] > option:selected").val();
+	sgrna_length=$("select[name='sgrna-length'] > option:selected").val();	
+	error_gestion()
+	$('#SpecG').hide();
+	$('#Waiting').show();
+	var N=JSON.stringify(n_gene);
+	var PID=JSON.stringify(percent_id);
+	var SEQ=JSON.stringify(final_sequence);
+	var GIN=JSON.stringify(includeNameList);
+	var GNOTIN=JSON.stringify(excludeNameList);
+	var PAM=JSON.stringify(pam);
+	var LENGTH=JSON.stringify(sgrna_length);
+	$.getJSON($SCRIPT_ROOT+'/specific_gene',{seq:SEQ,gin:GIN,gnotin:GNOTIN,n:N,pid:PID,pam:PAM,sgrna_length:LENGTH},
+		function(data) {
+			treatResultsSG(data)
+	})
+}
+
+function treatResultsSG(data){
+	if (data.length==5){
+		resultFound=1
+		res=data[0];
+		not_in=data[1];
+		tag=data[2];
+		number_hits=data[3]
+		number_on_gene=data[4]
+	}
+	else {
+		resultFound=0;
+	}
+	if(resultFound==1){
+		var obj=JSON.parse(res);
+		var infos='<p>' + number_hits + ' hits have been found for this research. ' ;
+		if (parseInt(number_hits)>100){
+			infos+='Only the best 100 are written below. Download the result file to get more hits. '
+		} 
+		if (parseInt(number_hits)>10000){
+			infos+='(only the best 10 000 are written to this file). '
+		}
+		infos+=number_on_gene+' of this hits hybridises at least one time with the subject gene (or an homologous). </p>'
+		if (not_in!=''){
+			infos+='<p>All hits are absent (based on Bowtie2 alignment) from excluded genome(s) : '+not_in+'.</p>';
+		}
+		else{
+			infos+='<p>No excluded genomes selected. </p>'
+		}
+		out=writeResults(obj)
+		$("#Waiting").fadeOut();
+		$("#Result").show();
+	
+		$('#infos').html(infos)
+		$("#ResTable").html(out);
+		display_download(tag)	
+	}
+	else{		//Display no matching results output.
+		$("#Waiting").hide();
+		$("#NoResult").show();
+		infos='<p>'+data[0]+'</p> <p> '+data[1]+'</p>'
+		$("#no_result").html(infos);
+	}
+}
+
+function error_gestion(){
+	var errors=false
+	try{
+		if (n_gene=='')throw "format error";
+		else if(n_gene<0)throw "can't be negative";
+		else if(n_gene>0 && n_gene<=parseInt(sgrna_length)+parseInt(pam.length))throw "can't be smaller than sgRNA length"
+		else if(n_gene>=final_sequence.length)throw "can't be larger than sequence length"
+	}
+	catch(err){
+		$('a[name=error-n]').show()
+		$('a[name=error-n]').html(err)
+		errors=true
+	}
+
+	try{
+		if (percent_id=='')throw "format error";
+		else if(percent_id<0 || percent_id>100)throw"must be between 0 and 100";
+	}
+	catch(err){
+		$('a[name=error-pid]').show()
+		$('a[name=error-pid]').html(err)
+		errors=true
+	}
+	if (errors==true){
+		return
+	}
+}
+
 $(document).ready(function(){
 
 	//readTextFile("./static/sortedgenomes.txt")	//Requires putting the sortedgenomes.txt in the 'static' folder.
@@ -436,19 +555,17 @@ $(document).ready(function(){
 
 
 	$('#tree_include').on("changed.jstree",function(e,data){
-		selectOnTreeIn(data)
+		selectOnTreeIn(data,'')
 	})
 
 	$('#tree_exclude').on("changed.jstree", function (e, data) {	// replace changed for onclicked like below
-		selectOnTreeNotIn(data)
+		selectOnTreeNotIn(data,'')
 
 	});
 
 
 
 //END OF TREE
-
-	$("#rstbtn").click(resetAll)
 
 	$("#reset_trees").click(resetTree)
 
@@ -457,9 +574,13 @@ $(document).ready(function(){
 
 	$("#submit_trees").click(submitTree)
 
-	$('#confirm_y').click(confirmSelection)
+	$('#confirm_y').click(function(){
+		confirmSelection('')
+	})
 
-	$('#confirm_n').click(resetAll)
+	$('#confirm_n').click(function(){
+		resetAll('')
+	})
 
 	$("#submitbtn").click(function(){
 		submitSetupAllGenome()
@@ -486,127 +607,27 @@ $(document).ready(function(){
 		displayTreeNotIn('_sg')
 	}) 
 
+	$('#tree_include_sg').on("changed.jstree",function(e,data){
+			selectOnTreeIn(data,'_sg')
+		})
+	$('#tree_exclude_sg').on("changed.jstree",function(e,data){
+		selectOnTreeNotIn(data,'_sg')
+	})
+
 	$('#submit_trees_sg').click(submitTreeSG)
 
-	/*$('#submit_trees_sg').click(function(){
-		genomes_IN=includeNameList_sg;
-		genomes_NOTIN=excludeNameList_sg;
-		$('#tree_sg').hide()
-		for (i=0;i<includeNameList_sg.length;i++){
-			var n=new Option(includeNameList_sg[i]);
-			$(n).html(includeNameList_sg[i]);
-			//$("#InView").append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
-		};
-		for (i=0;i<excludeNameList_sg.length;i++){
-			var n=new Option(excludeNameList_sg[i]);
-			$(n).html(excludeNameList_sg[i]);
-			//$("#NotInView").append(n);
-		};
-		$("#other_parameters").show();
-		$("#submit_sg").show();
-	});*/
+	$('#confirm_y_sg').click(function(){
+		confirmSelection('_sg')
+	})
 
-	$('#submit_sg').click(function(){
-
-		$("#Tabselection").hide();
-		$('a[name=error-n]').hide()
-		$('a[name=error-pid]').hide()
-		var n_gene=$("#search-region").val()
-		var percent_id=$("#percent-identity").val()
-		var pam=$("select[name='pam'] > option:selected").val();
-		var sgrna_length=$("select[name='sgrna-length'] > option:selected").val();
-		//ERRORS
-		var errors=false
-
-		try{
-			if (n_gene=='')throw "format error";
-			else if(n_gene<0)throw "can't be negative";
-			else if(n_gene>0 && n_gene<=parseInt(sgrna_length)+parseInt(pam.length))throw "can't be smaller than sgRNA length"
-			else if(n_gene>=final_sequence.length)throw "can't be larger than sequence length"
-		}
-		catch(err){
-			$('a[name=error-n]').show()
-			$('a[name=error-n]').html(err)
-			errors=true
-		}
-
-		try{
-			if (percent_id=='')throw "format error";
-			else if(percent_id<0 || percent_id>100)throw"must be between 0 and 100";
-		}
-		catch(err){
-			$('a[name=error-pid]').show()
-			$('a[name=error-pid]').html(err)
-			errors=true
-		}
+	$('#confirm_n_sg').click(function(){
+		resetAll('_sg')
+	})
 
 
-		if (errors==true){
-			return
-		}
-
-		$('#SpecG').hide();
-		$('#Waiting').show();
-		var N=JSON.stringify(n_gene);
-		var PID=JSON.stringify(percent_id);
-		var SEQ=JSON.stringify(final_sequence);
-		var GIN=JSON.stringify(genomes_IN);
-		var GNOTIN=JSON.stringify(genomes_NOTIN);
-		var GREF=JSON.stringify(gref);
-		var PAM=JSON.stringify(pam);
-		var LENGTH=JSON.stringify(sgrna_length);
-
-		$.getJSON($SCRIPT_ROOT+'/specific_gene',{seq:SEQ,gin:GIN,gnotin:GNOTIN,gref:GREF,n:N,pid:PID,pam:PAM,sgrna_length:LENGTH},
-			function(data) {
-			if (data.length==5){
-				res=data[0];
-				not_in=data[1];
-				tag=data[2];
-				number_hits=data[3]
-				number_on_gene=data[4]
-			}
-			else {
-			resultFound=0;
-			}
-			if(resultFound==1){
-				var obj=JSON.parse(res);
-				var infos='<p>' + number_hits + ' hits have been found for this research. ' ;
-				if (parseInt(number_hits)>100){
-					infos+='Only the best 100 are written below. Download the result file to get more hits. '
-
-				} 
-				if (parseInt(number_hits)>10000){
-					infos+='(only the best 10 000 are written to this file). '
-
-				}
-				infos+=number_on_gene+' of this hits hybridises at least one time with the subject gene (or an homologous). </p>'
-				if (not_in!=''){
-					infos+='<p>All hits are absent (based on Bowtie2 alignment) from excluded genome(s) : '+not_in+'.</p>';
-				}
-				else{
-					infos+='<p>No excluded genomes selected. </p>'
-				}
-				out=writeResults(obj)
-				$("#Waiting").fadeOut();
-				$("#Result").show();
-	
-			$('#infos').html(infos)
-			$("#ResTable").html(out);
-			display_download(tag)	//Link to where the output file is held; used for downloading the results.
-			//Same file used for AllG and SpecG options.
-			}
-			else{		//Display no matching results output.
-				$("#Waiting").hide();
-				$("#NoResult").show();
-				infos='<p>'+data[0]+'</p> <p> '+data[1]+'</p>'
-				$("#no_result").html(infos);
-			}
-		});
-	genomes_IN=[];	//These ready the lists
-	genomes_NOTIN=[];	//for the next request.
-	});
-
-
+	$('#submitbtn_sg').click(function(){
+		submitSpecificGene()
+	})			
 });
 
 function reloadpage() {
