@@ -3,7 +3,7 @@ from Bio import SeqIO
 from ete3 import NCBITaxa
 import pickle 
 from common_functions import reverse_complement
-import re, json
+import re, json, sys 
 
 class Lineage: 
     def __init__(self):
@@ -14,6 +14,11 @@ class Lineage:
         self.classe='No class'
         self.phylum="No phylum"
 
+def setup(): 
+    os.system('mkdir reference_genomes')
+    os.system('mkdir reference_genomes/fasta')
+    os.system('mkdir reference_genomes/index2')
+
 def dic_download(ref_bacteria):
     print('DOWNLOAD')
     out=open('to_download.sh','w')
@@ -23,45 +28,33 @@ def dic_download(ref_bacteria):
     dic_taxid={}
     dic_ref={}
     for l in f: 
-        l_split=l.rstrip().split('\t')
-        name=l_split[7]
-        short_ref=l_split[0]
-        taxfile.write(name+'\n')
-        ftp_link=l_split[19]
-        ref=ftp_link.split('/')[-1]
-        taxid=l_split[5]
-        dic_taxid[ref]=taxid
-        dic_ref[name+' '+short_ref]=[ref,taxid]
-        ftp_suffix=ftp_link.split('/')[-1]+'_genomic.fna'
-        genome_link='https://'+ftp_link.split('//')[1]+'/'+ftp_suffix
-        if ref not in os.listdir('reference_genomes/fasta'): 
-            cmd+='mkdir reference_genomes/fasta/'+ref+'\n'
-            cmd+='curl --remote-name --remote-time '+genome_link+'.gz\n'
-            cmd+='mv '+ftp_suffix+'.gz reference_genomes/fasta/'+ref+'/\n'
-            cmd+='gunzip reference_genomes/fasta/'+ref+'/'+ftp_suffix+'.gz\n'
+        if l[0]!='#': 
+            l_split=l.rstrip().split('\t')
+            name=l_split[7]
+            short_ref=l_split[0]
+            taxfile.write(name+'\n')
+            ftp_link=l_split[19]
+            ref=ftp_link.split('/')[-1]
+            taxid=l_split[5]
+            dic_taxid[ref]=taxid
+            dic_ref[name+' '+short_ref]=[ref,taxid]
+            ftp_suffix=ftp_link.split('/')[-1]+'_genomic.fna'
+            genome_link='https://'+ftp_link.split('//')[1]+'/'+ftp_suffix
+            if ref not in os.listdir('reference_genomes/fasta'): 
+                cmd+='mkdir reference_genomes/fasta/'+ref+'\n'
+                cmd+='curl --remote-name --remote-time '+genome_link+'.gz\n'
+                cmd+='mv '+ftp_suffix+'.gz reference_genomes/fasta/'+ref+'/\n'
+                cmd+='gunzip reference_genomes/fasta/'+ref+'/'+ftp_suffix+'.gz\n'
                 
     out.write(cmd)
     out.close()     
     taxfile.close()
     f.close()
     json.dump(dic_ref,open('reference_genomes/genome_ref_taxid.json','w'),indent=4)
-    #os.system('bash to_download.sh')
+    os.system('bash to_download.sh')
     os.system('rm to_download.sh')
     return dic_taxid 
         
-
-def eliminate_plasmides(list_ref):     
-    print('PLASMIDES')
-    count=0
-    for organism_code in list_ref: 
-        count+=1
-        print(count)
-        fasta_file='reference_genomes/fasta/' + organism_code +'_genomic.fna'
-        genome_seqrecord=[]
-        for seq_record in SeqIO.parse(fasta_file,'fasta'):
-            if 'plasmid' not in seq_record.description: 
-                genome_seqrecord.append(seq_record)
-        SeqIO.write(genome_seqrecord,'reference_genomes/fasta/'+organism_code+'_genomic.fna','fasta')
 
 def index_bowtie_blast(list_ref): 
     print('INDEX')
@@ -72,7 +65,6 @@ def index_bowtie_blast(list_ref):
             #cmd='gunzip reference_genomes/fasta/'+ftp_suffix+'.gz\n'
             cmd+='mkdir reference_genomes/index2/'+ref+'\n'
             cmd+='bowtie2-build reference_genomes/fasta/'+ref+'/'+ref+'_genomic.fna reference_genomes/index2/'+ref+'/'+ref+'\n'
-        if ref+'_genomic.fna.nin.gz' not in os.listdir('reference_genomes/fasta/'+ref): 
             cmd+='makeblastdb -in reference_genomes/fasta/'+ref+'/'+ref+'_genomic.fna -dbtype nucl\n'  
         out.write(cmd+'\n')   
     out.close()   
@@ -201,15 +193,6 @@ def distance_matrix(dic_taxid):
     dist_dic=distance_dic(dic_lineage)
     json.dump(dist_dic, open( "reference_genomes/distance_dic.json", "w" ),indent=4 )
 
-def test(dic_taxid): 
-    print('CHECK FOR :')
-    for ref in dic_taxid: 
-        count=0
-        for seqrecord in SeqIO.parse('reference_genomes/fasta/'+ref+'_genomic.fna','fasta'): 
-            count+=1    
-        if count>1: 
-            print(ref)
-
 def json_tree(): 
     print('JSON TREE')
     os.system('python3 scripts/tax2json.py')    
@@ -230,12 +213,12 @@ def compress():
     for i in os.listdir('reference_genomes/fasta/'): 
         if i != '.DS_Store': 
             if i.split('.')[-1]!='gz': 
-                out.write('tar -zcvf reference_genomes/fasta/'+i+'.tar.gz reference_genomes/fasta/'+i+'\n')
+                out.write('tar -zcf reference_genomes/fasta/'+i+'.tar.gz reference_genomes/fasta/'+i+'\n')
                 out.write('rm -r reference_genomes/fasta/'+i+'\n')
     for j in os.listdir('reference_genomes/index2/'): 
         if j != '.DS_Store': 
             if j.split('.')[-1]!='gz': 
-                out.write('tar -zcvf reference_genomes/index2/'+j+'.tar.gz reference_genomes/index2/'+j+'\n')
+                out.write('tar -zcf reference_genomes/index2/'+j+'.tar.gz reference_genomes/index2/'+j+'\n')
                 out.write('rm -r reference_genomes/index2/'+j+'\n')           
 
     out.close()
@@ -243,13 +226,11 @@ def compress():
     os.system('rm compress.sh')           
 
 
-ref_bacteria='more_genomes/assembly_summary_bacteria_ref_50.txt'
-dic_taxid=dic_download(ref_bacteria)
-#eliminate_plasmides(dic_taxid)
-#test(dic_taxid)
-#index_bowtie_blast(dic_taxid)
-#pre_calculate(dic_taxid)
-#distance_matrix(dic_taxid)
+f=sys.argv[1]
+setup()
+dic_taxid=dic_download(f)
+index_bowtie_blast(dic_taxid)
+distance_matrix(dic_taxid)
 json_tree()
-#genome_file_for_list()
-#compress()
+genome_file_for_list()
+compress()
