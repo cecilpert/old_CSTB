@@ -36,6 +36,22 @@ For more recent versions, check the documentations.
 ### Warning 
 If you choose to download requirements "manually", you have to add them to your PATH variable, so that they can be executable directly in your terminal.  
 
+## How to launch 
+
+### Construct a database 
+
+The github archive does not provide genome database. You can construct one with the scripts pre_treatment.py. 
+
+*** To complete... *** 
+
+### Local version 
+Go to CSTB folder and execute the shell script "run.command". This script executes Flask and you can go to the local adress http://127.0.0.1:5000/ to access graphical interface. 
+
+You can execute Flask manually with the following commands (you have to be in CSTB folder) : 
+<li> export FLASK_APP=scripts/webapp.py </li> 
+<li> export FLASK_DEBUG=1 (optional, useful if you want modify scripts) </li> 
+<li> flask run </li> 
+And go the the local url to access graphical interface. 
 
 
 
