@@ -51,8 +51,13 @@ You can execute Flask manually with the following commands (you have to be in CS
 <li> export FLASK_APP=scripts/webapp.py </li> 
 <li> export FLASK_DEBUG=1 (optional, useful if you want modify scripts) </li> 
 <li> flask run </li> 
+
 And go the the local url to access graphical interface. 
 
+## How it works 
+CSTB has been created to find target sequence for CRISPr system. 
+The programm has two part called All Genomes and Specific Gene. The functionment is the same, the only difference is that All Genomes search sequences in complete genomes and Specific Gene search sequences only in a given gene.  
+The principle is to detect sequences that hybridises on targeted genomes and DON'T hybridise on excluded genomes (it's the novelty compared to the other programs that exist).  
 
 
 
