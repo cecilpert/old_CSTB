@@ -44,7 +44,13 @@ If you choose to download requirements "manually", you have to add them to your 
 
 The github archive does not provide genome database for local version. You can construct one with the scripts pre_treatment.py. 
 
-*Coming soon...* 
+For build database, you will need an ncbi assembly_summary file. This kind of files are available in NCBI FTP and starts with assembly_summary. 
+
+**Example of files :** [All refseq genomes](https://ftp.ncbi.nlm.nih.gov/genomes/refseq/assembly_summary_refseq.txt), [All bacteria](https://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/assembly_summary.txt) 
+
+Once you download this type of file, launch `python3 scripts/pre_treatment.py` from CSTB folder to construct database. At the end, you must have a new folder called reference_genomes with different needed files. 
+
+
 
 ### Local version 
 Go to CSTB folder and execute `bash run.command`. This script executes Flask and you can go to the local adress http://127.0.0.1:5000/ to access graphical interface. 
