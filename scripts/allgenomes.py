@@ -28,8 +28,8 @@ def args_gestion():
 
 def setupApplication(parameters, dict_organism_code):
     '''Processes the arguments to be usable for research'''
-    organisms_selected=parameters.gi.split('+')
-    organisms_excluded=parameters.gni.split('+')
+    organisms_selected=parameters.gi.split('&')
+    organisms_excluded=parameters.gni.split('&')
     organisms_selected=[i for i in organisms_selected if i in dict_organism_code]
     organisms_excluded=[i for i in organisms_excluded if i in dict_organism_code]
     non_PAM_motif_length=int(parameters.sl)
@@ -246,6 +246,8 @@ def main():
    # organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
     organisms_selected, organisms_excluded, PAM, non_PAM_motif_length = setupApplication(parameters, dict_organism_code)
     print(','.join(organisms_excluded))
+    cf.eprint('SELECTED',organisms_selected)
+    cf.eprint('EXCLUDED',organisms_excluded)
     print(TASK_KEY)
     
     cf.eprint('---- CSTB complete genomes ----')

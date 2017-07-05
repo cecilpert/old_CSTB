@@ -31,6 +31,7 @@ def dic_download(ref_bacteria):
         if l[0]!='#': 
             l_split=l.rstrip().split('\t')
             name=l_split[7]
+            name=name.replace("'",'')
             short_ref=l_split[0]
             taxfile.write(name+'\n')
             ftp_link=l_split[19]
@@ -51,7 +52,7 @@ def dic_download(ref_bacteria):
     taxfile.close()
     f.close()
     json.dump(dic_ref,open('reference_genomes/genome_ref_taxid.json','w'),indent=4)
-    os.system('bash to_download.sh')
+    #os.system('bash to_download.sh')
     os.system('rm to_download.sh')
     return dic_taxid 
         
@@ -227,10 +228,10 @@ def compress():
 
 
 f=sys.argv[1]
-setup()
+#setup()
 dic_taxid=dic_download(f)
-index_bowtie_blast(dic_taxid)
+#index_bowtie_blast(dic_taxid)
 distance_matrix(dic_taxid)
 json_tree()
-genome_file_for_list()
-compress()
+#genome_file_for_list()
+#compress()

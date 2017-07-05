@@ -25,8 +25,8 @@ def args_gestion():
     return args 
 
 def setupApplication(parameters,dict_organism_code): 
-    organisms_selected=parameters.gi.split('+')
-    organisms_excluded=parameters.gni.split('+')
+    organisms_selected=parameters.gi.split('&')
+    organisms_excluded=parameters.gni.split('&')
     organisms_selected=[i for i in organisms_selected if i in dict_organism_code]
     organisms_excluded=[i for i in organisms_excluded if i in dict_organism_code]
     non_PAM_motif_length=int(parameters.sl)

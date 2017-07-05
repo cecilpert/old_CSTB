@@ -52,27 +52,6 @@ function loadFile(id){
 			}
 }
 
-function readTextFile(file)	//Found at http://stackoverflow.com/questions/14446447/javascript-read-local-text-file
-{
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
-    rawFile.onreadystatechange = function ()
-    {
-        if(rawFile.readyState === 4)
-        {
-            if(rawFile.status === 200 || rawFile.status == 0)
-            {
-                var allText = rawFile.responseText;
-                $("#INList").html(allText)
-                $("#gref").html(allText)
-                $("#INList_sg").html(allText)
-
-            }
-        }
-    }
-    rawFile.send(null);
-}
-
 function display_download(tag) {
     onDownload(tag)
     return;
@@ -82,24 +61,6 @@ function onDownload(data) {
     //var to_display=encodeURIComponent(data)
     //$('#result-file').html('<a href="data:application/txt;charset=utf-8,'+to_display+'"download="results.txt">Download results</a>')
     $('#result-file').html('<a href="download/' + data +'" >Download results</a>')
-}
-
-// Modif begin
-
-function openCity(evt, cityName) {
-  var i, x, tablinks;
-  x = document.getElementsByClassName("city");
-  for (i = 0; i < x.length; i++) {
-     x[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < x.length; i++) {
-     tablinks[i].className = tablinks[i].className.replace(" w3-border-red", "");
-  }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.firstElementChild.className += " w3-border-red";
-  $('#tree_include').jstree().show_dots();
-  $('#tree_exclude').jstree().show_dots();
 }
 
 function writeResults(obj){
@@ -140,17 +101,11 @@ function writeResults(obj){
 
 }
 
-function setupAllGenome(){
-	$('#list_selection').hide()
-	includeIdList=[]
-	disabledExc=[]
-	excludeIdList=[]
-	disabledInc=[]
-	excludeNameList=[]
-	includeNameList=[]
-}
 
 function displayTreeIn(suffix){
+	includeIdList=[]
+	disabledExc=[]
+
 	var to = false;
 	$('#search_in'+suffix).keyup(function () {
 		if(to) { clearTimeout(to); }
@@ -161,6 +116,7 @@ function displayTreeIn(suffix){
 	});
 	$.jstree.defaults.search.show_only_matches=true;
 	// tree building
+
 	$('#tree_include'+suffix).jstree({
 		"core" : {
 			'data' : { "url" : "./static/jsontree.json", "dataType" : "json"},
@@ -178,6 +134,8 @@ function displayTreeIn(suffix){
 }
 
 function displayTreeNotIn(suffix){
+	excludeIdList=[]
+	disabledInc=[]
 	var to = false;
 	$('#search_notin'+suffix).keyup(function () {
 		if(to) { clearTimeout(to); }
@@ -188,6 +146,7 @@ function displayTreeNotIn(suffix){
 	});
 	$.jstree.defaults.search.show_only_matches=true;
 	// tree building
+
 	$('#tree_exclude'+suffix).jstree({
 		"core" : {
 			'data' : { "url" : "./static/jsontree.json", "dataType" : "json"},
@@ -273,18 +232,25 @@ function selectOnTreeNotIn(data,suffix){
 	
 }
 
-function resetTree(){
-	includeNameList = [];
-	excludeNameList = [];
-	$('#tree_include').jstree().close_all();
-	$('#tree_include').jstree().deselect_all();
-	$('#tree_exclude').jstree().close_all();
-	$('#tree_exclude').jstree().deselect_all();
-	$('#tree_include').jstree().search('');
-	$('#tree_exclude').jstree().search('');
+function resetTree(suffix){
+	$('#tree_include'+suffix).jstree().close_all();
+	$('#tree_include'+suffix).jstree().deselect_all();
+	$('#tree_exclude'+suffix).jstree().close_all();
+	$('#tree_exclude'+suffix).jstree().deselect_all();
+	$('#tree_include'+suffix).jstree().search('');
+	$('#tree_exclude'+suffix).jstree().search('');
+	$('#search_in'+suffix).val('')
+	$('#search_notin'+suffix).val('')
+	includeIdList=[]
+	disabledExc=[]
+	excludeIdList=[]
+	disabledInc=[]
+	excludeNameList=[]
+	includeNameList=[]
 }
 
 function submitTree(){
+	$('#tree_ag').hide()
 	$("#submit_trees").hide();
 	$("#reset_trees").hide();
 	$('#list_selection').show();
@@ -325,29 +291,43 @@ function displaySelection(suffix){
 }
 
 function confirmSelection(suffix){
-	$('#confirm'+suffix).hide()
+	$('#confirm_y'+suffix).hide()
+	$('#confirm_n'+suffix).hide()
 	$('#other_parameters'+suffix).show()
 	$('#submitbtn'+suffix).show()
 }
 
-function resetAll(suffix){
-	$("#other_parameters"+suffix).hide();
+function resetSelection(suffix){
 	$('#list_selection'+suffix).hide()
 	$("#ShowIN"+suffix).hide();
 	$("#ShowNOTIN"+suffix).hide();
-	$("#submitbtn"+suffix).hide();
+	$('#tree_ag').show();
 	$("#submit_trees"+suffix).show();
 	$("#reset_trees"+suffix).show();
+	clearListView(suffix)
+}
+
+function clearListView(suffix){
+	length_in=document.getElementById('InView'+suffix).options.length
+	length_notin=document.getElementById('NotInView'+suffix).options.length
+	for(i=0;i<length_in;i++){
+		document.getElementById('InView'+suffix).options[0].remove()
+	}
+	for(j=0;j<length_notin;j++){
+		document.getElementById('NotInView'+suffix).options[0].remove()
+	}
 }
 // Modif end
 
 function submitSetupAllGenome(){
 	$('#Tabselection').hide()
-	$('#AllG').hide()
+	$('#allg_tips').hide()
+	$('#list_selection').hide()
+	$('#other_parameters').hide()
+
 	$('#Waiting').show()
 	GIN=JSON.stringify(includeNameList);
 	GNOTIN=JSON.stringify(excludeNameList);
-	MISMATCH=$("select[name='max-mismatch_AllG'] > option:selected").val();
 	PAM=$("select[name='pam_AllG'] > option:selected").val();
 	SGRNA=$("select[name='sgrna-length_AllG'] > option:selected").val();
 
@@ -394,21 +374,6 @@ function treatResults(data){
 
 }
 
-function setupSpecificGene(){
-	$('#changeSeq').hide()
-	$('#IN_sg').hide()
-	$('#NOTIN_sg').hide()
-	$("#other_parameters_sg").hide()
-	$('#submit_sg').hide()
-	$('#tree').hide()	
-	$('#list_selection_sg').hide()
-	includeIdList=[]
-	disabledExc=[]
-	excludeIdList=[]
-	disabledInc=[]
-	excludeNameList=[]
-	includeNameList=[]
-}
 
 function treatFastaFile(){
 	$('a[name=error-load]').hide()
@@ -456,7 +421,11 @@ function submitSpecificGene(){
 	pam=$("select[name='pam'] > option:selected").val();
 	sgrna_length=$("select[name='sgrna-length'] > option:selected").val();	
 	error_gestion()
-	$('#SpecG').hide();
+	$('#spec_tips').hide();
+	$('#ShowSeq').hide();
+	$('#tree').hide()
+	$('#list_selection_sg').hide();
+	$('#other_parameters_sg').hide();
 	$('#Waiting').show();
 	var N=JSON.stringify(n_gene);
 	var PID=JSON.stringify(percent_id);
@@ -543,16 +512,72 @@ function error_gestion(){
 	}
 }
 
+function setupAll(){
+	$('#AG_click').show()
+	$('#allg_tips').hide()
+	$('#tree_ag').hide()
+	$('#list_selection').hide()
+	$('#AG_click2').hide()
+	$('#SG_click2').hide()
+	$('#footer').hide()
+	$('#spec_tips').hide()
+	$('#list_selection_sg').hide()
+	$('#Sequenceupload').hide()
+	$('#tree').hide()
+	$('#next').hide()
+	$('#other_parameters_sg').hide()
+	$('#ShowSeq').hide()
+	displayTreeIn('')
+	displayTreeNotIn('')
+	displayTreeIn('_sg')
+	displayTreeNotIn('_sg')
+}
+
+function setupAllGenome(){
+	$('#footer').show()
+	$('#allg_tips').show()
+	$('#tree_ag').show()
+	$('#SG_click').hide()
+	$('#SG_click2').show()
+	$('#AG_click').show()
+	$('#AG_click2').hide()
+	$('#search_in').val('')
+	$('#search_notin').val('')
+	$('#spec_tips').hide()
+
+}
+
+function setupSpecificGene(){
+	$('#footer').show()
+	$('#allg_tips').hide()
+	$('#tree_ag').hide()
+	$('#AG_click').hide()
+	$('#AG_click2').show()
+	$('#SG_click2').hide()
+	$('#SG_click').show()
+	$('#spec_tips').show()
+	$('#Sequenceupload').show()
+	$('#seq').val('')
+	$('#next').show()
+
+}
+
+
 $(document).ready(function(){
 
-	//readTextFile("./static/sortedgenomes.txt")	//Requires putting the sortedgenomes.txt in the 'static' folder.
+	setupAll()
 
-	setupAllGenome()
+	$('#AG_click').click(function(){
+		setupAll()
+		setupAllGenome()
+		resetTree('')
+	})
 
-	displayTreeIn('')
-
-	displayTreeNotIn('')
-
+	$('#AG_click2').click(function(){
+		setupAll()
+		setupAllGenome()
+		resetTree('')
+	})
 
 	$('#tree_include').on("changed.jstree",function(e,data){
 		selectOnTreeIn(data,'')
@@ -560,58 +585,63 @@ $(document).ready(function(){
 
 	$('#tree_exclude').on("changed.jstree", function (e, data) {	// replace changed for onclicked like below
 		selectOnTreeNotIn(data,'')
+	})
 
-	});
+	$('#reset_trees').click(function(){
+		resetTree('')
+	})
 
-
-
-//END OF TREE
-
-	$("#reset_trees").click(resetTree)
-
-	//$('#search_in').val('');
-	//$('#search_notin').val('');
-
-	$("#submit_trees").click(submitTree)
+	$('#submit_trees').click(submitTree)
 
 	$('#confirm_y').click(function(){
 		confirmSelection('')
 	})
 
 	$('#confirm_n').click(function(){
-		resetAll('')
+		resetSelection('')
 	})
 
-	$("#submitbtn").click(function(){
+	$('#submitbtn').click(function(){
 		submitSetupAllGenome()
-		$.getJSON($SCRIPT_ROOT+'/allgenomes',{gi:GIN,gni:GNOTIN,max_mismatch:MISMATCH,pam:PAM,sgrna_length:SGRNA},
+		$.getJSON($SCRIPT_ROOT+'/allgenomes',{gi:GIN,gni:GNOTIN,pam:PAM,sgrna_length:SGRNA},
 		function(data) {
 			treatResults(data)
-		});	
+		})
 
-	});	
-		
-
+	})
 
 
-	//**SPECGENE CODE**//
 
-	setupSpecificGene()
+	$('#SG_click').click(function(){
+		setupAll()
+		setupSpecificGene()
+	})
+
+
+	$('#SG_click2').click(function(){
+		setupAll()
+		setupSpecificGene()
+	})
 
 	$('#load-file').click(treatFastaFile)
 
 	$('#next').click(function(){
 		displaySequence()
+		$('#ShowSeq').show()
 		$('#tree').show()
-		displayTreeIn('_sg')
-		displayTreeNotIn('_sg')
+		resetTree('_sg')
 	}) 
 
 	$('#tree_include_sg').on("changed.jstree",function(e,data){
-			selectOnTreeIn(data,'_sg')
-		})
+		selectOnTreeIn(data,'_sg')
+	})
 	$('#tree_exclude_sg').on("changed.jstree",function(e,data){
 		selectOnTreeNotIn(data,'_sg')
+	})
+
+
+	$('#reset_trees_sg').click(function(){
+		resetTree('_sg')
 	})
 
 	$('#submit_trees_sg').click(submitTreeSG)
@@ -621,15 +651,21 @@ $(document).ready(function(){
 	})
 
 	$('#confirm_n_sg').click(function(){
-		resetAll('_sg')
+		resetSelection('_sg')
 	})
 
 
 	$('#submitbtn_sg').click(function(){
 		submitSpecificGene()
-	})			
-});
+	})
+
+
+
+
+})
 
 function reloadpage() {
     location.reload();
 }
+	
+

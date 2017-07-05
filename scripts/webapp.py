@@ -22,10 +22,10 @@ def treat_arguments_allgenomes():
 	gi=request.args.get('gi',0).strip('[]').split(',')
 	print('gi1',gi)
 	gi=[i.strip('"\\n\\t') for i in gi]
-	gi='"'+'+'.join(gi)+'"'	#Spaces escaped in argument using '"' character.
+	gi='"'+'&'.join(gi)+'"'	#Spaces escaped in argument using '"' character.
 	gni=request.args.get('gni',0).strip('[]').split(',')
 	gni=[i.strip('"\\n\\t') for i in gni]
-	gni='"'+'+'.join(gni)+'"'
+	gni='"'+'&'.join(gni)+'"'
 	print(gni)
 
 	#Other parameters parsing
@@ -66,12 +66,12 @@ def treat_arguments_specific_gene():
 	#Gin and Gnotin treatment
 	gin=request.args.get('gin',0).strip('[]').split(',')	##Relies on having no ',' in the organism names.
 	gin=[genome.strip('"\\n\\t') for genome in gin]
-	gin='"'+'+'.join(gin)+'"'
+	gin='"'+'&'.join(gin)+'"'
 	gin=gin.rstrip('+"')+'"' #delete + at the end of the string if there is only one genome
 
 	gnotin=request.args.get('gnotin',0).strip('[]').split(',')
 	gnotin=[genome.strip('"\\n\\t') for genome in gnotin]
-	gnotin='"'+'+'.join(gnotin)+'"'
+	gnotin='"'+'&'.join(gnotin)+'"'
 
 	#Other parameters
 	n=request.args.get('n',0)
