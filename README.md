@@ -72,11 +72,18 @@ The principle is to detect sequences that hybridises on targeted genomes and DON
 
 ### All Genomes principle 
 
-*Coming soon...* 
+1. Sort genomes. Included genomes are sorted by ascending size and excluded genomes by descending size. 
+2. Search sequences in first included genome (the smallest) with Python regular expressions, and store the coordinates. 
+3. Determines the order of search, for next comparisons. This order is based on genomes similarity. Indeed, the search is faster when genome have high similarity with an excluded genome or low similarity with an included genome. 
+4. Map the current sequences against the next genome to compare with Bowtie2. If next genome is included, only sequences with exact match are conserved. If next genome is excluded, only sequences that don't map are conserved. The coordinates in the new genome are stored. Then, these sequences are mapped against the next genome and so on until there's no more genomes left. 
+5. Sort and format the results.
 
 ### Specific Gene principle 
 
-*Coming soon...* 
+1. Search homologous of the given gene in included genomes with Blast. Store the coordinates of genes. 
+2. Search sequences in given gene (with Python regular expression). 
+
+The next steps are exactly the same as All Genomes steps 1 to 5, except that more informations are stored like if the sequence is present in the gene or not.
 
 ### Performances test 
 
