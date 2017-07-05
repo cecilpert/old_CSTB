@@ -7,10 +7,10 @@ import json
 
 app=Flask(__name__)
 
-PYTHON_INTERPRETER="python3"
-ROOT_FOLDER="/Users/cecilehilpert/CSTB"
-DATA_FOLDER="/Users/cecilehilpert/CSTB/reference_genomes"
-CACHE_FOLDER="/Users/cecilehilpert/CSTB/tmp"
+PYTHON_INTERPRETER="python"
+ROOT_FOLDER="/data/www_dev/crispr/lib/CSTB"
+DATA_FOLDER="/data/databases/mobi/crispr"
+CACHE_FOLDER="/data/dev/crispr"
 
 #PYTHON_INTERPRETER="python3"
 

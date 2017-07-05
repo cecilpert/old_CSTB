@@ -2,7 +2,7 @@ from __future__ import print_function
 import common_functions as cf 
 import uuid,time,argparse,sys
 from Bio import SeqIO
-from queue import Queue
+from Queue import Queue
 from threading import Thread
 
 #Global variable
