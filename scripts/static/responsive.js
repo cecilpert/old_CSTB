@@ -1,3 +1,8 @@
+//var socket = io();
+
+
+
+
 // last modif at 16 dec 2016 01:18
 function verifyFasta(seq){
 	var error='no error'
@@ -173,7 +178,7 @@ function selectOnTreeIn(data,suffix){
 		a='j1'
 		b='j2'
 	}
-	
+
 	for(m = 0, n = includeIdList.length; m < n; m++) {
 		disabledExc.push(includeIdList[m].replace(a,b));
 	}
@@ -229,7 +234,7 @@ function selectOnTreeNotIn(data,suffix){
 		notSelectedIdNotIn.push(includeIdList[i].replace(a,b))
 	}
 	$('#tree_exclude'+suffix).jstree(true).uncheck_node(notSelectedIdNotIn);
-	
+
 }
 
 function resetTree(suffix){
@@ -278,7 +283,7 @@ function displaySelection(suffix){
 			$(n).html(includeNameList[i]);
 			$("#InView"+suffix).append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
 		}
-		
+
 	};
 	for (i=0;i<excludeNameList.length;i++){
 		node=excludeIdList[i]
@@ -287,7 +292,7 @@ function displaySelection(suffix){
 			$(n).html(excludeNameList[i]);
 			$("#NotInView"+suffix).append(n);	//Adds the contents of 'includeNameList' array into the 'InView'
 		}
-	};	
+	};
 }
 
 function confirmSelection(suffix){
@@ -336,7 +341,7 @@ function submitSetupAllGenome(){
 function treatResults(data){
 
 	$("#Waiting").hide();
-	
+
 
 	if (data.length==4){
 
@@ -351,7 +356,7 @@ function treatResults(data){
 		var infos='<p>' +number_hits + ' hits have been found for this research.' ;
 		if (parseInt(number_hits)>100){
 			infos+='. Only the best 100 are written below. Download the result file to get more hits.'
-		} 
+		}
 		if (parseInt(number_hits)>10000){
 			infos+=' (only the best 10 000 are written to this file).</p>'
 		}
@@ -362,10 +367,10 @@ function treatResults(data){
 			infos+='<p> No excluded genomes selected.</p>'
 		}
 		out=writeResults(obj)
-		$('#infos').html(infos)	
+		$('#infos').html(infos)
 		$("#ResTable").html(out);
 		display_download(tag)
-	}	
+	}
 	else{
 		$("#NoResult").show();
 		infos='<p>'+data[0]+'</p> <p> '+data[1]+'</p>'
@@ -386,7 +391,7 @@ function treatFastaFile(){
 	}
 	else{
 		loadFile('#fasta-file')
-	}	
+	}
 }
 
 function displaySequence(){
@@ -419,7 +424,7 @@ function submitSpecificGene(){
 	n_gene=$("#search-region").val()
 	percent_id=$("#percent-identity").val()
 	pam=$("select[name='pam'] > option:selected").val();
-	sgrna_length=$("select[name='sgrna-length'] > option:selected").val();	
+	sgrna_length=$("select[name='sgrna-length'] > option:selected").val();
 	error_gestion()
 	$('#spec_tips').hide();
 	$('#ShowSeq').hide();
@@ -457,7 +462,7 @@ function treatResultsSG(data){
 		var infos='<p>' + number_hits + ' hits have been found for this research. ' ;
 		if (parseInt(number_hits)>100){
 			infos+='Only the best 100 are written below. Download the result file to get more hits. '
-		} 
+		}
 		if (parseInt(number_hits)>10000){
 			infos+='(only the best 10 000 are written to this file). '
 		}
@@ -471,10 +476,10 @@ function treatResultsSG(data){
 		out=writeResults(obj)
 		$("#Waiting").fadeOut();
 		$("#Result").show();
-	
+
 		$('#infos').html(infos)
 		$("#ResTable").html(out);
-		display_download(tag)	
+		display_download(tag)
 	}
 	else{		//Display no matching results output.
 		$("#Waiting").hide();
@@ -603,10 +608,12 @@ $(document).ready(function(){
 
 	$('#submitbtn').click(function(){
 		submitSetupAllGenome()
-		$.getJSON($SCRIPT_ROOT+'/allgenomes',{gi:GIN,gni:GNOTIN,pam:PAM,sgrna_length:SGRNA},
+
+        socket.emit('submitAllGenomes', {gi:GIN,gni:GNOTIN,pam:PAM,sgrna_length:SGRNA});
+        /*$.getJSON($SCRIPT_ROOT+'/allgenomes',{gi:GIN,gni:GNOTIN,pam:PAM,sgrna_length:SGRNA},
 		function(data) {
 			treatResults(data)
-		})
+		})*/
 
 	})
 
@@ -630,7 +637,7 @@ $(document).ready(function(){
 		$('#ShowSeq').show()
 		$('#tree').show()
 		resetTree('_sg')
-	}) 
+	})
 
 	$('#tree_include_sg').on("changed.jstree",function(e,data){
 		selectOnTreeIn(data,'_sg')
@@ -667,5 +674,5 @@ $(document).ready(function(){
 function reloadpage() {
     location.reload();
 }
-	
+
 

@@ -1,11 +1,19 @@
 from flask import Flask, render_template, jsonify, request, send_file
+from flask_socketio import SocketIO
+
 import os
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import json
 
-app=Flask(__name__)
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
+
+if __name__ == '__main__':
+    socketio.run(app)
 
 PYTHON_INTERPRETER="python"
 ROOT_FOLDER="/data/www_dev/crispr/lib/CSTB"
@@ -17,7 +25,7 @@ CACHE_FOLDER="/data/dev/crispr"
 
 # Configure we application port and adresss
 
-def treat_arguments_allgenomes(): 
+def treat_arguments_allgenomes():
 	#Genomes_IN and NOT_IN lists parsing.
 	gi=request.args.get('gi',0).strip('[]').split(',')
 	print('gi1',gi)
@@ -43,7 +51,7 @@ def treat_arguments_allgenomes():
 
 	return command
 
-def treat_results_all_genomes(command): 
+def treat_results_all_genomes(command):
 	output=os.popen(command,'r')
 	lines=output.readlines()
 	for line in lines:
@@ -53,11 +61,11 @@ def treat_results_all_genomes(command):
 			return jsonify("Search yielded no results.",info)
 	else:
 		tag=lines[1].strip()
-		with open(CACHE_FOLDER+'/'+tag+'/results.json','r') as f: 
+		with open(CACHE_FOLDER+'/'+tag+'/results.json','r') as f:
 			res=f.read()
 		not_in=lines[0].strip()
 		number_hits=lines[2].strip()
-		return jsonify(res,not_in,tag,number_hits)		
+		return jsonify(res,not_in,tag,number_hits)
 
 def treat_arguments_specific_gene():
 	seq=request.args.get('seq',0).strip('"')
@@ -91,11 +99,11 @@ def treat_arguments_specific_gene():
 	sgrna_length=sgrna_length.replace('"','')
 
 
-	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/specificgene.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + " -seq " + seq + " -gi " + gin + " -gni " + gnotin + " -n " + n + " -ip " + percent_id + " -pam " + pam + " -sl " + sgrna_length 
+	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/specificgene.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + " -seq " + seq + " -gi " + gin + " -gni " + gnotin + " -n " + n + " -ip " + percent_id + " -pam " + pam + " -sl " + sgrna_length
 	print(command)
 	return command
 
-def treat_results_specific_gene(command): 
+def treat_results_specific_gene(command):
 	output=os.popen(command,'r')
 	lines=output.readlines()	##List containing all print statements in specific gene script.
 	#print(all_lines)
@@ -106,13 +114,34 @@ def treat_results_specific_gene(command):
 			return jsonify("Search yielded no results.",info)
 	else:
 		tag=lines[1].strip()
-		with open(CACHE_FOLDER+'/'+tag+'/results.json','r') as f: 
+		with open(CACHE_FOLDER+'/'+tag+'/results.json','r') as f:
 			res=f.read()
 		print(res)
 		not_in=lines[0].strip()
 		number_hits=lines[2].strip()
 		number_on_gene=lines[3].strip()
 		return jsonify(res,not_in,tag,number_hits,number_on_gene)
+
+#
+# Server routes definitions
+#
+
+@socketio.on('clientConnection')
+def handle_message(message):
+    print('################received message: ');
+    print(message);
+
+
+@socketio.on('submitAllGenomes')
+def handle_message(submitPacket):
+    # Parse packet element to generate script command-line arguments
+    print('################received submitAllGenomes request');
+    print(submitPacket);
+
+    #command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/allgenomes.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + " -gi " + gi + " -gni " + gni + " -pam " + pam + " -sl " + sgrna_length
+    #print(command)
+    #result=treat_results_all_genomes(command)
+
 
 @app.route('/')
 def rendu():	##HTML rendering upon url access
@@ -123,7 +152,7 @@ def ret():
 	command=treat_arguments_allgenomes()
 	result=treat_results_all_genomes(command)
 	return result
-	
+
 @app.route('/specific_gene')
 def ret_specific_gene():
 	command=treat_arguments_specific_gene()
@@ -135,5 +164,5 @@ def ret_specific_gene():
 def downloadResultFile(path):
 	print ('Trying to server download request w/ key : %s' % path)
 	filePath=CACHE_FOLDER+'/'+path+'/results_allgenome.txt'
-	return send_file(filePath, mimetype='plaintext')	
-	
+	return send_file(filePath, mimetype='plaintext')
+
