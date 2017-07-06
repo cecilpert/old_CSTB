@@ -1,5 +1,5 @@
 from __future__ import print_function
-import common_functions as cf 
+import common_functions as cf
 import uuid,time,argparse,sys
 from Bio import SeqIO
 from Queue import Queue
@@ -8,7 +8,7 @@ from threading import Thread
 #Global variable
 TASK_KEY = str(uuid.uuid1())
 WORKDIR = None
-REF_GEN_DIR = None
+UNCOMPRESSED_GEN_DIR = None
 
 
 def args_gestion():
@@ -47,7 +47,7 @@ def construct_in(fasta_path, organism, organism_code, PAM, non_PAM_motif_length)
 
     seq_dict={}
 
-    for genome_seqrecord in SeqIO.parse(fasta_file,'fasta'): 
+    for genome_seqrecord in SeqIO.parse(fasta_file,'fasta'):
         genome_seq=genome_seqrecord.seq
         ref=genome_seqrecord.id
         seq_list_forward=cf.find_sgRNA_seq(str(genome_seq),cf.reverse_complement(sgRNA))
@@ -59,27 +59,27 @@ def construct_in(fasta_path, organism, organism_code, PAM, non_PAM_motif_length)
             seq=str(seq)
             if seq not in seq_dict:
                 seq_dict[seq]={organism:{}}
-            if ref not in seq_dict[seq][organism]: 
+            if ref not in seq_dict[seq][organism]:
                 seq_dict[seq][organism][ref]=[]
-            seq_dict[seq][organism][ref].append('+('+str(indice+1)+','+str(end)+')')    
-   
+            seq_dict[seq][organism][ref].append('+('+str(indice+1)+','+str(end)+')')
+
         for indice in seq_list_reverse:
             end=indice+len(PAM)+non_PAM_motif_length
             seq=genome_seq[indice:end]
             seq=str(seq)
             if seq not in seq_dict:
-                seq_dict[seq]={organism:{}}  
-            if ref not in seq_dict[seq][organism]: 
+                seq_dict[seq]={organism:{}}
+            if ref not in seq_dict[seq][organism]:
                 seq_dict[seq][organism][ref]=[]
-            seq_dict[seq][organism][ref].append('-('+str(indice+1)+','+str(end)+')')         
+            seq_dict[seq][organism][ref].append('-('+str(indice+1)+','+str(end)+')')
     return seq_dict
 
 
 def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna):
     '''Launch bowtie alignments for included genomes and treat the results, with parallelization (ie if 4 threads are selected, then 4 bowtie will be launch at the same time, with 4 subfiles of the beginning file.
-    For included genomes, only the sequences matching exactly (no mismatch0 with genome will be conserved. 
+    For included genomes, only the sequences matching exactly (no mismatch0 with genome will be conserved.
     '''
-    
+
     def worker():
         while True:
             e = q.get()
@@ -109,7 +109,7 @@ def add_in_parallel(num_thread,list_fasta,organism_code,dic_seq,genome,len_sgrna
                                     strand='-'
                                 start=l_split[3]
                                 end=int(start)+len_sgrna-1
-                                if ref not in dic_result[seq][genome]: 
+                                if ref not in dic_result[seq][genome]:
                                     dic_result[seq][genome][ref]=[]
                                 coord=strand+'('+start+','+str(end)+')'
                                 dic_result[seq][genome][ref].append(coord)
@@ -167,15 +167,15 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
     else:
         sorted_genomes_notin=[]
 
-    cf.eprint('-- RESEARCH --')    
+    cf.eprint('-- RESEARCH --')
 
     #Research in first genome
-    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]][0],PAM,non_PAM_motif_length) 
+    dic_seq=construct_in(fasta_path,sorted_genomes[0],dict_org_code[sorted_genomes[0]][0],PAM,non_PAM_motif_length)
     cf.eprint(str(len(dic_seq))+' hits in first included genome '+sorted_genomes[0])
     list_fasta=cf.write_to_fasta_parallel(dic_seq,num_file)
 
-    #Order for research 
-    distFile = REF_GEN_DIR + "/distance_dic.json"
+    #Order for research
+    distFile = UNCOMPRESSED_GEN_DIR + "/distance_dic.json"
     dist_dic=cf.readJsonDic(distFile)
     cf.eprint('-- Determinate order for research -- ')
     list_order=cf.order_for_research(sorted_genomes[1:],sorted_genomes_notin,sorted_genomes[0],dict_org_code,dist_dic,[])
@@ -190,7 +190,7 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
                 end_time=time.time()
                 total_time=end_time-start_time
                 cf.eprint('TIME',total_time)
-                cf.delete_used_files(genomes_NOT_IN+genomes_IN,dict_org_code)
+                cf.delete_used_files()
                 sys.exit(1)
             cf.eprint(str(len(dic_seq))+' hits remain after exclude genome '+genome)
             list_fasta=cf.write_to_fasta_parallel(dic_seq,num_file)
@@ -202,13 +202,14 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
                 end_time=time.time()
                 total_time=end_time-start_time
                 cf.eprint('TIME',total_time)
-                cf.delete_used_files(genomes_NOT_IN+genomes_IN,dict_org_code)
+                cf.delete_used_files()
                 sys.exit(1)
             cf.eprint(str(len(dic_seq))+' hits remain after include genome '+genome)
             list_fasta=cf.write_to_fasta_parallel(dic_seq,num_file)
 
-    cf.delete_used_files(genomes_IN+genomes_NOT_IN,dict_org_code)       
-    print(len(dic_seq))        
+    #cf.delete_used_files(genomes_IN+genomes_NOT_IN,dict_org_code)
+    cf.delete_used_files()
+    print(len(dic_seq))
 
     hit_list=cf.construct_hitlist(dic_seq)
 
@@ -221,35 +222,35 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
     cf.output_interface(hit_list[:100])
 
 
-def setGlobalEnvironment(param):  
+def setGlobalEnvironment(param):
     global TASK_KEY
-    global REF_GEN_DIR
-    global WORKDIR    
+    global UNCOMPRESSED_GEN_DIR
+    global WORKDIR
     TASK_KEY=str(uuid.uuid1())
     cf.TASK_KEY=TASK_KEY
-    REF_GEN_DIR=param.rfg  
-    cf.REF_GEN_DIR=REF_GEN_DIR  
-    WORKDIR=cf.setupWorkSpace(param)  
+    UNCOMPRESSED_GEN_DIR=param.rfg
+    cf.REF_GEN_DIR=UNCOMPRESSED_GEN_DIR
+    WORKDIR=cf.setupWorkSpace(param)
     cf.WORKDIR=WORKDIR
 
 def main():
-
     start_time=time.time()
-   
+
     parameters = args_gestion()
 
-    fasta_path  = parameters.rfg + '/fasta'
+    setGlobalEnvironment(parameters)
 
-    setGlobalEnvironment(parameters)    
+    fasta_path  = WORKDIR + '/reference_genomes/fasta'
 
-    dict_organism_code = cf.readJsonDic(REF_GEN_DIR + '/genome_ref_taxid.json')  ##Keys: organism, values: genomic reference (ncbi)
+
+    dict_organism_code = cf.readJsonDic(UNCOMPRESSED_GEN_DIR + '/genome_ref_taxid.json')  ##Keys: organism, values: genomic reference (ncbi)
    # organisms_selected,organisms_excluded,PAM,non_PAM_motif_length=args_gestion(dict_organism_code)
     organisms_selected, organisms_excluded, PAM, non_PAM_motif_length = setupApplication(parameters, dict_organism_code)
     print(','.join(organisms_excluded))
     cf.eprint('SELECTED',organisms_selected)
     cf.eprint('EXCLUDED',organisms_excluded)
     print(TASK_KEY)
-    
+
     cf.eprint('---- CSTB complete genomes ----')
     cf.eprint('Parallelisation with distance matrix')
     construction(fasta_path,PAM,non_PAM_motif_length,organisms_selected,organisms_excluded,dict_organism_code)

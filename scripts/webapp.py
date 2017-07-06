@@ -1,23 +1,23 @@
 from flask import Flask, render_template, jsonify, request, send_file
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, send, emit
 
 import os
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import json
-
+import ast
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 if __name__ == '__main__':
-    socketio.run(app)
+	socketio.run(app)
 
 PYTHON_INTERPRETER="python"
 ROOT_FOLDER="/data/www_dev/crispr/lib/CSTB"
-DATA_FOLDER="/data/databases/mobi/crispr"
+DATA_FOLDER="/data/databases/mobi/crispr/reference_genomes"
 CACHE_FOLDER="/data/dev/crispr"
 
 #PYTHON_INTERPRETER="python3"
@@ -54,18 +54,22 @@ def treat_arguments_allgenomes():
 def treat_results_all_genomes(command):
 	output=os.popen(command,'r')
 	lines=output.readlines()
+	print(lines)
+
 	for line in lines:
 		if "Program terminated" in line:
 			error_split=line.split('&')
 			info=error_split[1].rstrip("\n]")
-			return jsonify("Search yielded no results.",info)
-	else:
-		tag=lines[1].strip()
-		with open(CACHE_FOLDER+'/'+tag+'/results.json','r') as f:
-			res=f.read()
-		not_in=lines[0].strip()
-		number_hits=lines[2].strip()
-		return jsonify(res,not_in,tag,number_hits)
+			return ( ("Search yielded no results.",info), jsonify("Search yielded no results.",info) )
+	#else:
+	tag=lines[1].strip()
+	with open(CACHE_FOLDER + '/' + tag + '/results.json','r') as f:
+		res=f.read()
+	not_in=lines[0].strip()
+	number_hits=lines[2].strip()
+	#val = jsonify(res,not_in,tag,number_hits)
+	#print(val)
+	return ( (res, not_in, tag, number_hits), jsonify(res,not_in,tag,number_hits) )
 
 def treat_arguments_specific_gene():
 	seq=request.args.get('seq',0).strip('"')
@@ -126,21 +130,41 @@ def treat_results_specific_gene(command):
 # Server routes definitions
 #
 
+@socketio.on('disconnect', namespace='/chat')
+def test_disconnect():
+    print('Client disconnected!!!')
+
+
+
 @socketio.on('clientConnection')
 def handle_message(message):
-    print('################received message: ');
-    print(message);
+	print('################received message: ');
+	print(message);
 
 
 @socketio.on('submitAllGenomes')
 def handle_message(submitPacket):
-    # Parse packet element to generate script command-line arguments
-    print('################received submitAllGenomes request');
-    print(submitPacket);
+	# Parse packet element to generate script command-line arguments
+	print('################received submitAllGenomes request');
+	print(submitPacket);
+	gi = ast.literal_eval(submitPacket['gi'])
+	gi='"' + '&'.join(gi) + '"'
+	gni = ast.literal_eval(submitPacket['gni'])
+	gni='"' + '&'.join(gni) + '"'
 
-    #command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/allgenomes.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + " -gi " + gi + " -gni " + gni + " -pam " + pam + " -sl " + sgrna_length
-    #print(command)
-    #result=treat_results_all_genomes(command)
+	#Other parameters parsing
+
+	pam=submitPacket['pam'].replace('"','')
+
+	sgrna_length=submitPacket['sgrna_length']
+
+	command=PYTHON_INTERPRETER + " " + ROOT_FOLDER + "/scripts/allgenomes.py -cah " + CACHE_FOLDER + " -rfg " + DATA_FOLDER + " -gi " + gi + " -gni " + gni + " -pam " + pam + " -sl " + sgrna_length
+	print(command)
+	result, jsonifiedResults = treat_results_all_genomes(command)
+
+	print ("emitting results")
+	#print (result)
+	emit('resultsAllGenomes', { "data" : result })
 
 
 @app.route('/')
@@ -150,8 +174,8 @@ def rendu():	##HTML rendering upon url access
 @app.route('/allgenomes')
 def ret():
 	command=treat_arguments_allgenomes()
-	result=treat_results_all_genomes(command)
-	return result
+	(result, jsonifiedResults)=treat_results_all_genomes(command)
+	return jsonifiedResults
 
 @app.route('/specific_gene')
 def ret_specific_gene():

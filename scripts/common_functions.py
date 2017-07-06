@@ -13,7 +13,7 @@ class Hit():
 
 def eprint(*args, **kwargs):
     '''For printing only on the terminal'''
-    print(*args, file=sys.stderr, **kwargs) 
+    print(*args, file=sys.stderr, **kwargs)
 
 
 def reverse_complement(sequence):
@@ -60,7 +60,7 @@ def sort_genomes(list_genomes,fasta_path,dict_org_code):
     tmp_list=[]
     for genome in list_genomes:
         len_genome=0
-        for seq_record in SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'): 
+        for seq_record in SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'/' + dict_org_code[genome][0] +'_genomic.fna', 'fasta'):
             len_genome+=len(seq_record)
         tmp_list.append((len_genome,genome))
     genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0])]   ##Sort by ascending size
@@ -71,21 +71,23 @@ def sort_genomes_desc(list_genomes,fasta_path,dict_org_code):
     tmp_list=[]
     for genome in list_genomes:
         len_genome=0
-        for seq_record in SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'/' + dict_org_code[genome][0]+'_genomic.fna', 'fasta'): 
+        for seq_record in SeqIO.parse(fasta_path +'/' + dict_org_code[genome][0] +'/' + dict_org_code[genome][0]+'_genomic.fna', 'fasta'):
             len_genome+=len(seq_record)
         tmp_list.append((len_genome,genome))
     genomes_sorted=[i[1] for i in sorted(tmp_list,key=lambda genome:genome[0],reverse=True)]   ##Sort by ascending size
-    return(genomes_sorted)    
+    return(genomes_sorted)
 
 def unzip_files(list_genomes,dict_org_code):
     '''Unzip required files for reserach'''
     eprint('-- Unzip selected genomes --')
+    eprint('location ' + WORKDIR)
     out=open(WORKDIR+'/unzip.sh','w')
+    out.write('cd ' + WORKDIR + '\n');
     for genome in list_genomes:
-        ref=dict_org_code[genome][0] 
+        ref=dict_org_code[genome][0]
         out.write('tar xf '+REF_GEN_DIR+'/fasta/'+ref+'.tar.gz\ntar xf '+REF_GEN_DIR+'/index2/'+ref+'.tar.gz\n')
     out.close()
-    os.system('bash ' + WORKDIR + '/unzip.sh')  
+    os.system('bash ' + WORKDIR + '/unzip.sh')
 
 def write_to_fasta_parallel(dic_seq, num_file):
     '''Write sequences in fasta file, and separate its in several files if specified.'''
@@ -109,15 +111,15 @@ def write_to_fasta_parallel(dic_seq, num_file):
                 for seq in list_seq:
                     out.write('>' + seq + '\n' + seq + '\n')
         out.close()
-    return(list_dic_fasta) 
+    return(list_dic_fasta)
 
 def run_bowtie(organism_code,fasta_file,num):
     resultFile = WORKDIR + '/results_bowtie' + num + '.sam'
-    bowtie_tab=['bowtie2','-x ' + REF_GEN_DIR + '/index2/' + organism_code + '/' + organism_code + ' -f ' + fasta_file + ' -S ' + resultFile + ' -L 13 -a --quiet ']
+    bowtie_tab=['bowtie2','-x ' + WORKDIR + '/reference_genomes/index2/' + organism_code + '/' + organism_code + ' -f ' + fasta_file + ' -S ' + resultFile + ' -L 13 -a --quiet ']
     subprocess.call(bowtie_tab)
     return resultFile
 
-def treat_bowtie_notin(resultFile,e,dic_seq):    
+def treat_bowtie_notin(resultFile,e,dic_seq):
     res=open(resultFile, 'r')
     dic_result={}
     for l in res:
@@ -127,11 +129,11 @@ def treat_bowtie_notin(resultFile,e,dic_seq):
                 dic_result[seq]=dic_seq[seq]
     e['results']=dic_result
     res.close()
-   
+
 
 def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
     '''Launch bowtie alignments for excluded genomes and treat the results, with parallelization (ie if 4 threads are selected, then 4 bowtie will be launch at the same time, with 4 subfiles of the beginning file.
-    For excluded genomes, only the sequence NOT matching with genome will be conserved. 
+    For excluded genomes, only the sequence NOT matching with genome will be conserved.
     '''
     def worker():
         while True:
@@ -156,17 +158,15 @@ def add_notin_parallel(num_thread,list_fasta,organism_code,dic_seq):
     for e in list_fasta:
         total_results.update(e['results'])
 
-    return total_results 
+    return total_results
 
 
-def delete_used_files(list_genomes,dict_org_code):
+def delete_used_files():
+    eprint("Deleting stuff")
     '''Delete unzipped files that have been used for research'''
     eprint('-- Delete selected genomes --')
     out=open(WORKDIR+'/delete.sh','w')
-    for genome in list_genomes:
-        ref=dict_org_code[genome][0] 
-        out.write('rm -r '+REF_GEN_DIR+'/fasta/'+ref+'\n')
-        out.write('rm -r '+REF_GEN_DIR+'/index2/'+ref+'\n')
+    out.write('rm -r '+ WORKDIR +'/reference_genomes\nrm ' + WORKDIR +'/delete.sh\n')
     out.close()
     os.system('bash '+WORKDIR+'/delete.sh')
 
@@ -183,7 +183,7 @@ def construct_hitlist(dict_seq):
         count+=1
         new_hit=Hit(seq,dict_seq[seq])
         hits_list.append(new_hit)
-    return(hits_list)    
+    return(hits_list)
 
 def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
     '''Write results in a file.
@@ -208,32 +208,32 @@ def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
         for gi in genomes_IN:
             output.write('\t'+','.join(hit.genomes_Dict[gi]))
         output.write('\n')
-    output.close()   
+    output.close()
 
 def setupWorkSpace(parameters):
     '''Create the work folder where all temporary or results files will be stored'''
     workFolder = parameters.cah + '/' + TASK_KEY
     os.mkdir(workFolder)
-    return workFolder   
+    return workFolder
 
-def list_ref(dic_ref):    
+def list_ref(dic_ref):
     list_ref=[]
-    for ref in dic_ref: 
+    for ref in dic_ref:
         dic={"ref":ref,"coords":dic_ref[ref]}
         list_ref.append(dic)
-    return list_ref        
-    
-def list_occurences(dic_occurences): 
+    return list_ref
+
+def list_occurences(dic_occurences):
     list_occurences=[]
-    for genome in dic_occurences: 
+    for genome in dic_occurences:
         dic_genome={'org':genome,'all_ref':list_ref(dic_occurences[genome])}
         list_occurences.append(dic_genome)
-    return list_occurences        
+    return list_occurences
 
 
 def output_interface(hit_list):
     '''
-    Reformat the results to create a json file. 
+    Reformat the results to create a json file.
     It will be parsed in javascript to display it in interface.
     '''
     eprint('-- Construct results for graphical interface --')
@@ -246,17 +246,17 @@ def output_interface(hit_list):
         list_dic.append(dic)
 
     list_dic.reverse()
-    with open(json_result_file,'w') as f: 
+    with open(json_result_file,'w') as f:
         json.dump(list_dic,f,indent=4)
-                           
+
 def readJsonDic(path):
     '''Load the dictionnary that contains genomes name associated with their references'''
     with open(path) as json_data:
         d = json.load(json_data)
-    return d   
+    return d
 
 def order_for_research(list_in,list_notin,genome,dict_org_code,dist_dic,list_order):
-    '''Determinate the order of research, based on the distance matrix created for all genomes. 
+    '''Determinate the order of research, based on the distance matrix created for all genomes.
     The best comparisons to do are comparisons between similar genomes for the exclusion and between distant genomes for inclusion
     '''
 

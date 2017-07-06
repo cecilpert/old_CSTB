@@ -1,5 +1,13 @@
 //var socket = io();
+socket.on("resultsAllGenomes", function(data) {
+    console.log("Showing results");
+    console.dir(data);
 
+    RES = data;
+
+    treatResults(data);
+
+});
 
 
 
@@ -338,12 +346,14 @@ function submitSetupAllGenome(){
 
 }
 
-function treatResults(data){
+function treatResults(results){
+
+
 
 	$("#Waiting").hide();
+    var data = results.data;
 
-
-	if (data.length==4){
+	if (results.data.length==4){
 
 		$('#Result').show()
 		res=data[0];
@@ -351,7 +361,7 @@ function treatResults(data){
 		tag=data[2];
 		number_hits=data[3]
 
-		var obj=JSON.parse(res);
+		var obj = JSON.parse(res);
 
 		var infos='<p>' +number_hits + ' hits have been found for this research.' ;
 		if (parseInt(number_hits)>100){
@@ -370,13 +380,13 @@ function treatResults(data){
 		$('#infos').html(infos)
 		$("#ResTable").html(out);
 		display_download(tag)
-	}
+
+    }
 	else{
 		$("#NoResult").show();
 		infos='<p>'+data[0]+'</p> <p> '+data[1]+'</p>'
 		$("#no_result").html(infos);
 	}
-
 }
 
 
