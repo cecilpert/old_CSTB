@@ -41,7 +41,7 @@ def dic_download(ref_bacteria):
             dic_ref[name+' '+short_ref]=[ref,taxid]
             ftp_suffix=ftp_link.split('/')[-1]+'_genomic.fna'
             genome_link='https://'+ftp_link.split('//')[1]+'/'+ftp_suffix
-            if ref not in os.listdir('reference_genomes/fasta'): 
+            if ref+'.tar.gz' not in os.listdir('reference_genomes/fasta'): 
                 cmd+='mkdir reference_genomes/fasta/'+ref+'\n'
                 cmd+='curl --remote-name --remote-time '+genome_link+'.gz\n'
                 cmd+='mv '+ftp_suffix+'.gz reference_genomes/fasta/'+ref+'/\n'
@@ -52,7 +52,7 @@ def dic_download(ref_bacteria):
     taxfile.close()
     f.close()
     json.dump(dic_ref,open('reference_genomes/genome_ref_taxid.json','w'),indent=4)
-    #os.system('bash to_download.sh')
+    os.system('bash to_download.sh')
     os.system('rm to_download.sh')
     return dic_taxid 
         
@@ -228,10 +228,10 @@ def compress():
 
 
 f=sys.argv[1]
-#setup()
+setup()
 dic_taxid=dic_download(f)
-#index_bowtie_blast(dic_taxid)
+index_bowtie_blast(dic_taxid)
 distance_matrix(dic_taxid)
 json_tree()
 #genome_file_for_list()
-#compress()
+compress()
