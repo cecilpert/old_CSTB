@@ -1,3 +1,4 @@
+*.pyc
 *.log
 ._*
 scripts/_*
