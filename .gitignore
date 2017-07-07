@@ -15,5 +15,5 @@ scripts/static/results*
 resultsTag.txt
 reference_genomes*
 sortedgenomes.txt
-scripts/static/jsontree*
+scripts/static/jsontree.json
 scripts/static/sortedgenomes*
