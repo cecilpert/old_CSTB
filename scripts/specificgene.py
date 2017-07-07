@@ -2,7 +2,7 @@ from __future__ import print_function
 import common_functions as cf 
 import time,argparse,uuid,os,subprocess,sys
 from Bio.Blast import NCBIXML  
-from Queue import Queue 
+from queue import Queue 
 from threading import Thread
 
 ### METHODS FOR THE ARGUMENTS ###
@@ -46,14 +46,14 @@ def blast_to_find_all_genes(query_seq, genomes, identity_percentage_min,dic_geno
 
     dic_genes={} 
     size_gene=len(query_seq)
-    file_query=WORKDIR+'/blast_request'
+    file_query=WORKDIR+'/blast_request.fna'
     with open(file_query,'w') as f:
         f.write(query_seq)
     f.close()    
     for i in range(len(genomes)): 
         cf.eprint("Searching for sequence in",genomes[i])
         ref=dic_genome[genomes[i]][0]
-        db_path = REF_GEN_DIR + "/fasta/" + ref + '/' + ref + "_genomic.fna" #peut-etre mieux faire sur les cds parce que avec le génome complet pas d'infos sur nom gene, description etc...
+        db_path = WORKDIR + "/reference_genomes/fasta/" + ref + '/' + ref + "_genomic.fna"
         blast_command = "blastn -db " + db_path + " -query " + file_query + " -outfmt 5"
         blast_output = os.popen(blast_command, 'r')
         blast_records = NCBIXML.parse(blast_output)
@@ -234,7 +234,7 @@ def do_search(query_seq, n, genome_list, dict_org_code, not_in_genome_list,
 
     start_time=time.time()
     num_threads=2
-    fasta_path=REF_GEN_DIR+'/fasta'
+    fasta_path=WORKDIR+'/reference_genomes/fasta'
     len_all_sgrna=sgrna_length+len(pam)
     
 
@@ -276,7 +276,7 @@ def do_search(query_seq, n, genome_list, dict_org_code, not_in_genome_list,
                 end_time=time.time()
                 total_time=end_time-start_time
                 cf.eprint('TIME',total_time)
-                cf.delete_used_files(not_in_genome_list+genome_list,dict_org_code)
+                cf.delete_used_files()
                 sys.exit(1)
             cf.eprint(str(len(dic_seq))+' hits remain after exclude genome '+genome)
             list_fasta=cf.write_to_fasta_parallel(dic_seq,num_threads)
@@ -288,13 +288,13 @@ def do_search(query_seq, n, genome_list, dict_org_code, not_in_genome_list,
                 end_time=time.time()
                 total_time=end_time-start_time
                 cf.eprint('TIME',total_time)
-                cf.delete_used_files(not_in_genome_list+genome_list,dict_org_code)
+                cf.delete_used_files()
                 sys.exit(1)
             cf.eprint(str(len(dic_seq))+' hits remain after include genome '+genome)
             list_fasta=cf.write_to_fasta_parallel(dic_seq,num_threads)
 
 
-    cf.delete_used_files(not_in_genome_list+genome_list,dict_org_code) # delete unzip folders previously unzipped     
+    cf.delete_used_files() # delete unzip folders previously unzipped     
 
     print(len(dic_seq)) #give the number of hits to inferface    
 

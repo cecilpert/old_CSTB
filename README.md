@@ -20,6 +20,9 @@ It's also possible to use Python2. In this case, you have to change the global v
 ### Flask and BioPython 
 You can use pip3 with `pip3 install flask` and `pip3 install biopython`
 
+You will also need flask-socketio and eventlet. You can use `pip3 install flask-socketio` and `pip3 install eventlet`
+
+
 #### Online documentations
 [BioPython](http://biopython.org/wiki/Documentation) 
 
@@ -53,7 +56,10 @@ Once you download this type of file, launch `python3 scripts/pre_treatment.py pa
 
 
 ### Local version 
-Go to CSTB folder and execute `bash run.command`. This script executes Flask and you can go to the local adress http://127.0.0.1:5000/ to access graphical interface. 
+
+Clone this git depository : `git clone https://github.com/chilpert2/CSTB` 
+
+Go to CSTB folder and execute `.\run.command`. This script executes Flask and you can go to the local adress http://127.0.0.1:5000/ to access graphical interface. 
 
 You can execute Flask manually with the following commands (you have to be in CSTB folder) : 
 
@@ -70,6 +76,12 @@ CSTB has been created to find target sequence for CRISPr system.
 The programm has two part called All Genomes and Specific Gene. The functionment is the same, the only difference is that All Genomes search sequences in complete genomes and Specific Gene search sequences only in a given gene.  
 The principle is to detect sequences that hybridises on targeted genomes and DON'T hybridise on excluded genomes (it's the novelty compared to the other programs that exist).  
 
+### Files used 
+3 files are really important for a correct execution : 
+1. `distance_dic.json` located in `reference_genomes` once you construct database. This file contains informations about similarity distance between all genomes of database, and it will be load to determinate the order of research 
+2. `genome_ref_taxid.json` located in `reference_genomes` once you construct database. This file contains informations about genome names, their references and taxid. 
+3. `jsontree.json` located in `scripts/static/`. This file is used to display the phylo tree in interface. It's created when you construct database with pre_treatment.py.   
+
 ### All Genomes principle 
 
 1. Sort genomes. Included genomes are sorted by ascending size and excluded genomes by descending size. 
@@ -85,6 +97,4 @@ The principle is to detect sequences that hybridises on targeted genomes and DON
 
 The next steps are exactly the same as All Genomes steps 1 to 5, except that more informations are stored like if the sequence is present in the gene or not.
 
-### Performances test 
 
-*Coming soon...* 

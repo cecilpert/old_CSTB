@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os,sys,json,re,subprocess
 from Bio import SeqIO
-from Queue import Queue
+from queue import Queue
 from threading import Thread
 
 class Hit():
@@ -204,10 +204,12 @@ def write_to_file(genomes_IN,genomes_NOT_IN,hit_list,PAM,non_PAM_motif_length):
         output.write('\t'+genome_i)
     output.write('\n')
     for hit in hit_list:
-        output.write(hit.sequence)
+        output.write(hit.sequence+'\t')
         for gi in genomes_IN:
-            output.write('\t'+','.join(hit.genomes_Dict[gi]))
-        output.write('\n')
+            for ref in hit.genomes_Dict[gi]: 
+                to_write=ref+':'+','.join(hit.genomes_Dict[gi][ref])+';'
+        to_write=to_write.strip(';')        
+        output.write(to_write+'\n')
     output.close()
 
 def setupWorkSpace(parameters):

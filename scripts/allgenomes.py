@@ -2,7 +2,7 @@ from __future__ import print_function
 import common_functions as cf
 import uuid,time,argparse,sys
 from Bio import SeqIO
-from Queue import Queue
+from queue import Queue
 from threading import Thread
 
 #Global variable
@@ -207,7 +207,6 @@ def construction(fasta_path,PAM,non_PAM_motif_length,genomes_IN,genomes_NOT_IN,d
             cf.eprint(str(len(dic_seq))+' hits remain after include genome '+genome)
             list_fasta=cf.write_to_fasta_parallel(dic_seq,num_file)
 
-    #cf.delete_used_files(genomes_IN+genomes_NOT_IN,dict_org_code)
     cf.delete_used_files()
     print(len(dic_seq))
 

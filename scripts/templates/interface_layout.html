@@ -93,6 +93,10 @@
     		overflow: auto;
 		}
 
+		#error{
+			color: red;
+		}
+
 
 	</style>
 
@@ -258,14 +262,16 @@
 			<div id=cadre class="w3-row">
 
 				<div class="w3-third w3-padding w3-card-4 w3-hover-light-blue">
-					<h6>Search from position 1 to position</h6>
+					<h6>Search from position 1 to position <i>(0 if you want to search in all sequence)</i> </h6>
 					<input type="number" id="search-region" value="100" min="23" width="10px" title="0 if you want to search in all sequence">
+					<br>
 					<a id='error' name='error-n'></a>
 				</div>
 
 				<div class="w3-third w3-padding w3-card-4 w3-hover-light-blue">
 					<h6>Percentage identity min for homolog genes research</h6>
 					<input type="number" id="percent-identity" value="70" min="0" max='100' width="10px">
+					<br>
 					<a id='error' name='error-pid'></a>
 				</div>
 
