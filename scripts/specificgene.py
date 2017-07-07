@@ -2,7 +2,7 @@ from __future__ import print_function
 import common_functions as cf 
 import time,argparse,uuid,os,subprocess,sys
 from Bio.Blast import NCBIXML  
-from queue import Queue 
+from Queue import Queue 
 from threading import Thread
 
 ### METHODS FOR THE ARGUMENTS ###
