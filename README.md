@@ -15,7 +15,7 @@ Then : `brew install python3`
 
 [Python website](https://www.python.org)
 
-It's also possible to use Python2. In this case, you have to change the global variable PYTHON_INTERPRETER to "python" instead of "python3" in webapp.py script (folder scripts). **Warning** : If you choose to use Python2, Flask and BioPython must be installed for this version.   
+It's also possible to use Python2. In this case, you have to change the global variable PYTHON_INTERPRETER to "python" instead of "python3" in webapp.py script (folder scripts). **Warning** : If you choose to use Python2, all Python requirements (flask, flask-socketio, eventlet, biopython) have to be installed for Python2. 
 
 ### Flask and BioPython 
 You can use pip3 with `pip3 install flask` and `pip3 install biopython`
@@ -59,7 +59,7 @@ Once you download this type of file, launch `python3 scripts/pre_treatment.py pa
 
 Clone this git depository : `git clone https://github.com/chilpert2/CSTB` 
 
-Go to CSTB folder and execute `.\run.command`. This script executes Flask and you can go to the local adress http://127.0.0.1:5000/ to access graphical interface. 
+Go to CSTB folder and execute `./run.command`. This script executes Flask and you can go to the local adress http://127.0.0.1:5000/ to access graphical interface. 
 
 You can execute Flask manually with the following commands (you have to be in CSTB folder) : 
 
