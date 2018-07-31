@@ -1,9 +1,50 @@
-import os
+import os, sys
 from Bio import SeqIO
 from ete3 import NCBITaxa
 import pickle 
 from functionbase import reverse_complement
 import re, json
+PROXY_SETTINGS = None
+import argparse
+
+
+
+def main():
+    global PROXY_SETTINGS
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input", help="List of bacteteria in \"assembly-like\" format")  
+    parser.add_argument("--proxy", help="proxy settings")
+    
+
+    args = parser.parse_args()
+    if args.proxy:
+        PROXY_SETTINGS = args.proxy
+        os.environ["http_proxy"] = args.proxy
+        os.environ["https_proxy"] = args.proxy
+      
+    #ref_bacteria='more_genomes/assembly_summary_bacteria_500.txt'
+    #dic_taxid=dic_download(ref_bacteria)
+   # print ("Using " + sys.argv[1] + " as input")
+    
+    if not os.path.exists("./reference_genomes"):
+        os.makedirs("./reference_genomes")
+        os.makedirs("./reference_genomes/fasta")
+        os.makedirs("./reference_genomes/index2")
+        os.makedirs("./reference_genomes/pre_calculate")
+
+        
+    else :
+        print('A folder names "reference_genomes" alrady exist please move it')
+        sys.exit(1)
+    
+    dic_taxid=dic_download(args.input)
+    eliminate_plasmides(dic_taxid)
+#test(dic_taxid)
+    index_bowtie_blast(dic_taxid)
+    pre_calculate(dic_taxid)
+    distance_matrix(dic_taxid)
+    
+    #json_tree()
 
 class Lineage: 
     def __init__(self):
@@ -37,7 +78,10 @@ def dic_download(ref_bacteria):
         ftp_suffix=ftp_link.split('/')[-1]+'_genomic.fna'
         genome_link='https://'+ftp_link.split('//')[1]+'/'+ftp_suffix
         if ftp_suffix not in os.listdir('reference_genomes/fasta'): 
-            cmd+='curl --remote-name --remote-time '+genome_link+'.gz\n'
+            cmd += 'curl '
+            if PROXY_SETTINGS:
+                cmd += '--proxy ' + PROXY_SETTINGS + ' '
+            cmd+='--remote-name --remote-time '+genome_link+'.gz\n'
             cmd+='mv '+ftp_suffix+'.gz reference_genomes/fasta/\n'
             cmd+='gunzip reference_genomes/fasta/'+ftp_suffix+'.gz\n'
                 
@@ -197,7 +241,9 @@ def distance_dic(dic_lineage):
 def distance_matrix(dic_taxid): 
     print('DISTANCE MATRIX')
     dic_lineage=create_lineage_objects(dic_taxid)
+    print("s2")
     dist_dic=distance_dic(dic_lineage)
+    print("s3")
     pickle.dump(dist_dic, open( "reference_genomes/distance_dic.pickle", "wb" ) )
 
 def test(dic_taxid): 
@@ -213,11 +259,8 @@ def json_tree():
     print('JSON TREE')
     os.system('python3 scripts/tax2json.py')            
 
-ref_bacteria='more_genomes/assembly_summary_bacteria_500.txt'
-dic_taxid=dic_download(ref_bacteria)
-#eliminate_plasmides(dic_taxid)
-#test(dic_taxid)
-#index_bowtie_blast(dic_taxid)
-#pre_calculate(dic_taxid)
-#distance_matrix(dic_taxid)
-json_tree()
+
+
+
+if __name__ == "__main__":
+    main()
