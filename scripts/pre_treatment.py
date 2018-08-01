@@ -64,7 +64,7 @@ def dic_download(ref_bacteria):
     cmd=''
     dic_taxid={}
     dic_ref={}
-    for l in f: 
+    for l in f:         
         count+=1
         l_split=l.rstrip().split('\t')
         name=l_split[7]
