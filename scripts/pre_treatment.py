@@ -58,7 +58,7 @@ class Lineage:
 def dic_download(ref_bacteria):
     print('DOWNLOAD')
     out=open('to_download.sh','w')
-    taxfile=open('scripts/taxfile.txt','w')
+    taxfile=open('reference_genomes/taxfile.txt','w')
     count=0
     f=open(ref_bacteria,'r')
     cmd=''
@@ -255,9 +255,9 @@ def test(dic_taxid):
         if count>1: 
             print(ref)
 
-def json_tree(): 
-    print('JSON TREE')
-    os.system('python3 scripts/tax2json.py')            
+#def json_tree(): 
+#    print('JSON TREE')
+#    os.system('python3 scripts/tax2json.py')            
 
 
 
