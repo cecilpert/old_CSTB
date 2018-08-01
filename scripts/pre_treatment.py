@@ -245,6 +245,9 @@ def distance_matrix(dic_taxid):
     dist_dic=distance_dic(dic_lineage)
     print("s3")
     pickle.dump(dist_dic, open( "reference_genomes/distance_dic.pickle", "wb" ) )
+    
+    with open("reference_genomes/distance_dic.json", 'w') as fp:
+        json.dump(dist_dic, fp)
 
 def test(dic_taxid): 
     print('CHECK FOR :')
